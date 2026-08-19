@@ -154,9 +154,75 @@ ____________________________________________________________
 676767!!! a todo needs a description. Give it a little something to do!
 ____________________________________________________________
 ____________________________________________________________
-676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, or unmark.
+676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or delete.
 ____________________________________________________________
 ____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: delete a task and renumber the list
+
+- Aim: A task can be deleted by its one-based list number, and the remaining tasks are renumbered.
+- Run command: `java -cp out/production/ip SevenSix`
+
+### Inputs
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+todo join sports club
+list
+delete 3
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 task in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: June 6th)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] join sports club
+Now you have 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+1.[T][ ] read book
+2.[D][ ] return book (by: June 6th)
+3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+4.[T][ ] join sports club
+____________________________________________________________
+____________________________________________________________
+Noted. I've removed this task:
+  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+1.[T][ ] read book
+2.[D][ ] return book (by: June 6th)
+3.[T][ ] join sports club
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
