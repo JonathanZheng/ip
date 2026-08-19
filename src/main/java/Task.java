@@ -25,6 +25,15 @@ public class Task {
     }
 
     /**
+     * Returns the letter that identifies this task's type in the user interface.
+     *
+     * @return {@code T} for a to-do task; other task types override this method
+     */
+    public String getTaskTypeIcon() {
+        return "T";
+    }
+
+    /**
      * Marks this task as done.
      */
     public void markAsDone() {
@@ -45,6 +54,6 @@ public class Task {
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getTaskTypeIcon() + "][" + getStatusIcon() + "] " + description;
     }
 }

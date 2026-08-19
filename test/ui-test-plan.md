@@ -34,16 +34,17 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
-## Test case: add, mark, unmark, and list a task
+## Test case: add, mark, unmark, and list to-do tasks
 
-- Aim: A task can be added, marked done, unmarked, and shown with its current status.
+- Aim: To-do tasks can be added, marked done, unmarked, and listed with their type and status.
 - Run command: `java -cp out/production/ip SevenSix`
 
 ### Inputs
 
 ```text
-write report
+todo read book
 mark 1
+todo borrow book
 list
 unmark 1
 list
@@ -58,21 +59,30 @@ Hello! I'm SevenSix.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-added: write report
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 task in the list.
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [X] write report
+  [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-1.[X] write report
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+1.[T][X] read book
+2.[T][ ] borrow book
 ____________________________________________________________
 ____________________________________________________________
 OK, I've marked this task as not done yet:
-  [ ] write report
+  [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
-1.[ ] write report
+1.[T][ ] read book
+2.[T][ ] borrow book
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!

@@ -34,7 +34,9 @@ public class SevenSix {
                 return;
             }
 
-            if (command.equals("list")) {
+            if (command.startsWith("todo ")) {
+                numberOfTasks = addTodo(command, tasks, numberOfTasks);
+            } else if (command.equals("list")) {
                 printTasks(tasks, numberOfTasks);
             } else if (command.startsWith("mark ")) {
                 markTask(command, tasks, numberOfTasks);
@@ -48,6 +50,36 @@ public class SevenSix {
 
             System.out.println(SEPARATOR);
         }
+    }
+
+    /**
+     * Adds a to-do task and reports the updated number of stored tasks.
+     *
+     * @param command the complete to-do command, such as {@code todo borrow book}
+     * @param tasks the array that holds the tasks
+     * @param numberOfTasks the number of entries in {@code tasks} that have been used
+     * @return the number of stored tasks after the to-do has been added
+     */
+    private static int addTodo(String command, Task[] tasks, int numberOfTasks) {
+        String description = command.substring("todo ".length());
+        tasks[numberOfTasks] = new Todo(description);
+        int updatedNumberOfTasks = numberOfTasks + 1;
+
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + tasks[numberOfTasks]);
+        System.out.println("Now you have " + updatedNumberOfTasks + " "
+                + getTaskCountDescription(updatedNumberOfTasks) + " in the list.");
+        return updatedNumberOfTasks;
+    }
+
+    /**
+     * Returns a grammatically correct description of a number of tasks.
+     *
+     * @param numberOfTasks the number of stored tasks
+     * @return {@code task} for one task, or {@code tasks} otherwise
+     */
+    private static String getTaskCountDescription(int numberOfTasks) {
+        return numberOfTasks == 1 ? "task" : "tasks";
     }
 
     /**
