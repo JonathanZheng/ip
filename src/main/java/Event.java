@@ -10,22 +10,12 @@ public class Event extends Task {
      *
      * @param description the text describing the task
      * @param from the start date or time, stored exactly as entered
-     * @param to the end date or time, stored exactly as entered
+    * @param to the end date or time, stored exactly as entered
      */
     public Event(String description, String from, String to) {
-        super(description);
+        super(description, TaskType.EVENT);
         this.from = from;
         this.to = to;
-    }
-
-    /**
-     * Returns the letter used for event tasks in the user interface.
-     *
-     * @return {@code E}
-     */
-    @Override
-    public String getTaskTypeIcon() {
-        return "E";
     }
 
     /**
