@@ -37,3 +37,5 @@ After each code update, review `test/ui-test-plan.md` and update its test cases 
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+When recommending interactive staging with `git add -p` or `git commit -p`, always tell the user the exact key to enter for each hunk in order, based on the requested commit split. Explain when a hunk should be edited with `e`, and identify which changes to keep or remove in the editor. Do not make the user infer the staging sequence from a general explanation of `y`, `n`, or `e`.
