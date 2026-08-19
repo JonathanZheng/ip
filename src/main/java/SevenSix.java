@@ -14,8 +14,7 @@ public class SevenSix {
      * @param args command-line arguments, which are not used by this application
      */
     public static void main(String[] args) {
-        String[] tasks = new String[MAX_TASKS];
-        boolean[] completedTasks = new boolean[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int numberOfTasks = 0;
 
         System.out.println(SEPARATOR);
@@ -36,13 +35,13 @@ public class SevenSix {
             }
 
             if (command.equals("list")) {
-                printTasks(tasks, completedTasks, numberOfTasks);
+                printTasks(tasks, numberOfTasks);
             } else if (command.startsWith("mark ")) {
-                markTask(command, tasks, completedTasks, numberOfTasks);
+                markTask(command, tasks, numberOfTasks);
             } else if (command.startsWith("unmark ")) {
-                unmarkTask(command, tasks, completedTasks, numberOfTasks);
+                unmarkTask(command, tasks, numberOfTasks);
             } else {
-                tasks[numberOfTasks] = command;
+                tasks[numberOfTasks] = new Task(command);
                 numberOfTasks++;
                 System.out.println("added: " + command);
             }
@@ -55,13 +54,11 @@ public class SevenSix {
      * Prints every stored task with a one-based number.
      *
      * @param tasks the array that holds the tasks
-     * @param completedTasks the array that records whether each task is done
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      */
-    private static void printTasks(String[] tasks, boolean[] completedTasks, int numberOfTasks) {
+    private static void printTasks(Task[] tasks, int numberOfTasks) {
         for (int i = 0; i < numberOfTasks; i++) {
-            String marker = completedTasks[i] ? "X" : " ";
-            System.out.println((i + 1) + ".[" + marker + "] " + tasks[i]);
+            System.out.println((i + 1) + "." + tasks[i]);
         }
     }
 
@@ -70,10 +67,9 @@ public class SevenSix {
      *
      * @param command the complete mark command, such as {@code mark 2}
      * @param tasks the array that holds the tasks
-     * @param completedTasks the array that records whether each task is done
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      */
-    private static void markTask(String command, String[] tasks, boolean[] completedTasks, int numberOfTasks) {
+    private static void markTask(String command, Task[] tasks, int numberOfTasks) {
         try {
             int taskNumber = Integer.parseInt(command.substring("mark ".length()).trim());
             if (taskNumber < 1 || taskNumber > numberOfTasks) {
@@ -82,9 +78,9 @@ public class SevenSix {
             }
 
             int taskIndex = taskNumber - 1;
-            completedTasks[taskIndex] = true;
+            tasks[taskIndex].markAsDone();
             System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  [X] " + tasks[taskIndex]);
+            System.out.println("  " + tasks[taskIndex]);
         } catch (NumberFormatException exception) {
             System.out.println("Please specify a valid task number.");
         }
@@ -95,10 +91,9 @@ public class SevenSix {
      *
      * @param command the complete unmark command, such as {@code unmark 2}
      * @param tasks the array that holds the tasks
-     * @param completedTasks the array that records whether each task is done
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      */
-    private static void unmarkTask(String command, String[] tasks, boolean[] completedTasks, int numberOfTasks) {
+    private static void unmarkTask(String command, Task[] tasks, int numberOfTasks) {
         try {
             int taskNumber = Integer.parseInt(command.substring("unmark ".length()).trim());
             if (taskNumber < 1 || taskNumber > numberOfTasks) {
@@ -107,9 +102,9 @@ public class SevenSix {
             }
 
             int taskIndex = taskNumber - 1;
-            completedTasks[taskIndex] = false;
+            tasks[taskIndex].markAsNotDone();
             System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  [ ] " + tasks[taskIndex]);
+            System.out.println("  " + tasks[taskIndex]);
         } catch (NumberFormatException exception) {
             System.out.println("Please specify a valid task number.");
         }
