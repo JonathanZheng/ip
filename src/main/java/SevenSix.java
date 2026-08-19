@@ -25,31 +25,36 @@ public class SevenSix {
         Scanner scanner = new Scanner(System.in);
 
         while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
+            String command = scanner.nextLine().trim();
             System.out.println(SEPARATOR);
 
-            if (command.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println(SEPARATOR);
-                return;
-            }
+            try {
+                if (command.equals("bye")) {
+                    System.out.println("Bye. Hope to see you again soon!");
+                    System.out.println(SEPARATOR);
+                    return;
+                }
 
-            if (command.startsWith("todo ")) {
-                numberOfTasks = addTodo(command, tasks, numberOfTasks);
-            } else if (command.startsWith("deadline ")) {
-                numberOfTasks = addDeadline(command, tasks, numberOfTasks);
-            } else if (command.startsWith("event ")) {
-                numberOfTasks = addEvent(command, tasks, numberOfTasks);
-            } else if (command.equals("list")) {
-                printTasks(tasks, numberOfTasks);
-            } else if (command.startsWith("mark ")) {
-                markTask(command, tasks, numberOfTasks);
-            } else if (command.startsWith("unmark ")) {
-                unmarkTask(command, tasks, numberOfTasks);
-            } else {
-                tasks[numberOfTasks] = new Task(command);
-                numberOfTasks++;
-                System.out.println("added: " + command);
+                if (command.equals(TODO_COMMAND) || command.startsWith(TODO_COMMAND + " ")) {
+                    numberOfTasks = addTodo(command, tasks, numberOfTasks);
+                } else if (command.equals(DEADLINE_COMMAND)
+                        || command.startsWith(DEADLINE_COMMAND + " ")) {
+                    numberOfTasks = addDeadline(command, tasks, numberOfTasks);
+                } else if (command.equals(EVENT_COMMAND) || command.startsWith(EVENT_COMMAND + " ")) {
+                    numberOfTasks = addEvent(command, tasks, numberOfTasks);
+                } else if (command.equals("list")) {
+                    printTasks(tasks, numberOfTasks);
+                } else if (command.equals(MARK_COMMAND) || command.startsWith(MARK_COMMAND + " ")) {
+                    markTask(command, tasks, numberOfTasks);
+                } else if (command.equals(UNMARK_COMMAND)
+                        || command.startsWith(UNMARK_COMMAND + " ")) {
+                    unmarkTask(command, tasks, numberOfTasks);
+                } else {
+                    throw new SevenSixException(
+                            "I don't know that command yet. Try todo, deadline, event, list, mark, or unmark.");
+                }
+            } catch (SevenSixException exception) {
+                printError(exception.getMessage());
             }
 
             System.out.println(SEPARATOR);
@@ -121,8 +126,13 @@ public class SevenSix {
      * @param tasks the array that holds the tasks
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      * @return the number of stored tasks after the task has been added
+     * @throws SevenSixException if the task list is full
      */
-    private static int addTask(Task task, Task[] tasks, int numberOfTasks) {
+    private static int addTask(Task task, Task[] tasks, int numberOfTasks) throws SevenSixException {
+        if (numberOfTasks >= MAX_TASKS) {
+            throw new SevenSixException("your task list is full. 676767!!! Try completing or removing a task first.");
+        }
+
         tasks[numberOfTasks] = task;
         int updatedNumberOfTasks = numberOfTasks + 1;
 
