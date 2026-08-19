@@ -3,16 +3,13 @@
  */
 public class SevenSix {
     public static void main(String[] args) {
-        String banner = """
-                 _____                      _____ _      
-                / ____|                    / ____(_)     
-               | (___   _____   _____ _ __ | (___  ___  __
-                \\___ \\ / _ \\ \\ / / _ \\ '_ \\ \\___ \\| \\ \\/ /
-                ____) |  __/\\ V /|  __/ | | |____) | |>  <
-               |_____/ \\___| \\_/  \\___|_| |_|_____/|_/_/\\_\\
-               """;
+        String separator = "____________________________________________________________";
 
-        System.out.println(banner);
-        System.out.println("Welcome to SevenSix!");
+        System.out.println(separator);
+        System.out.println("Hello! I'm SevenSix.");
+        System.out.println("What can I do for you?");
+        System.out.println(separator);
+        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println(separator);
     }
 }
