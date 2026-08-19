@@ -38,6 +38,8 @@ public class SevenSix {
                 numberOfTasks = addTodo(command, tasks, numberOfTasks);
             } else if (command.startsWith("deadline ")) {
                 numberOfTasks = addDeadline(command, tasks, numberOfTasks);
+            } else if (command.startsWith("event ")) {
+                numberOfTasks = addEvent(command, tasks, numberOfTasks);
             } else if (command.equals("list")) {
                 printTasks(tasks, numberOfTasks);
             } else if (command.startsWith("mark ")) {
@@ -86,6 +88,30 @@ public class SevenSix {
         String description = details.substring(0, byMarkerIndex);
         String by = details.substring(byMarkerIndex + " /by ".length());
         return addTask(new Deadline(description, by), tasks, numberOfTasks);
+    }
+
+    /**
+     * Adds an event task when its description, start, and end are separated by {@code /from} and
+     * {@code /to}.
+     *
+     * @param command the complete event command, such as {@code event team meeting /from Mon 2pm /to 4pm}
+     * @param tasks the array that holds the tasks
+     * @param numberOfTasks the number of entries in {@code tasks} that have been used
+     * @return the number of stored tasks after handling the command
+     */
+    private static int addEvent(String command, Task[] tasks, int numberOfTasks) {
+        String details = command.substring("event ".length());
+        int fromMarkerIndex = details.indexOf(" /from ");
+        int toMarkerIndex = details.indexOf(" /to ", fromMarkerIndex + " /from ".length());
+        if (fromMarkerIndex == -1 || toMarkerIndex == -1) {
+            System.out.println("Please use: event <description> /from <start> /to <end>.");
+            return numberOfTasks;
+        }
+
+        String description = details.substring(0, fromMarkerIndex);
+        String from = details.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex);
+        String to = details.substring(toMarkerIndex + " /to ".length());
+        return addTask(new Event(description, from, to), tasks, numberOfTasks);
     }
 
     /**

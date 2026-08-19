@@ -128,3 +128,43 @@ ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test case: add and list event tasks
+
+- Aim: Event tasks retain their start and end text exactly as entered and show the event type.
+- Run command: `java -cp out/production/ip SevenSix`
+
+### Inputs
+
+```text
+event project meeting /from Mon 2pm /to 4pm
+event orientation week /from 4/10/2019 /to 11/10/2019
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 1 task in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] orientation week (from: 4/10/2019 to: 11/10/2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[E][ ] orientation week (from: 4/10/2019 to: 11/10/2019)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
