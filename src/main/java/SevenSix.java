@@ -36,6 +36,8 @@ public class SevenSix {
 
             if (command.startsWith("todo ")) {
                 numberOfTasks = addTodo(command, tasks, numberOfTasks);
+            } else if (command.startsWith("deadline ")) {
+                numberOfTasks = addDeadline(command, tasks, numberOfTasks);
             } else if (command.equals("list")) {
                 printTasks(tasks, numberOfTasks);
             } else if (command.startsWith("mark ")) {
@@ -62,7 +64,40 @@ public class SevenSix {
      */
     private static int addTodo(String command, Task[] tasks, int numberOfTasks) {
         String description = command.substring("todo ".length());
-        tasks[numberOfTasks] = new Todo(description);
+        return addTask(new Todo(description), tasks, numberOfTasks);
+    }
+
+    /**
+     * Adds a deadline task when its description and due time are separated by {@code /by}.
+     *
+     * @param command the complete deadline command, such as {@code deadline return book /by Sunday}
+     * @param tasks the array that holds the tasks
+     * @param numberOfTasks the number of entries in {@code tasks} that have been used
+     * @return the number of stored tasks after handling the command
+     */
+    private static int addDeadline(String command, Task[] tasks, int numberOfTasks) {
+        String details = command.substring("deadline ".length());
+        int byMarkerIndex = details.indexOf(" /by ");
+        if (byMarkerIndex == -1) {
+            System.out.println("Please use: deadline <description> /by <deadline>.");
+            return numberOfTasks;
+        }
+
+        String description = details.substring(0, byMarkerIndex);
+        String by = details.substring(byMarkerIndex + " /by ".length());
+        return addTask(new Deadline(description, by), tasks, numberOfTasks);
+    }
+
+    /**
+     * Stores a task and reports the updated number of stored tasks.
+     *
+     * @param task the task to store
+     * @param tasks the array that holds the tasks
+     * @param numberOfTasks the number of entries in {@code tasks} that have been used
+     * @return the number of stored tasks after the task has been added
+     */
+    private static int addTask(Task task, Task[] tasks, int numberOfTasks) {
+        tasks[numberOfTasks] = task;
         int updatedNumberOfTasks = numberOfTasks + 1;
 
         System.out.println("Got it. I've added this task:");

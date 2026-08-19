@@ -88,3 +88,43 @@ ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test case: add and list deadline tasks
+
+- Aim: Deadline tasks retain the due text exactly as entered and show the deadline type.
+- Run command: `java -cp out/production/ip SevenSix`
+
+### Inputs
+
+```text
+deadline return book /by Sunday
+deadline do homework /by no idea :-p
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 1 task in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] do homework (by: no idea :-p)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+1.[D][ ] return book (by: Sunday)
+2.[D][ ] do homework (by: no idea :-p)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
