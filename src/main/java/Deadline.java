@@ -8,21 +8,11 @@ public class Deadline extends Task {
      * Creates a deadline task that is initially not done.
      *
      * @param description the text describing the task
-     * @param by the due date or time, stored exactly as entered
+    * @param by the due date or time, stored exactly as entered
      */
     public Deadline(String description, String by) {
-        super(description);
+        super(description, TaskType.DEADLINE);
         this.by = by;
-    }
-
-    /**
-     * Returns the letter used for deadline tasks in the user interface.
-     *
-     * @return {@code D}
-     */
-    @Override
-    public String getTaskTypeIcon() {
-        return "D";
     }
 
     /**
