@@ -6,6 +6,11 @@ import java.util.Scanner;
 public class SevenSix {
     private static final int MAX_TASKS = 100;
     private static final String SEPARATOR = "____________________________________________________________";
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String MARK_COMMAND = "mark";
+    private static final String UNMARK_COMMAND = "unmark";
 
     /**
      * Welcomes the user, stores entered tasks, lists them on request, and ends when the user enters
@@ -68,9 +73,13 @@ public class SevenSix {
      * @param tasks the array that holds the tasks
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      * @return the number of stored tasks after the to-do has been added
+     * @throws SevenSixException if the to-do description is empty
      */
-    private static int addTodo(String command, Task[] tasks, int numberOfTasks) {
-        String description = command.substring("todo ".length());
+    private static int addTodo(String command, Task[] tasks, int numberOfTasks) throws SevenSixException {
+        String description = command.substring(TODO_COMMAND.length()).trim();
+        if (description.isBlank()) {
+            throw new SevenSixException("a todo needs a description. Give it a little something to do!");
+        }
         return addTask(new Todo(description), tasks, numberOfTasks);
     }
 
@@ -81,17 +90,20 @@ public class SevenSix {
      * @param tasks the array that holds the tasks
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      * @return the number of stored tasks after handling the command
+     * @throws SevenSixException if the deadline format or its details are invalid
      */
-    private static int addDeadline(String command, Task[] tasks, int numberOfTasks) {
-        String details = command.substring("deadline ".length());
+    private static int addDeadline(String command, Task[] tasks, int numberOfTasks) throws SevenSixException {
+        String details = command.substring(DEADLINE_COMMAND.length()).trim();
         int byMarkerIndex = details.indexOf(" /by ");
         if (byMarkerIndex == -1) {
-            System.out.println("Please use: deadline <description> /by <deadline>.");
-            return numberOfTasks;
+            throw new SevenSixException("deadline format is: deadline <description> /by <deadline>.");
         }
 
-        String description = details.substring(0, byMarkerIndex);
-        String by = details.substring(byMarkerIndex + " /by ".length());
+        String description = details.substring(0, byMarkerIndex).trim();
+        String by = details.substring(byMarkerIndex + " /by ".length()).trim();
+        if (description.isBlank() || by.isBlank()) {
+            throw new SevenSixException("a deadline needs both a description and a due time.");
+        }
         return addTask(new Deadline(description, by), tasks, numberOfTasks);
     }
 
@@ -103,20 +115,32 @@ public class SevenSix {
      * @param tasks the array that holds the tasks
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
      * @return the number of stored tasks after handling the command
+     * @throws SevenSixException if the event format or its details are invalid
      */
-    private static int addEvent(String command, Task[] tasks, int numberOfTasks) {
-        String details = command.substring("event ".length());
+    private static int addEvent(String command, Task[] tasks, int numberOfTasks) throws SevenSixException {
+        String details = command.substring(EVENT_COMMAND.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
         int toMarkerIndex = details.indexOf(" /to ", fromMarkerIndex + " /from ".length());
         if (fromMarkerIndex == -1 || toMarkerIndex == -1) {
-            System.out.println("Please use: event <description> /from <start> /to <end>.");
-            return numberOfTasks;
+            throw new SevenSixException("event format is: event <description> /from <start> /to <end>.");
         }
 
-        String description = details.substring(0, fromMarkerIndex);
-        String from = details.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex);
-        String to = details.substring(toMarkerIndex + " /to ".length());
+        String description = details.substring(0, fromMarkerIndex).trim();
+        String from = details.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
+        String to = details.substring(toMarkerIndex + " /to ".length()).trim();
+        if (description.isBlank() || from.isBlank() || to.isBlank()) {
+            throw new SevenSixException("an event needs a description, a start, and an end.");
+        }
         return addTask(new Event(description, from, to), tasks, numberOfTasks);
+    }
+
+    /**
+     * Prints a themed message for an input exception.
+     *
+     * @param message the explanation of the input error
+     */
+    private static void printError(String message) {
+        System.out.println("676767!!! " + message);
     }
 
     /**
@@ -171,22 +195,23 @@ public class SevenSix {
      * @param command the complete mark command, such as {@code mark 2}
      * @param tasks the array that holds the tasks
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
+     * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void markTask(String command, Task[] tasks, int numberOfTasks) {
+    private static void markTask(String command, Task[] tasks, int numberOfTasks) throws SevenSixException {
+        int taskNumber;
         try {
-            int taskNumber = Integer.parseInt(command.substring("mark ".length()).trim());
-            if (taskNumber < 1 || taskNumber > numberOfTasks) {
-                System.out.println("That task number is not in your list.");
-                return;
-            }
-
-            int taskIndex = taskNumber - 1;
-            tasks[taskIndex].markAsDone();
-            System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[taskIndex]);
+            taskNumber = Integer.parseInt(command.substring(MARK_COMMAND.length()).trim());
         } catch (NumberFormatException exception) {
-            System.out.println("Please specify a valid task number.");
+            throw new SevenSixException("please specify a valid task number.");
         }
+        if (taskNumber < 1 || taskNumber > numberOfTasks) {
+            throw new SevenSixException("that task number is not in your list.");
+        }
+
+        int taskIndex = taskNumber - 1;
+        tasks[taskIndex].markAsDone();
+        System.out.println("Nice! I've marked this task as done:");
+        System.out.println("  " + tasks[taskIndex]);
     }
 
     /**
@@ -195,21 +220,22 @@ public class SevenSix {
      * @param command the complete unmark command, such as {@code unmark 2}
      * @param tasks the array that holds the tasks
      * @param numberOfTasks the number of entries in {@code tasks} that have been used
+     * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void unmarkTask(String command, Task[] tasks, int numberOfTasks) {
+    private static void unmarkTask(String command, Task[] tasks, int numberOfTasks) throws SevenSixException {
+        int taskNumber;
         try {
-            int taskNumber = Integer.parseInt(command.substring("unmark ".length()).trim());
-            if (taskNumber < 1 || taskNumber > numberOfTasks) {
-                System.out.println("That task number is not in your list.");
-                return;
-            }
-
-            int taskIndex = taskNumber - 1;
-            tasks[taskIndex].markAsNotDone();
-            System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[taskIndex]);
+            taskNumber = Integer.parseInt(command.substring(UNMARK_COMMAND.length()).trim());
         } catch (NumberFormatException exception) {
-            System.out.println("Please specify a valid task number.");
+            throw new SevenSixException("please specify a valid task number.");
         }
+        if (taskNumber < 1 || taskNumber > numberOfTasks) {
+            throw new SevenSixException("that task number is not in your list.");
+        }
+
+        int taskIndex = taskNumber - 1;
+        tasks[taskIndex].markAsNotDone();
+        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println("  " + tasks[taskIndex]);
     }
 }

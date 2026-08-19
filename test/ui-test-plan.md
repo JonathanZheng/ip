@@ -129,6 +129,40 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test case: reject incorrect input and accept trailing spaces
+
+- Aim: Empty task descriptions and unknown commands produce helpful 67-themed errors without adding tasks, while valid commands with trailing spaces still work.
+- Run command: `java -cp out/production/ip SevenSix`
+
+### Inputs
+
+```text
+todo
+blah
+list 
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+676767!!! a todo needs a description. Give it a little something to do!
+____________________________________________________________
+____________________________________________________________
+676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, or unmark.
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test case: add and list event tasks
 
 - Aim: Event tasks retain their start and end text exactly as entered and show the event type.
