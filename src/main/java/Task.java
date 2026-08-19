@@ -4,6 +4,7 @@
 public class Task {
     protected String description;
     protected boolean isDone;
+    private final TaskType taskType;
 
     /**
      * Creates a task that is initially not done.
@@ -11,8 +12,19 @@ public class Task {
      * @param description the text describing the task
      */
     public Task(String description) {
+        this(description, TaskType.TODO);
+    }
+
+    /**
+     * Creates a task with the specified type that is initially not done.
+     *
+     * @param description the text describing the task
+     * @param taskType the type of this task
+     */
+    public Task(String description, TaskType taskType) {
         this.description = description;
         this.isDone = false;
+        this.taskType = taskType;
     }
 
     /**
@@ -27,10 +39,10 @@ public class Task {
     /**
      * Returns the letter that identifies this task's type in the user interface.
      *
-     * @return {@code T} for a to-do task; other task types override this method
+     * @return the icon associated with this task's type
      */
     public String getTaskTypeIcon() {
-        return "T";
+        return taskType.getIcon();
     }
 
     /**
