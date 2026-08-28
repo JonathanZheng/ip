@@ -18,4 +18,21 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    Welcome to SevenSix!
    ```
 
+## Building an executable JAR
+
+Run the following command from the project root:
+
+```bash
+./gradlew clean shadowJar
+```
+
+This creates the executable `build/libs/duke.jar`. Copy that file into an empty folder and run
+the chatbot with:
+
+```bash
+java -jar duke.jar
+```
+
+The JAR is a generated build artifact and should not be committed to Git.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
