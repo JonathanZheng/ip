@@ -46,6 +46,24 @@ public class Task {
     }
 
     /**
+     * Returns the task description for persistence.
+     *
+     * @return the task description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns whether this task has been marked as done.
+     *
+     * @return {@code true} when this task is done
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
      * Marks this task as done.
      */
     public void markAsDone() {

@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,6 +13,8 @@ public class SevenSix {
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
     private static final String DELETE_COMMAND = "delete";
+    private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
+    private static final String DATA_FILE_PROPERTY = "sevensix.data.file";
 
     /**
      * Welcomes the user, stores entered tasks, lists them on request, and ends when the user enters
@@ -21,7 +23,8 @@ public class SevenSix {
      * @param args command-line arguments, which are not used by this application
      */
     public static void main(String[] args) {
-        List<Task> tasks = new ArrayList<>();
+        TaskStorage storage = createTaskStorage();
+        List<Task> tasks = storage.load();
 
         System.out.println(SEPARATOR);
         System.out.println("Hello! I'm SevenSix.");
@@ -42,22 +45,22 @@ public class SevenSix {
                 }
 
                 if (command.equals(TODO_COMMAND) || command.startsWith(TODO_COMMAND + " ")) {
-                    addTodo(command, tasks);
+                    addTodo(command, tasks, storage);
                 } else if (command.equals(DEADLINE_COMMAND)
                         || command.startsWith(DEADLINE_COMMAND + " ")) {
-                    addDeadline(command, tasks);
+                    addDeadline(command, tasks, storage);
                 } else if (command.equals(EVENT_COMMAND) || command.startsWith(EVENT_COMMAND + " ")) {
-                    addEvent(command, tasks);
+                    addEvent(command, tasks, storage);
                 } else if (command.equals("list")) {
                     printTasks(tasks);
                 } else if (command.equals(MARK_COMMAND) || command.startsWith(MARK_COMMAND + " ")) {
-                    markTask(command, tasks);
+                    markTask(command, tasks, storage);
                 } else if (command.equals(UNMARK_COMMAND)
                         || command.startsWith(UNMARK_COMMAND + " ")) {
-                    unmarkTask(command, tasks);
+                    unmarkTask(command, tasks, storage);
                 } else if (command.equals(DELETE_COMMAND)
                         || command.startsWith(DELETE_COMMAND + " ")) {
-                    deleteTask(command, tasks);
+                    deleteTask(command, tasks, storage);
                 } else {
                     throw new SevenSixException(
                             "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or delete.");
@@ -71,18 +74,35 @@ public class SevenSix {
     }
 
     /**
+     * Creates the task storage used by this run.
+     *
+     * <p>The optional system property makes automated tests independent from a user's normal
+     * task file. In ordinary use, tasks are stored in {@code ./data/duke.txt}.</p>
+     *
+     * @return the configured task storage
+     */
+    private static TaskStorage createTaskStorage() {
+        String configuredPath = System.getProperty(DATA_FILE_PROPERTY);
+        Path dataFile = configuredPath == null || configuredPath.isBlank()
+                ? DEFAULT_DATA_FILE
+                : Path.of(configuredPath);
+        return new TaskStorage(dataFile);
+    }
+
+    /**
      * Adds a to-do task and reports the updated number of stored tasks.
      *
      * @param command the complete to-do command, such as {@code todo borrow book}
      * @param tasks the collection that holds the tasks
      * @throws SevenSixException if the to-do description is empty
      */
-    private static void addTodo(String command, List<Task> tasks) throws SevenSixException {
+    private static void addTodo(String command, List<Task> tasks, TaskStorage storage)
+            throws SevenSixException {
         String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isBlank()) {
             throw new SevenSixException("a todo needs a description. Give it a little something to do!");
         }
-        addTask(new Todo(description), tasks);
+        addTask(new Todo(description), tasks, storage);
     }
 
     /**
@@ -92,7 +112,8 @@ public class SevenSix {
      * @param tasks the collection that holds the tasks
      * @throws SevenSixException if the deadline format or its details are invalid
      */
-    private static void addDeadline(String command, List<Task> tasks) throws SevenSixException {
+    private static void addDeadline(String command, List<Task> tasks, TaskStorage storage)
+            throws SevenSixException {
         String details = command.substring(DEADLINE_COMMAND.length()).trim();
         int byMarkerIndex = details.indexOf(" /by ");
         if (byMarkerIndex == -1) {
@@ -104,7 +125,7 @@ public class SevenSix {
         if (description.isBlank() || by.isBlank()) {
             throw new SevenSixException("a deadline needs both a description and a due time.");
         }
-        addTask(new Deadline(description, by), tasks);
+        addTask(new Deadline(description, by), tasks, storage);
     }
 
     /**
@@ -115,7 +136,8 @@ public class SevenSix {
      * @param tasks the collection that holds the tasks
      * @throws SevenSixException if the event format or its details are invalid
      */
-    private static void addEvent(String command, List<Task> tasks) throws SevenSixException {
+    private static void addEvent(String command, List<Task> tasks, TaskStorage storage)
+            throws SevenSixException {
         String details = command.substring(EVENT_COMMAND.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
         int toMarkerIndex = details.indexOf(" /to ", fromMarkerIndex + " /from ".length());
@@ -129,7 +151,7 @@ public class SevenSix {
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
             throw new SevenSixException("an event needs a description, a start, and an end.");
         }
-        addTask(new Event(description, from, to), tasks);
+        addTask(new Event(description, from, to), tasks, storage);
     }
 
     /**
@@ -147,8 +169,9 @@ public class SevenSix {
      * @param task the task to store
      * @param tasks the collection that holds the tasks
      */
-    private static void addTask(Task task, List<Task> tasks) {
+    private static void addTask(Task task, List<Task> tasks, TaskStorage storage) {
         tasks.add(task);
+        saveTasks(tasks, storage);
         int numberOfTasks = tasks.size();
 
         System.out.println("Got it. I've added this task:");
@@ -185,7 +208,8 @@ public class SevenSix {
      * @param tasks the collection that holds the tasks
      * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void markTask(String command, List<Task> tasks) throws SevenSixException {
+    private static void markTask(String command, List<Task> tasks, TaskStorage storage)
+            throws SevenSixException {
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(command.substring(MARK_COMMAND.length()).trim());
@@ -198,6 +222,7 @@ public class SevenSix {
 
         int taskIndex = taskNumber - 1;
         tasks.get(taskIndex).markAsDone();
+        saveTasks(tasks, storage);
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + tasks.get(taskIndex));
     }
@@ -209,7 +234,8 @@ public class SevenSix {
      * @param tasks the collection that holds the tasks
      * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void unmarkTask(String command, List<Task> tasks) throws SevenSixException {
+    private static void unmarkTask(String command, List<Task> tasks, TaskStorage storage)
+            throws SevenSixException {
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(command.substring(UNMARK_COMMAND.length()).trim());
@@ -222,6 +248,7 @@ public class SevenSix {
 
         int taskIndex = taskNumber - 1;
         tasks.get(taskIndex).markAsNotDone();
+        saveTasks(tasks, storage);
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + tasks.get(taskIndex));
     }
@@ -233,7 +260,8 @@ public class SevenSix {
      * @param tasks the collection that holds the tasks
      * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void deleteTask(String command, List<Task> tasks) throws SevenSixException {
+    private static void deleteTask(String command, List<Task> tasks, TaskStorage storage)
+            throws SevenSixException {
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(command.substring(DELETE_COMMAND.length()).trim());
@@ -245,9 +273,22 @@ public class SevenSix {
         }
 
         Task removedTask = tasks.remove(taskNumber - 1);
+        saveTasks(tasks, storage);
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + tasks.size() + " "
                 + getTaskCountDescription(tasks.size()) + " in the list.");
+    }
+
+    /**
+     * Saves the task list after a command changes it.
+     *
+     * @param tasks the changed task list
+     * @param storage the storage destination
+     */
+    private static void saveTasks(List<Task> tasks, TaskStorage storage) {
+        if (!storage.save(tasks)) {
+            System.err.println("SevenSix could not save the task list to disk.");
+        }
     }
 }
