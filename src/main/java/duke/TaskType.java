@@ -1,3 +1,5 @@
+package duke;
+
 /**
  * Identifies the kinds of tasks supported by SevenSix and their display icons.
  */

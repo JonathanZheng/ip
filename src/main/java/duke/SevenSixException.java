@@ -1,3 +1,5 @@
+package duke;
+
 /**
  * Represents an error caused by invalid input to SevenSix.
  */
