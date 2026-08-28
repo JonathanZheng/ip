@@ -1,5 +1,4 @@
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -24,7 +23,7 @@ public class SevenSix {
      */
     public static void main(String[] args) {
         TaskStorage storage = createTaskStorage();
-        List<Task> tasks = storage.load();
+        TaskList tasks = new TaskList(storage.load());
 
         System.out.println(SEPARATOR);
         System.out.println("Hello! I'm SevenSix.");
@@ -97,7 +96,7 @@ public class SevenSix {
      * @param storage the storage destination
      * @throws SevenSixException if the to-do description is empty
      */
-    private static void addTodo(String command, List<Task> tasks, TaskStorage storage)
+    private static void addTodo(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
         String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isBlank()) {
@@ -114,7 +113,7 @@ public class SevenSix {
      * @param storage the storage destination
      * @throws SevenSixException if the deadline format or its details are invalid
      */
-    private static void addDeadline(String command, List<Task> tasks, TaskStorage storage)
+    private static void addDeadline(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
         String details = command.substring(DEADLINE_COMMAND.length()).trim();
         int byMarkerIndex = details.indexOf(" /by ");
@@ -140,7 +139,7 @@ public class SevenSix {
      * @param storage the storage destination
      * @throws SevenSixException if the event format or its details are invalid
      */
-    private static void addEvent(String command, List<Task> tasks, TaskStorage storage)
+    private static void addEvent(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
         String details = command.substring(EVENT_COMMAND.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
@@ -176,7 +175,7 @@ public class SevenSix {
      * @param task the task to store
      * @param tasks the collection that holds the tasks
      */
-    private static void addTask(Task task, List<Task> tasks, TaskStorage storage) {
+    private static void addTask(Task task, TaskList tasks, TaskStorage storage) {
         tasks.add(task);
         saveTasks(tasks, storage);
         int numberOfTasks = tasks.size();
@@ -202,7 +201,7 @@ public class SevenSix {
      *
      * @param tasks the collection that holds the tasks
      */
-    private static void printTasks(List<Task> tasks) {
+    private static void printTasks(TaskList tasks) {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + "." + tasks.get(i));
         }
@@ -216,7 +215,7 @@ public class SevenSix {
      * @param storage the storage destination
      * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void markTask(String command, List<Task> tasks, TaskStorage storage)
+    private static void markTask(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
         int taskNumber;
         try {
@@ -243,7 +242,7 @@ public class SevenSix {
      * @param storage the storage destination
      * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void unmarkTask(String command, List<Task> tasks, TaskStorage storage)
+    private static void unmarkTask(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
         int taskNumber;
         try {
@@ -270,7 +269,7 @@ public class SevenSix {
      * @param storage the storage destination
      * @throws SevenSixException if the task number is invalid or not in the list
      */
-    private static void deleteTask(String command, List<Task> tasks, TaskStorage storage)
+    private static void deleteTask(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
         int taskNumber;
         try {
@@ -296,7 +295,7 @@ public class SevenSix {
      * @param tasks the changed task list
      * @param storage the storage destination
      */
-    private static void saveTasks(List<Task> tasks, TaskStorage storage) {
+    private static void saveTasks(TaskList tasks, TaskStorage storage) {
         if (!storage.save(tasks)) {
             System.err.println("SevenSix could not save the task list to disk.");
         }

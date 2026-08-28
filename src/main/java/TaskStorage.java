@@ -58,7 +58,7 @@ public class TaskStorage {
      * @param tasks the tasks to save
      * @return {@code true} when the task list was saved successfully, or {@code false} otherwise
      */
-    public boolean save(List<Task> tasks) {
+    public boolean save(Iterable<Task> tasks) {
         try {
             createParentDirectory();
             List<String> lines = new ArrayList<>();
