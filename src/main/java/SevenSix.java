@@ -94,6 +94,7 @@ public class SevenSix {
      *
      * @param command the complete to-do command, such as {@code todo borrow book}
      * @param tasks the collection that holds the tasks
+     * @param storage the storage destination
      * @throws SevenSixException if the to-do description is empty
      */
     private static void addTodo(String command, List<Task> tasks, TaskStorage storage)
@@ -110,6 +111,7 @@ public class SevenSix {
      *
      * @param command the complete deadline command, such as {@code deadline return book /by Sunday}
      * @param tasks the collection that holds the tasks
+     * @param storage the storage destination
      * @throws SevenSixException if the deadline format or its details are invalid
      */
     private static void addDeadline(String command, List<Task> tasks, TaskStorage storage)
@@ -125,7 +127,8 @@ public class SevenSix {
         if (description.isBlank() || by.isBlank()) {
             throw new SevenSixException("a deadline needs both a description and a due time.");
         }
-        addTask(new Deadline(description, by), tasks, storage);
+        DateTimeParser.ParsedDateTime parsedBy = DateTimeParser.parse(by);
+        addTask(new Deadline(description, parsedBy.getDate(), parsedBy.getTime()), tasks, storage);
     }
 
     /**
@@ -134,6 +137,7 @@ public class SevenSix {
      *
      * @param command the complete event command, such as {@code event team meeting /from Mon 2pm /to 4pm}
      * @param tasks the collection that holds the tasks
+     * @param storage the storage destination
      * @throws SevenSixException if the event format or its details are invalid
      */
     private static void addEvent(String command, List<Task> tasks, TaskStorage storage)
@@ -151,7 +155,10 @@ public class SevenSix {
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
             throw new SevenSixException("an event needs a description, a start, and an end.");
         }
-        addTask(new Event(description, from, to), tasks, storage);
+        DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
+        DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
+        addTask(new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
+                parsedTo.getDate(), parsedTo.getTime()), tasks, storage);
     }
 
     /**
@@ -206,6 +213,7 @@ public class SevenSix {
      *
      * @param command the complete mark command, such as {@code mark 2}
      * @param tasks the collection that holds the tasks
+     * @param storage the storage destination
      * @throws SevenSixException if the task number is invalid or not in the list
      */
     private static void markTask(String command, List<Task> tasks, TaskStorage storage)
@@ -232,6 +240,7 @@ public class SevenSix {
      *
      * @param command the complete unmark command, such as {@code unmark 2}
      * @param tasks the collection that holds the tasks
+     * @param storage the storage destination
      * @throws SevenSixException if the task number is invalid or not in the list
      */
     private static void unmarkTask(String command, List<Task> tasks, TaskStorage storage)
@@ -258,6 +267,7 @@ public class SevenSix {
      *
      * @param command the complete delete command, such as {@code delete 3}
      * @param tasks the collection that holds the tasks
+     * @param storage the storage destination
      * @throws SevenSixException if the task number is invalid or not in the list
      */
     private static void deleteTask(String command, List<Task> tasks, TaskStorage storage)

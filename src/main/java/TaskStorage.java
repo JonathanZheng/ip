@@ -97,11 +97,12 @@ public class TaskStorage {
         String status = task.isDone() ? "1" : "0";
         if (task instanceof Deadline deadline) {
             return String.join(" | ", "D", status, escape(deadline.getDescription()),
-                    escape(deadline.getBy()));
+                    escape(DateTimeParser.formatForStorage(deadline.getBy(), deadline.getByTime())));
         }
         if (task instanceof Event event) {
             return String.join(" | ", "E", status, escape(event.getDescription()),
-                    escape(event.getFrom()), escape(event.getTo()));
+                    escape(DateTimeParser.formatForStorage(event.getFrom(), event.getFromTime())),
+                    escape(DateTimeParser.formatForStorage(event.getTo(), event.getToTime())));
         }
         return String.join(" | ", "T", status, escape(task.getDescription()));
     }
@@ -134,14 +135,26 @@ public class TaskStorage {
             if (fields.size() != 4 || fields.get(2).isBlank() || fields.get(3).isBlank()) {
                 return null;
             }
-            task = new Deadline(fields.get(2), fields.get(3));
+            try {
+                DateTimeParser.ParsedDateTime parsedBy = DateTimeParser.parse(fields.get(3));
+                task = new Deadline(fields.get(2), parsedBy.getDate(), parsedBy.getTime());
+            } catch (SevenSixException exception) {
+                return null;
+            }
             break;
         case "E":
             if (fields.size() != 5 || fields.get(2).isBlank() || fields.get(3).isBlank()
                     || fields.get(4).isBlank()) {
                 return null;
             }
-            task = new Event(fields.get(2), fields.get(3), fields.get(4));
+            try {
+                DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(fields.get(3));
+                DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(fields.get(4));
+                task = new Event(fields.get(2), parsedFrom.getDate(), parsedFrom.getTime(),
+                        parsedTo.getDate(), parsedTo.getTime());
+            } catch (SevenSixException exception) {
+                return null;
+            }
             break;
         default:
             return null;
