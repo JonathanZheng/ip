@@ -15,12 +15,13 @@ import java.util.List;
  * backslash characters so that those characters can also appear in task details.</p>
  */
 public class TaskStorage {
+    /** The file used to persist the task list. */
     private final Path dataFile;
 
     /**
      * Creates storage for the supplied data file.
      *
-     * @param dataFile the relative or absolute path of the task data file
+     * @param dataFile the relative or absolute path of the task data file.
      */
     public TaskStorage(Path dataFile) {
         this.dataFile = dataFile;
@@ -32,7 +33,7 @@ public class TaskStorage {
      * <p>A missing file is treated as an empty task list. Invalid lines are ignored so one
      * corrupted record does not prevent the chatbot from starting.</p>
      *
-     * @return the tasks read from disk, or an empty list when the file is missing or unreadable
+     * @return the tasks read from disk, or an empty list when the file is missing or unreadable.
      */
     public List<Task> load() {
         try {
@@ -57,8 +58,8 @@ public class TaskStorage {
     /**
      * Saves the current task list, creating its parent directory when necessary.
      *
-     * @param tasks the tasks to save
-     * @return {@code true} when the task list was saved successfully, or {@code false} otherwise
+     * @param tasks the tasks to save.
+     * @return {@code true} when the task list was saved successfully, or {@code false} otherwise.
      */
     public boolean save(Iterable<Task> tasks) {
         try {
@@ -80,7 +81,7 @@ public class TaskStorage {
     /**
      * Creates the folder containing the data file if the path has a parent folder.
      *
-     * @throws IOException if the folder cannot be created
+     * @throws IOException if the folder cannot be created.
      */
     private void createParentDirectory() throws IOException {
         Path parent = dataFile.getParent();
@@ -92,8 +93,8 @@ public class TaskStorage {
     /**
      * Converts a task into one line of the storage format.
      *
-     * @param task the task to format
-     * @return the serialized task
+     * @param task the task to format.
+     * @return the serialized task.
      */
     private String formatTask(Task task) {
         String status = task.isDone() ? "1" : "0";
@@ -112,8 +113,8 @@ public class TaskStorage {
     /**
      * Converts one storage line into a task, returning {@code null} for malformed data.
      *
-     * @param line the line read from disk
-     * @return the parsed task, or {@code null} when the line is invalid
+     * @param line the line read from disk.
+     * @return the parsed task, or {@code null} when the line is invalid.
      */
     private Task parseTask(String line) {
         if (line.isBlank()) {
@@ -171,8 +172,8 @@ public class TaskStorage {
     /**
      * Splits a storage line at unescaped pipe characters and removes field padding.
      *
-     * @param line the serialized task line
-     * @return the decoded fields
+     * @param line the serialized task line.
+     * @return the decoded fields.
      */
     private List<String> splitFields(String line) {
         List<String> fields = new ArrayList<>();
@@ -206,8 +207,8 @@ public class TaskStorage {
     /**
      * Escapes characters that have a special meaning in the storage format.
      *
-     * @param value the text to escape
-     * @return escaped text
+     * @param value the text to escape.
+     * @return escaped text.
      */
     private String escape(String value) {
         return value.replace("\\", "\\\\").replace("|", "\\|");

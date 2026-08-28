@@ -7,21 +7,36 @@ import java.util.Scanner;
  * Starts the SevenSix application and responds to commands entered by the user.
  */
 public class SevenSix {
+    /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
+    /** Command keyword for creating a to-do task. */
     private static final String TODO_COMMAND = "todo";
+    /** Command keyword for creating a deadline task. */
     private static final String DEADLINE_COMMAND = "deadline";
+    /** Command keyword for creating an event task. */
     private static final String EVENT_COMMAND = "event";
+    /** Command keyword for marking a task as done. */
     private static final String MARK_COMMAND = "mark";
+    /** Command keyword for marking a task as not done. */
     private static final String UNMARK_COMMAND = "unmark";
+    /** Command keyword for deleting a task. */
     private static final String DELETE_COMMAND = "delete";
+    /** Default relative path for persisted tasks. */
     private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
+    /** System property that overrides the default data-file path during automated runs. */
     private static final String DATA_FILE_PROPERTY = "sevensix.data.file";
+
+    /**
+     * Creates an application entry point.
+     */
+    public SevenSix() {
+    }
 
     /**
      * Welcomes the user, stores entered tasks, lists them on request, and ends when the user enters
      * {@code bye}.
      *
-     * @param args command-line arguments, which are not used by this application
+     * @param args command-line arguments, which are not used by this application.
      */
     public static void main(String[] args) {
         TaskStorage storage = createTaskStorage();
@@ -80,7 +95,7 @@ public class SevenSix {
      * <p>The optional system property makes automated tests independent from a user's normal
      * task file. In ordinary use, tasks are stored in {@code ./data/duke.txt}.</p>
      *
-     * @return the configured task storage
+     * @return the configured task storage.
      */
     private static TaskStorage createTaskStorage() {
         String configuredPath = System.getProperty(DATA_FILE_PROPERTY);
@@ -93,10 +108,10 @@ public class SevenSix {
     /**
      * Adds a to-do task and reports the updated number of stored tasks.
      *
-     * @param command the complete to-do command, such as {@code todo borrow book}
-     * @param tasks the collection that holds the tasks
-     * @param storage the storage destination
-     * @throws SevenSixException if the to-do description is empty
+     * @param command the complete to-do command, such as {@code todo borrow book}.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
+     * @throws SevenSixException if the to-do description is empty.
      */
     private static void addTodo(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
@@ -110,10 +125,10 @@ public class SevenSix {
     /**
      * Adds a deadline task when its description and due time are separated by {@code /by}.
      *
-     * @param command the complete deadline command, such as {@code deadline return book /by Sunday}
-     * @param tasks the collection that holds the tasks
-     * @param storage the storage destination
-     * @throws SevenSixException if the deadline format or its details are invalid
+     * @param command the complete deadline command, such as {@code deadline return book /by Sunday}.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
+     * @throws SevenSixException if the deadline format or its details are invalid.
      */
     private static void addDeadline(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
@@ -136,10 +151,10 @@ public class SevenSix {
      * Adds an event task when its description, start, and end are separated by {@code /from} and
      * {@code /to}.
      *
-     * @param command the complete event command, such as {@code event team meeting /from Mon 2pm /to 4pm}
-     * @param tasks the collection that holds the tasks
-     * @param storage the storage destination
-     * @throws SevenSixException if the event format or its details are invalid
+     * @param command the complete event command, such as {@code event team meeting /from Mon 2pm /to 4pm}.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
+     * @throws SevenSixException if the event format or its details are invalid.
      */
     private static void addEvent(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
@@ -165,7 +180,7 @@ public class SevenSix {
     /**
      * Prints a themed message for an input exception.
      *
-     * @param message the explanation of the input error
+     * @param message the explanation of the input error.
      */
     private static void printError(String message) {
         System.out.println("676767!!! " + message);
@@ -174,8 +189,9 @@ public class SevenSix {
     /**
      * Stores a task in the collection and reports the updated number of stored tasks.
      *
-     * @param task the task to store
-     * @param tasks the collection that holds the tasks
+     * @param task the task to store.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
      */
     private static void addTask(Task task, TaskList tasks, TaskStorage storage) {
         tasks.add(task);
@@ -191,8 +207,8 @@ public class SevenSix {
     /**
      * Returns a grammatically correct description of a number of tasks.
      *
-     * @param numberOfTasks the number of stored tasks
-     * @return {@code task} for one task, or {@code tasks} otherwise
+     * @param numberOfTasks the number of stored tasks.
+     * @return {@code task} for one task, or {@code tasks} otherwise.
      */
     private static String getTaskCountDescription(int numberOfTasks) {
         return numberOfTasks == 1 ? "task" : "tasks";
@@ -201,7 +217,7 @@ public class SevenSix {
     /**
      * Prints every stored task with a one-based number.
      *
-     * @param tasks the collection that holds the tasks
+     * @param tasks the collection that holds the tasks.
      */
     private static void printTasks(TaskList tasks) {
         for (int i = 0; i < tasks.size(); i++) {
@@ -212,10 +228,10 @@ public class SevenSix {
     /**
      * Marks a task as done and reports the task to the user.
      *
-     * @param command the complete mark command, such as {@code mark 2}
-     * @param tasks the collection that holds the tasks
-     * @param storage the storage destination
-     * @throws SevenSixException if the task number is invalid or not in the list
+     * @param command the complete mark command, such as {@code mark 2}.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
+     * @throws SevenSixException if the task number is invalid or not in the list.
      */
     private static void markTask(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
@@ -239,10 +255,10 @@ public class SevenSix {
     /**
      * Marks a task as not done and reports the task to the user.
      *
-     * @param command the complete unmark command, such as {@code unmark 2}
-     * @param tasks the collection that holds the tasks
-     * @param storage the storage destination
-     * @throws SevenSixException if the task number is invalid or not in the list
+     * @param command the complete unmark command, such as {@code unmark 2}.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
+     * @throws SevenSixException if the task number is invalid or not in the list.
      */
     private static void unmarkTask(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
@@ -266,10 +282,10 @@ public class SevenSix {
     /**
      * Deletes a task by its one-based number and reports the updated task count.
      *
-     * @param command the complete delete command, such as {@code delete 3}
-     * @param tasks the collection that holds the tasks
-     * @param storage the storage destination
-     * @throws SevenSixException if the task number is invalid or not in the list
+     * @param command the complete delete command, such as {@code delete 3}.
+     * @param tasks the collection that holds the tasks.
+     * @param storage the storage destination.
+     * @throws SevenSixException if the task number is invalid or not in the list.
      */
     private static void deleteTask(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
@@ -294,8 +310,8 @@ public class SevenSix {
     /**
      * Saves the task list after a command changes it.
      *
-     * @param tasks the changed task list
-     * @param storage the storage destination
+     * @param tasks the changed task list.
+     * @param storage the storage destination.
      */
     private static void saveTasks(TaskList tasks, TaskStorage storage) {
         if (!storage.save(tasks)) {

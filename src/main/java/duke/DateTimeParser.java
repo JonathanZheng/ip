@@ -13,18 +13,23 @@ import java.util.Locale;
  * Parses the date and time text used by deadline and event commands.
  */
 public final class DateTimeParser {
+    /** Format used for dates shown to the user. */
     private static final DateTimeFormatter DISPLAY_DATE_FORMATTER =
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    /** Format used for times shown to the user. */
     private static final DateTimeFormatter DISPLAY_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+    /** Format used for times stored in the data file. */
     private static final DateTimeFormatter STORAGE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+    /** Supported date-time formats accepted in commands and storage records. */
     private static final List<DateTimeFormatter> DATE_TIME_FORMATTERS = List.of(
             DateTimeFormatter.ISO_LOCAL_DATE_TIME,
             strictFormatter("uuuu-MM-dd HHmm"),
             strictFormatter("uuuu-MM-dd HH:mm"),
             strictFormatter("d/M/uuuu HHmm"),
             strictFormatter("d/M/uuuu HH:mm"));
+    /** Supported date-only formats accepted in commands and storage records. */
     private static final List<DateTimeFormatter> DATE_FORMATTERS = List.of(
             DateTimeFormatter.ISO_LOCAL_DATE,
             strictFormatter("d/M/uuuu"));
@@ -38,9 +43,9 @@ public final class DateTimeParser {
     /**
      * Parses a date or date-time value supplied in a command.
      *
-     * @param text the date or date-time text
-     * @return the parsed date and optional time
-     * @throws SevenSixException if the text does not use a supported format
+     * @param text the date or date-time text.
+     * @return the parsed date and optional time.
+     * @throws SevenSixException if the text does not use a supported format.
      */
     public static ParsedDateTime parse(String text) throws SevenSixException {
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
@@ -67,9 +72,9 @@ public final class DateTimeParser {
     /**
      * Formats a typed date and optional time for the task display.
      *
-     * @param date the date to format
-     * @param time the optional time to format
-     * @return a readable date, with a time when one was supplied
+     * @param date the date to format.
+     * @param time the optional time to format.
+     * @return a readable date, with a time when one was supplied.
      */
     public static String formatForDisplay(LocalDate date, LocalTime time) {
         String formattedDate = date.format(DISPLAY_DATE_FORMATTER);
@@ -82,9 +87,9 @@ public final class DateTimeParser {
     /**
      * Formats a typed date and optional time for the storage file.
      *
-     * @param date the date to format
-     * @param time the optional time to format
-     * @return an unambiguous machine-readable date or date-time
+     * @param date the date to format.
+     * @param time the optional time to format.
+     * @return an unambiguous machine-readable date or date-time.
      */
     public static String formatForStorage(LocalDate date, LocalTime time) {
         String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
@@ -97,8 +102,8 @@ public final class DateTimeParser {
     /**
      * Creates a strict formatter for patterns containing a proleptic year.
      *
-     * @param pattern the date or date-time pattern
-     * @return a strict formatter using English symbols
+     * @param pattern the date or date-time pattern.
+     * @return a strict formatter using English symbols.
      */
     private static DateTimeFormatter strictFormatter(String pattern) {
         return DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH)
@@ -109,14 +114,16 @@ public final class DateTimeParser {
      * Holds a parsed date and an optional time without converting a date-only value into midnight.
      */
     public static final class ParsedDateTime {
+        /** The parsed calendar date. */
         private final LocalDate date;
+        /** The parsed clock time, or {@code null} for date-only input. */
         private final LocalTime time;
 
         /**
          * Creates a parsed date and optional time.
          *
-         * @param date the parsed date
-         * @param time the parsed time, or {@code null} for a date-only value
+         * @param date the parsed date.
+         * @param time the parsed time, or {@code null} for a date-only value.
          */
         private ParsedDateTime(LocalDate date, LocalTime time) {
             this.date = date;
@@ -126,7 +133,7 @@ public final class DateTimeParser {
         /**
          * Returns the parsed date.
          *
-         * @return the parsed date
+         * @return the parsed date.
          */
         public LocalDate getDate() {
             return date;
@@ -135,7 +142,7 @@ public final class DateTimeParser {
         /**
          * Returns the parsed time, when one was supplied.
          *
-         * @return the parsed time, or {@code null} for a date-only value
+         * @return the parsed time, or {@code null} for a date-only value.
          */
         public LocalTime getTime() {
             return time;
