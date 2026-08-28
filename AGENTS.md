@@ -38,6 +38,18 @@ Focus JUnit tests on approximately the highest-value 50% of methods, prioritizin
 or critical business logic. After each code change, update the JUnit tests for the affected
 behaviour and run them with Gradle so the test suite continues to meet this coverage target.
 
+## Java coding standard
+
+Follow the project skill `seedu-java-coding-standard` in
+`.codex/skills/seedu-java-coding-standard/SKILL.md` for all Java code. Review it before adding or
+changing Java source or tests, and keep new code compliant with the SE-EDU basic and intermediate
+Java coding standard.
+
+## Git commit message standard
+
+Follow the project skill `seedu-git-standard` in `.codex/skills/seedu-git-standard/SKILL.md` for all
+future commits. Use its subject and body rules whenever creating or recommending a commit message.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
