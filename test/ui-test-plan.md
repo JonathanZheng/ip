@@ -89,16 +89,16 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
-## Test case: add and list deadline tasks
+## Test case: parse and list deadline dates
 
-- Aim: Deadline tasks retain the due text exactly as entered and show the deadline type.
+- Aim: Deadline tasks parse date and date-time input and display readable formatted values.
 - Run command: `rm -f .ui-test-data/deadline.txt && java -Dsevensix.data.file=.ui-test-data/deadline.txt -cp out/production/ip SevenSix`
 
 ### Inputs
 
 ```text
-deadline return book /by Sunday
-deadline do homework /by no idea :-p
+deadline return book /by 2019-06-06
+deadline do homework /by 2/12/2019 1800
 list
 bye
 ```
@@ -112,17 +112,17 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 1 task in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] do homework (by: no idea :-p)
+  [D][ ] do homework (by: Dec 02 2019 6:00 PM)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-1.[D][ ] return book (by: Sunday)
-2.[D][ ] do homework (by: no idea :-p)
+1.[D][ ] return book (by: Jun 06 2019)
+2.[D][ ] do homework (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -131,7 +131,7 @@ ____________________________________________________________
 
 ## Test case: reject incorrect input and accept trailing spaces
 
-- Aim: Empty task descriptions and unknown commands produce helpful 67-themed errors without adding tasks, while valid commands with trailing spaces still work.
+- Aim: Empty task descriptions, unknown commands, and invalid dates produce helpful 67-themed errors without adding tasks, while valid commands with trailing spaces still work.
 - Run command: `rm -f .ui-test-data/invalid-input.txt && java -Dsevensix.data.file=.ui-test-data/invalid-input.txt -cp out/production/ip SevenSix`
 
 ### Inputs
@@ -139,6 +139,8 @@ ____________________________________________________________
 ```text
 todo
 blah
+deadline return book /by not-a-date
+event meeting /from 2019-01-01 /to not-a-date
 list 
 bye
 ```
@@ -157,6 +159,12 @@ ____________________________________________________________
 676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or delete.
 ____________________________________________________________
 ____________________________________________________________
+676767!!! use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+____________________________________________________________
+____________________________________________________________
+676767!!! use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+____________________________________________________________
+____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -172,8 +180,8 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 todo join sports club
 list
 delete 3
@@ -195,12 +203,12 @@ Now you have 1 task in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 06 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -210,18 +218,18 @@ Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 1.[T][ ] read book
-2.[D][ ] return book (by: June 6th)
-3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+2.[D][ ] return book (by: Jun 06 2019)
+3.[E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 4.[T][ ] join sports club
 ____________________________________________________________
 ____________________________________________________________
 Noted. I've removed this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 1.[T][ ] read book
-2.[D][ ] return book (by: June 6th)
+2.[D][ ] return book (by: Jun 06 2019)
 3.[T][ ] join sports club
 ____________________________________________________________
 ____________________________________________________________
@@ -229,15 +237,15 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
-## Test case: add and list event tasks
+## Test case: parse and list event dates
 
-- Aim: Event tasks retain their start and end text exactly as entered and show the event type.
+- Aim: Event tasks parse date and date-time input and display readable formatted values.
 - Run command: `rm -f .ui-test-data/event.txt && java -Dsevensix.data.file=.ui-test-data/event.txt -cp out/production/ip SevenSix`
 
 ### Inputs
 
 ```text
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 event orientation week /from 4/10/2019 /to 11/10/2019
 list
 bye
@@ -252,17 +260,17 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 Now you have 1 task in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] orientation week (from: 4/10/2019 to: 11/10/2019)
+  [E][ ] orientation week (from: Oct 04 2019 to: Oct 11 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
-2.[E][ ] orientation week (from: 4/10/2019 to: 11/10/2019)
+1.[E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
+2.[E][ ] orientation week (from: Oct 04 2019 to: Oct 11 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -271,8 +279,8 @@ ____________________________________________________________
 
 ## Test case: save tasks and load them on startup
 
-- Aim: Tasks are written to disk after they are added and are restored when SevenSix starts again.
-- Run command: `rm -f .ui-test-data/persistence.txt && printf 'todo saved task\nbye\n' | java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip SevenSix > /dev/null && java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip SevenSix`
+- Aim: Typed deadline values are written to disk after they are added and restored when SevenSix starts again.
+- Run command: `rm -f .ui-test-data/persistence.txt && printf 'deadline saved deadline /by 2/12/2019 1800\nbye\n' | java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip SevenSix > /dev/null && java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip SevenSix`
 
 ### Inputs
 
@@ -289,7 +297,7 @@ Hello! I'm SevenSix.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-1.[T][ ] saved task
+1.[D][ ] saved deadline (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -299,7 +307,7 @@ ____________________________________________________________
 ## Test case: ignore corrupted task records
 
 - Aim: A malformed record does not stop SevenSix from loading valid records from the same file.
-- Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | Sunday\n' > .ui-test-data/corrupted.txt && java -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip SevenSix`
+- Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | 2019-06-06\n' > .ui-test-data/corrupted.txt && java -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip SevenSix`
 
 ### Inputs
 
@@ -317,7 +325,7 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 1.[T][X] valid saved task
-2.[D][ ] return book (by: Sunday)
+2.[D][ ] return book (by: Jun 06 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
