@@ -14,7 +14,7 @@ Use the following fields for every test case:
 ## Test case: greeting and exit
 
 - Aim: The program welcomes the user and exits politely when the user enters `bye`.
-- Run command: `rm -f .ui-test-data/greeting.txt && java -Dsevensix.data.file=.ui-test-data/greeting.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/greeting.txt && java -Dsevensix.data.file=.ui-test-data/greeting.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -37,7 +37,7 @@ ____________________________________________________________
 ## Test case: add, mark, unmark, and list to-do tasks
 
 - Aim: To-do tasks can be added, marked done, unmarked, and listed with their type and status.
-- Run command: `rm -f .ui-test-data/todo.txt && java -Dsevensix.data.file=.ui-test-data/todo.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/todo.txt && java -Dsevensix.data.file=.ui-test-data/todo.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -92,7 +92,7 @@ ____________________________________________________________
 ## Test case: parse and list deadline dates
 
 - Aim: Deadline tasks parse date and date-time input and display readable formatted values.
-- Run command: `rm -f .ui-test-data/deadline.txt && java -Dsevensix.data.file=.ui-test-data/deadline.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/deadline.txt && java -Dsevensix.data.file=.ui-test-data/deadline.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -132,7 +132,7 @@ ____________________________________________________________
 ## Test case: reject incorrect input and accept trailing spaces
 
 - Aim: Empty task descriptions, unknown commands, and invalid dates produce helpful 67-themed errors without adding tasks, while valid commands with trailing spaces still work.
-- Run command: `rm -f .ui-test-data/invalid-input.txt && java -Dsevensix.data.file=.ui-test-data/invalid-input.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/invalid-input.txt && java -Dsevensix.data.file=.ui-test-data/invalid-input.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -174,7 +174,7 @@ ____________________________________________________________
 ## Test case: delete a task and renumber the list
 
 - Aim: A task can be deleted by its one-based list number, and the remaining tasks are renumbered.
-- Run command: `rm -f .ui-test-data/delete.txt && java -Dsevensix.data.file=.ui-test-data/delete.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/delete.txt && java -Dsevensix.data.file=.ui-test-data/delete.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -240,7 +240,7 @@ ____________________________________________________________
 ## Test case: parse and list event dates
 
 - Aim: Event tasks parse date and date-time input and display readable formatted values.
-- Run command: `rm -f .ui-test-data/event.txt && java -Dsevensix.data.file=.ui-test-data/event.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/event.txt && java -Dsevensix.data.file=.ui-test-data/event.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -280,7 +280,7 @@ ____________________________________________________________
 ## Test case: save tasks and load them on startup
 
 - Aim: Typed deadline values are written to disk after they are added and restored when SevenSix starts again.
-- Run command: `rm -f .ui-test-data/persistence.txt && printf 'deadline saved deadline /by 2/12/2019 1800\nbye\n' | java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip SevenSix > /dev/null && java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip SevenSix`
+- Run command: `rm -f .ui-test-data/persistence.txt && printf 'deadline saved deadline /by 2/12/2019 1800\nbye\n' | java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip duke.SevenSix > /dev/null && java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
@@ -307,7 +307,7 @@ ____________________________________________________________
 ## Test case: ignore corrupted task records
 
 - Aim: A malformed record does not stop SevenSix from loading valid records from the same file.
-- Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | 2019-06-06\n' > .ui-test-data/corrupted.txt && java -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip SevenSix`
+- Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | 2019-06-06\n' > .ui-test-data/corrupted.txt && java -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
 
