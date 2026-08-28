@@ -3,6 +3,7 @@ package duke;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Stores tasks and provides the operations used to manage their order.
@@ -63,6 +64,23 @@ public class TaskList implements Iterable<Task> {
      */
     public int size() {
         return tasks.size();
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the supplied keyword, ignoring letter case.
+     *
+     * @param keyword the text to search for.
+     * @return a new list containing the matching tasks in their original order.
+     */
+    public List<Task> find(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 
     /**

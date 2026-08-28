@@ -1,6 +1,7 @@
 package duke;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -21,6 +22,8 @@ public class SevenSix {
     private static final String COMMAND_UNMARK = "unmark";
     /** Command keyword for deleting a task. */
     private static final String COMMAND_DELETE = "delete";
+    /** Command keyword for searching task descriptions. */
+    private static final String COMMAND_FIND = "find";
     /** Default relative path for persisted tasks. */
     private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
     /** System property that overrides the default data-file path during automated runs. */
@@ -77,9 +80,12 @@ public class SevenSix {
                 } else if (command.equals(COMMAND_DELETE)
                         || command.startsWith(COMMAND_DELETE + " ")) {
                     deleteTask(command, tasks, storage);
+                } else if (command.equals(COMMAND_FIND) || command.startsWith(COMMAND_FIND + " ")) {
+                    findTasks(command, tasks);
                 } else {
                     throw new SevenSixException(
-                            "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or delete.");
+                            "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
+                                    + " or find.");
                 }
             } catch (SevenSixException exception) {
                 printError(exception.getMessage());
@@ -305,6 +311,31 @@ public class SevenSix {
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + tasks.size() + " "
                 + getTaskCountDescription(tasks.size()) + " in the list.");
+    }
+
+    /**
+     * Finds tasks whose descriptions contain the requested keyword and prints the results.
+     *
+     * @param command the complete find command, such as {@code find book}.
+     * @param tasks the collection that holds the tasks.
+     * @throws SevenSixException if the search keyword is empty.
+     */
+    private static void findTasks(String command, TaskList tasks) throws SevenSixException {
+        String keyword = command.substring(COMMAND_FIND.length()).trim();
+        if (keyword.isBlank()) {
+            throw new SevenSixException("a find command needs a keyword to search for.");
+        }
+
+        List<Task> matchingTasks = tasks.find(keyword);
+        if (matchingTasks.isEmpty()) {
+            System.out.println("There are no matching tasks in your list.");
+            return;
+        }
+
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println((i + 1) + "." + matchingTasks.get(i));
+        }
     }
 
     /**

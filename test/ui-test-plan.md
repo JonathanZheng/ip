@@ -156,7 +156,7 @@ ____________________________________________________________
 676767!!! a todo needs a description. Give it a little something to do!
 ____________________________________________________________
 ____________________________________________________________
-676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or delete.
+676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or find.
 ____________________________________________________________
 ____________________________________________________________
 676767!!! use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
@@ -326,6 +326,57 @@ ____________________________________________________________
 ____________________________________________________________
 1.[T][X] valid saved task
 2.[D][ ] return book (by: Jun 06 2019)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: find tasks by keyword
+
+- Aim: The find command returns matching task descriptions without changing the task list, regardless of keyword letter case, and reports when there are no matches.
+- Run command: `rm -f .ui-test-data/find.txt && java -Dsevensix.data.file=.ui-test-data/find.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+todo read book
+deadline return book /by 2019-06-06
+todo join sports club
+find BOOK
+find holiday
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 task in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Jun 06 2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] join sports club
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+1.[T][ ] read book
+2.[D][ ] return book (by: Jun 06 2019)
+____________________________________________________________
+____________________________________________________________
+There are no matching tasks in your list.
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
