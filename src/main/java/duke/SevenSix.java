@@ -10,17 +10,17 @@ public class SevenSix {
     /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
     /** Command keyword for creating a to-do task. */
-    private static final String TODO_COMMAND = "todo";
+    private static final String COMMAND_TODO = "todo";
     /** Command keyword for creating a deadline task. */
-    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String COMMAND_DEADLINE = "deadline";
     /** Command keyword for creating an event task. */
-    private static final String EVENT_COMMAND = "event";
+    private static final String COMMAND_EVENT = "event";
     /** Command keyword for marking a task as done. */
-    private static final String MARK_COMMAND = "mark";
+    private static final String COMMAND_MARK = "mark";
     /** Command keyword for marking a task as not done. */
-    private static final String UNMARK_COMMAND = "unmark";
+    private static final String COMMAND_UNMARK = "unmark";
     /** Command keyword for deleting a task. */
-    private static final String DELETE_COMMAND = "delete";
+    private static final String COMMAND_DELETE = "delete";
     /** Default relative path for persisted tasks. */
     private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
     /** System property that overrides the default data-file path during automated runs. */
@@ -60,22 +60,22 @@ public class SevenSix {
                     return;
                 }
 
-                if (command.equals(TODO_COMMAND) || command.startsWith(TODO_COMMAND + " ")) {
+                if (command.equals(COMMAND_TODO) || command.startsWith(COMMAND_TODO + " ")) {
                     addTodo(command, tasks, storage);
-                } else if (command.equals(DEADLINE_COMMAND)
-                        || command.startsWith(DEADLINE_COMMAND + " ")) {
+                } else if (command.equals(COMMAND_DEADLINE)
+                        || command.startsWith(COMMAND_DEADLINE + " ")) {
                     addDeadline(command, tasks, storage);
-                } else if (command.equals(EVENT_COMMAND) || command.startsWith(EVENT_COMMAND + " ")) {
+                } else if (command.equals(COMMAND_EVENT) || command.startsWith(COMMAND_EVENT + " ")) {
                     addEvent(command, tasks, storage);
                 } else if (command.equals("list")) {
                     printTasks(tasks);
-                } else if (command.equals(MARK_COMMAND) || command.startsWith(MARK_COMMAND + " ")) {
+                } else if (command.equals(COMMAND_MARK) || command.startsWith(COMMAND_MARK + " ")) {
                     markTask(command, tasks, storage);
-                } else if (command.equals(UNMARK_COMMAND)
-                        || command.startsWith(UNMARK_COMMAND + " ")) {
+                } else if (command.equals(COMMAND_UNMARK)
+                        || command.startsWith(COMMAND_UNMARK + " ")) {
                     unmarkTask(command, tasks, storage);
-                } else if (command.equals(DELETE_COMMAND)
-                        || command.startsWith(DELETE_COMMAND + " ")) {
+                } else if (command.equals(COMMAND_DELETE)
+                        || command.startsWith(COMMAND_DELETE + " ")) {
                     deleteTask(command, tasks, storage);
                 } else {
                     throw new SevenSixException(
@@ -115,7 +115,7 @@ public class SevenSix {
      */
     private static void addTodo(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
-        String description = command.substring(TODO_COMMAND.length()).trim();
+        String description = command.substring(COMMAND_TODO.length()).trim();
         if (description.isBlank()) {
             throw new SevenSixException("a todo needs a description. Give it a little something to do!");
         }
@@ -132,7 +132,7 @@ public class SevenSix {
      */
     private static void addDeadline(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
-        String details = command.substring(DEADLINE_COMMAND.length()).trim();
+        String details = command.substring(COMMAND_DEADLINE.length()).trim();
         int byMarkerIndex = details.indexOf(" /by ");
         if (byMarkerIndex == -1) {
             throw new SevenSixException("deadline format is: deadline <description> /by <deadline>.");
@@ -158,7 +158,7 @@ public class SevenSix {
      */
     private static void addEvent(String command, TaskList tasks, TaskStorage storage)
             throws SevenSixException {
-        String details = command.substring(EVENT_COMMAND.length()).trim();
+        String details = command.substring(COMMAND_EVENT.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
         int toMarkerIndex = details.indexOf(" /to ", fromMarkerIndex + " /from ".length());
         if (fromMarkerIndex == -1 || toMarkerIndex == -1) {
@@ -237,7 +237,7 @@ public class SevenSix {
             throws SevenSixException {
         int taskNumber;
         try {
-            taskNumber = Integer.parseInt(command.substring(MARK_COMMAND.length()).trim());
+            taskNumber = Integer.parseInt(command.substring(COMMAND_MARK.length()).trim());
         } catch (NumberFormatException exception) {
             throw new SevenSixException("please specify a valid task number.");
         }
@@ -264,7 +264,7 @@ public class SevenSix {
             throws SevenSixException {
         int taskNumber;
         try {
-            taskNumber = Integer.parseInt(command.substring(UNMARK_COMMAND.length()).trim());
+            taskNumber = Integer.parseInt(command.substring(COMMAND_UNMARK.length()).trim());
         } catch (NumberFormatException exception) {
             throw new SevenSixException("please specify a valid task number.");
         }
@@ -291,7 +291,7 @@ public class SevenSix {
             throws SevenSixException {
         int taskNumber;
         try {
-            taskNumber = Integer.parseInt(command.substring(DELETE_COMMAND.length()).trim());
+            taskNumber = Integer.parseInt(command.substring(COMMAND_DELETE.length()).trim());
         } catch (NumberFormatException exception) {
             throw new SevenSixException("please specify a valid task number.");
         }
