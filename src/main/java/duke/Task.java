@@ -4,14 +4,17 @@ package duke;
  * Represents a task stored by SevenSix.
  */
 public class Task {
+    /** The text that describes the task. */
     protected String description;
+    /** Whether the task has been completed. */
     protected boolean isDone;
+    /** The task type used for persistence and display. */
     private final TaskType taskType;
 
     /**
      * Creates a task that is initially not done.
      *
-     * @param description the text describing the task
+     * @param description the text describing the task.
      */
     public Task(String description) {
         this(description, TaskType.TODO);
@@ -20,8 +23,8 @@ public class Task {
     /**
      * Creates a task with the specified type that is initially not done.
      *
-     * @param description the text describing the task
-     * @param taskType the type of this task
+     * @param description the text describing the task.
+     * @param taskType the type of this task.
      */
     public Task(String description, TaskType taskType) {
         this.description = description;
@@ -32,7 +35,7 @@ public class Task {
     /**
      * Returns the marker used to show whether this task is done.
      *
-     * @return {@code X} for a done task, or a space otherwise
+     * @return {@code X} for a done task, or a space otherwise.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -41,7 +44,7 @@ public class Task {
     /**
      * Returns the letter that identifies this task's type in the user interface.
      *
-     * @return the icon associated with this task's type
+     * @return the icon associated with this task's type.
      */
     public String getTaskTypeIcon() {
         return taskType.getIcon();
@@ -50,7 +53,7 @@ public class Task {
     /**
      * Returns the task description for persistence.
      *
-     * @return the task description
+     * @return the task description.
      */
     public String getDescription() {
         return description;
@@ -59,7 +62,7 @@ public class Task {
     /**
      * Returns whether this task has been marked as done.
      *
-     * @return {@code true} when this task is done
+     * @return {@code true} when this task is done.
      */
     public boolean isDone() {
         return isDone;
@@ -82,7 +85,7 @@ public class Task {
     /**
      * Returns the task in the format used by list and status messages.
      *
-     * @return the status marker and task description
+     * @return the status marker and task description.
      */
     @Override
     public String toString() {

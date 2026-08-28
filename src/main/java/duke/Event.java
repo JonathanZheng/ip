@@ -8,17 +8,21 @@ import java.time.LocalTime;
  * Represents a task that starts and ends at specified dates or times.
  */
 public class Event extends Task {
+    /** The calendar date on which the event starts. */
     private final LocalDate from;
+    /** The optional clock time at which the event starts. */
     private final LocalTime fromTime;
+    /** The calendar date on which the event ends. */
     private final LocalDate to;
+    /** The optional clock time at which the event ends. */
     private final LocalTime toTime;
 
     /**
      * Creates an event task that is initially not done.
      *
-     * @param description the text describing the task
-     * @param from the start date
-     * @param to the end date
+     * @param description the text describing the task.
+     * @param from the start date.
+     * @param to the end date.
      */
     public Event(String description, LocalDate from, LocalDate to) {
         this(description, from, null, to, null);
@@ -27,9 +31,9 @@ public class Event extends Task {
     /**
      * Creates an event task with a start and end date-time.
      *
-     * @param description the text describing the task
-     * @param from the start date-time
-     * @param to the end date-time
+     * @param description the text describing the task.
+     * @param from the start date-time.
+     * @param to the end date-time.
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         this(description, from.toLocalDate(), from.toLocalTime(), to.toLocalDate(), to.toLocalTime());
@@ -38,11 +42,11 @@ public class Event extends Task {
     /**
      * Creates an event task with dates and optional times.
      *
-     * @param description the text describing the task
-     * @param from the start date
-     * @param fromTime the optional start time
-     * @param to the end date
-     * @param toTime the optional end time
+     * @param description the text describing the task.
+     * @param from the start date.
+     * @param fromTime the optional start time.
+     * @param to the end date.
+     * @param toTime the optional end time.
      */
     public Event(String description, LocalDate from, LocalTime fromTime, LocalDate to,
             LocalTime toTime) {
@@ -56,7 +60,7 @@ public class Event extends Task {
     /**
      * Returns the event start details for persistence.
      *
-     * @return the start date or time
+     * @return the start date.
      */
     public LocalDate getFrom() {
         return from;
@@ -65,7 +69,7 @@ public class Event extends Task {
     /**
      * Returns the event start time for persistence.
      *
-     * @return the start time, or {@code null} when only a date was supplied
+     * @return the start time, or {@code null} when only a date was supplied.
      */
     public LocalTime getFromTime() {
         return fromTime;
@@ -74,7 +78,7 @@ public class Event extends Task {
     /**
      * Returns the event end details for persistence.
      *
-     * @return the end date or time
+     * @return the end date.
      */
     public LocalDate getTo() {
         return to;
@@ -83,7 +87,7 @@ public class Event extends Task {
     /**
      * Returns the event end time for persistence.
      *
-     * @return the end time, or {@code null} when only a date was supplied
+     * @return the end time, or {@code null} when only a date was supplied.
      */
     public LocalTime getToTime() {
         return toTime;
@@ -92,7 +96,7 @@ public class Event extends Task {
     /**
      * Returns the event task with its start and end dates or times.
      *
-     * @return the formatted event task
+     * @return the formatted event task.
      */
     @Override
     public String toString() {

@@ -8,6 +8,7 @@ import java.util.List;
  * Stores tasks and provides the operations used to manage their order.
  */
 public class TaskList implements Iterable<Task> {
+    /** The tasks in the order in which they were added. */
     private final List<Task> tasks;
 
     /**
@@ -20,7 +21,7 @@ public class TaskList implements Iterable<Task> {
     /**
      * Creates a task list containing the supplied tasks.
      *
-     * @param tasks the initial tasks
+     * @param tasks the initial tasks.
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -29,7 +30,7 @@ public class TaskList implements Iterable<Task> {
     /**
      * Adds a task to the end of this list.
      *
-     * @param task the task to add
+     * @param task the task to add.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -38,8 +39,8 @@ public class TaskList implements Iterable<Task> {
     /**
      * Returns the task at a zero-based index.
      *
-     * @param index the task index
-     * @return the task at the index
+     * @param index the task index.
+     * @return the task at the index.
      */
     public Task get(int index) {
         return tasks.get(index);
@@ -48,8 +49,8 @@ public class TaskList implements Iterable<Task> {
     /**
      * Removes and returns the task at a zero-based index.
      *
-     * @param index the task index
-     * @return the removed task
+     * @param index the task index.
+     * @return the removed task.
      */
     public Task remove(int index) {
         return tasks.remove(index);
@@ -58,7 +59,7 @@ public class TaskList implements Iterable<Task> {
     /**
      * Returns the number of tasks in this list.
      *
-     * @return the task count
+     * @return the task count.
      */
     public int size() {
         return tasks.size();
@@ -67,7 +68,7 @@ public class TaskList implements Iterable<Task> {
     /**
      * Returns an iterator over the tasks in list order.
      *
-     * @return an iterator over the tasks
+     * @return an iterator over the tasks.
      */
     @Override
     public Iterator<Task> iterator() {
