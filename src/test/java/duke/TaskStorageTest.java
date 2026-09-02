@@ -20,13 +20,13 @@ import org.junit.jupiter.api.io.TempDir;
  */
 class TaskStorageTest {
     @TempDir
-    Path temporaryDirectory;
+    private Path temporaryDirectory;
 
     /**
      * Saving and loading should preserve task types, details, dates, times, and status.
      */
     @Test
-    void saveAndLoad_mixedTasks_preservesTaskData() {
+    void saveAndLoadMixedTasksPreservesTaskData() {
         Path dataFile = temporaryDirectory.resolve("nested").resolve("tasks.txt");
         TaskStorage storage = new TaskStorage(dataFile);
 
@@ -63,7 +63,7 @@ class TaskStorageTest {
      * Loading a missing file should return no tasks and create its parent directory.
      */
     @Test
-    void load_missingFile_returnsEmptyListAndCreatesParentDirectory() {
+    void loadMissingFileReturnsEmptyListAndCreatesParentDirectory() {
         Path dataFile = temporaryDirectory.resolve("new-folder").resolve("tasks.txt");
         TaskStorage storage = new TaskStorage(dataFile);
 
@@ -78,7 +78,7 @@ class TaskStorageTest {
      * Invalid records should be skipped while valid records in the same file are loaded.
      */
     @Test
-    void load_corruptedRecords_ignoresInvalidLines() throws IOException {
+    void loadCorruptedRecordsIgnoresInvalidLines() throws IOException {
         Path dataFile = temporaryDirectory.resolve("corrupted.txt");
         Files.writeString(dataFile, String.join(System.lineSeparator(),
                 "T | 1 | valid task",

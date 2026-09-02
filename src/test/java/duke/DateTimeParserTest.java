@@ -17,7 +17,7 @@ class DateTimeParserTest {
      * A date-only value should preserve its date and have no time component.
      */
     @Test
-    void parse_dateOnly_returnsDateWithoutTime() throws SevenSixException {
+    void parseDateOnlyReturnsDateWithoutTime() throws SevenSixException {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("2019-06-06");
 
         assertEquals(LocalDate.of(2019, 6, 6), parsed.getDate());
@@ -28,7 +28,7 @@ class DateTimeParserTest {
      * The compact day/month/year format should also parse an explicit time.
      */
     @Test
-    void parse_dateAndCompactTime_returnsDateAndTime() throws SevenSixException {
+    void parseDateAndCompactTimeReturnsDateAndTime() throws SevenSixException {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("2/12/2019 1800");
 
         assertEquals(LocalDate.of(2019, 12, 2), parsed.getDate());
@@ -39,7 +39,7 @@ class DateTimeParserTest {
      * Unsupported text should produce the application-specific input exception.
      */
     @Test
-    void parse_invalidValue_throwsSevenSixException() {
+    void parseInvalidValueThrowsSevenSixException() {
         SevenSixException exception = assertThrows(SevenSixException.class,
                 () -> DateTimeParser.parse("not-a-date"));
 
@@ -51,7 +51,7 @@ class DateTimeParserTest {
      * Display and storage formatting should use different, predictable representations.
      */
     @Test
-    void format_dateTime_returnsDisplayAndStorageFormats() {
+    void formatDateTimeReturnsDisplayAndStorageFormats() {
         LocalDate date = LocalDate.of(2019, 12, 2);
         LocalTime time = LocalTime.of(18, 0);
 
