@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
  */
 class TaskListTest {
     @Test
-    void find_keyword_returnsCaseInsensitivePartialMatchesInOrder() {
+    void findKeywordReturnsCaseInsensitivePartialMatchesInOrder() {
         TaskList tasks = new TaskList(List.of(
                 new Todo("read book"),
                 new Todo("join sports club"),
@@ -28,7 +28,7 @@ class TaskListTest {
     }
 
     @Test
-    void find_keywordWithNoMatches_returnsEmptyList() {
+    void findKeywordWithNoMatchesReturnsEmptyList() {
         TaskList tasks = new TaskList(List.of(new Todo("read book")));
 
         List<Task> matchingTasks = tasks.find("holiday");

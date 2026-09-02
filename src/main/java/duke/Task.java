@@ -5,9 +5,9 @@ package duke;
  */
 public class Task {
     /** The text that describes the task. */
-    protected String description;
+    private final String description;
     /** Whether the task has been completed. */
-    protected boolean isDone;
+    private boolean isDone;
     /** The task type used for persistence and display. */
     private final TaskType taskType;
 
