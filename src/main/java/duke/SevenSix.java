@@ -133,6 +133,16 @@ public class SevenSix {
     }
 
     /**
+     * Joins response lines using the platform's line separator.
+     *
+     * @param lines the lines that make up the response.
+     * @return the response with each line separated appropriately.
+     */
+    private static String joinResponseLines(String... lines) {
+        return String.join(System.lineSeparator(), lines);
+    }
+
+    /**
      * Adds a to-do task and reports the updated number of stored tasks.
      *
      * @param command the complete to-do command.
@@ -208,7 +218,7 @@ public class SevenSix {
         tasks.add(task);
         saveTasks();
         int numberOfTasks = tasks.size();
-        return String.join(System.lineSeparator(),
+        return joinResponseLines(
                 "Got it. I've added this task:",
                 "  " + task,
                 "Now you have " + numberOfTasks + " "
@@ -257,7 +267,7 @@ public class SevenSix {
         Task task = getTask(taskNumber);
         task.markAsDone();
         saveTasks();
-        return String.join(System.lineSeparator(),
+        return joinResponseLines(
                 "Nice! I've marked this task as done:", "  " + task);
     }
 
@@ -273,7 +283,7 @@ public class SevenSix {
         Task task = getTask(taskNumber);
         task.markAsNotDone();
         saveTasks();
-        return String.join(System.lineSeparator(),
+        return joinResponseLines(
                 "OK, I've marked this task as not done yet:", "  " + task);
     }
 
@@ -289,7 +299,7 @@ public class SevenSix {
         Task removedTask = getTask(taskNumber);
         tasks.remove(taskNumber - 1);
         saveTasks();
-        return String.join(System.lineSeparator(),
+        return joinResponseLines(
                 "Noted. I've removed this task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " "
