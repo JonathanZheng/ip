@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Starts the SevenSix application and responds to commands entered by the user.
+ * Processes SevenSix commands and provides the console entry point.
  */
 public class SevenSix {
     /** Separates the chatbot's greeting, responses, and prompts. */
@@ -29,115 +29,132 @@ public class SevenSix {
     /** System property that overrides the default data-file path during automated runs. */
     private static final String DATA_FILE_PROPERTY = "sevensix.data.file";
 
+    /** The task storage used by this chatbot instance. */
+    private final TaskStorage storage;
+    /** The in-memory task list used by this chatbot instance. */
+    private final TaskList tasks;
+
     /**
-     * Creates an application entry point.
+     * Creates a chatbot using the configured data-file path.
      */
     public SevenSix() {
+        this(resolveDataFile());
     }
 
     /**
-     * Welcomes the user, stores entered tasks, lists them on request, and ends when the user enters
-     * {@code bye}.
+     * Creates a chatbot using the supplied data-file path.
+     *
+     * @param dataFile the path used to persist tasks.
+     */
+    public SevenSix(Path dataFile) {
+        storage = new TaskStorage(dataFile);
+        tasks = new TaskList(storage.load());
+    }
+
+    /**
+     * Processes one command and returns the response that should be shown to the user.
+     *
+     * @param command the command entered by the user.
+     * @return the chatbot response, without console separators.
+     */
+    public String getResponse(String command) {
+        String normalizedCommand = command == null ? "" : command.trim();
+        try {
+            if (normalizedCommand.equals("bye")) {
+                return "Bye. Hope to see you again soon!";
+            }
+
+            if (normalizedCommand.equals(COMMAND_TODO)
+                    || normalizedCommand.startsWith(COMMAND_TODO + " ")) {
+                return addTodo(normalizedCommand);
+            } else if (normalizedCommand.equals(COMMAND_DEADLINE)
+                    || normalizedCommand.startsWith(COMMAND_DEADLINE + " ")) {
+                return addDeadline(normalizedCommand);
+            } else if (normalizedCommand.equals(COMMAND_EVENT)
+                    || normalizedCommand.startsWith(COMMAND_EVENT + " ")) {
+                return addEvent(normalizedCommand);
+            } else if (normalizedCommand.equals("list")) {
+                return printTasks();
+            } else if (normalizedCommand.equals(COMMAND_MARK)
+                    || normalizedCommand.startsWith(COMMAND_MARK + " ")) {
+                return markTask(normalizedCommand);
+            } else if (normalizedCommand.equals(COMMAND_UNMARK)
+                    || normalizedCommand.startsWith(COMMAND_UNMARK + " ")) {
+                return unmarkTask(normalizedCommand);
+            } else if (normalizedCommand.equals(COMMAND_DELETE)
+                    || normalizedCommand.startsWith(COMMAND_DELETE + " ")) {
+                return deleteTask(normalizedCommand);
+            } else if (normalizedCommand.equals(COMMAND_FIND)
+                    || normalizedCommand.startsWith(COMMAND_FIND + " ")) {
+                return findTasks(normalizedCommand);
+            }
+            throw new SevenSixException(
+                    "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
+                            + " or find.");
+        } catch (SevenSixException exception) {
+            return exception.getMessage();
+        }
+    }
+
+    /**
+     * Runs the original console interface.
      *
      * @param args command-line arguments, which are not used by this application.
      */
     public static void main(String[] args) {
-        TaskStorage storage = createTaskStorage();
-        TaskList tasks = new TaskList(storage.load());
-
+        SevenSix chatbot = new SevenSix();
         System.out.println(SEPARATOR);
         System.out.println("Hello! I'm SevenSix.");
         System.out.println("What can I do for you?");
         System.out.println(SEPARATOR);
 
         Scanner scanner = new Scanner(System.in);
-
         while (scanner.hasNextLine()) {
-            String command = scanner.nextLine().trim();
+            String command = scanner.nextLine();
             System.out.println(SEPARATOR);
-
-            try {
-                if (command.equals("bye")) {
-                    System.out.println("Bye. Hope to see you again soon!");
-                    System.out.println(SEPARATOR);
-                    return;
-                }
-
-                if (command.equals(COMMAND_TODO) || command.startsWith(COMMAND_TODO + " ")) {
-                    addTodo(command, tasks, storage);
-                } else if (command.equals(COMMAND_DEADLINE)
-                        || command.startsWith(COMMAND_DEADLINE + " ")) {
-                    addDeadline(command, tasks, storage);
-                } else if (command.equals(COMMAND_EVENT) || command.startsWith(COMMAND_EVENT + " ")) {
-                    addEvent(command, tasks, storage);
-                } else if (command.equals("list")) {
-                    printTasks(tasks);
-                } else if (command.equals(COMMAND_MARK) || command.startsWith(COMMAND_MARK + " ")) {
-                    markTask(command, tasks, storage);
-                } else if (command.equals(COMMAND_UNMARK)
-                        || command.startsWith(COMMAND_UNMARK + " ")) {
-                    unmarkTask(command, tasks, storage);
-                } else if (command.equals(COMMAND_DELETE)
-                        || command.startsWith(COMMAND_DELETE + " ")) {
-                    deleteTask(command, tasks, storage);
-                } else if (command.equals(COMMAND_FIND) || command.startsWith(COMMAND_FIND + " ")) {
-                    findTasks(command, tasks);
-                } else {
-                    throw new SevenSixException(
-                            "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
-                                    + " or find.");
-                }
-            } catch (SevenSixException exception) {
-                printError(exception.getMessage());
+            System.out.println(chatbot.getResponse(command));
+            System.out.println(SEPARATOR);
+            if (command.trim().equals("bye")) {
+                return;
             }
-
-            System.out.println(SEPARATOR);
         }
     }
 
     /**
-     * Creates the task storage used by this run.
+     * Resolves the data-file path from the optional system property.
      *
-     * <p>The optional system property makes automated tests independent from a user's normal
-     * task file. In ordinary use, tasks are stored in {@code ./data/duke.txt}.</p>
-     *
-     * @return the configured task storage.
+     * @return the configured data-file path.
      */
-    private static TaskStorage createTaskStorage() {
+    private static Path resolveDataFile() {
         String configuredPath = System.getProperty(DATA_FILE_PROPERTY);
-        Path dataFile = configuredPath == null || configuredPath.isBlank()
+        return configuredPath == null || configuredPath.isBlank()
                 ? DEFAULT_DATA_FILE
                 : Path.of(configuredPath);
-        return new TaskStorage(dataFile);
     }
 
     /**
      * Adds a to-do task and reports the updated number of stored tasks.
      *
-     * @param command the complete to-do command, such as {@code todo borrow book}.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @param command the complete to-do command.
+     * @return the response for the added task.
      * @throws SevenSixException if the to-do description is empty.
      */
-    private static void addTodo(String command, TaskList tasks, TaskStorage storage)
-            throws SevenSixException {
+    private String addTodo(String command) throws SevenSixException {
         String description = command.substring(COMMAND_TODO.length()).trim();
         if (description.isBlank()) {
             throw new SevenSixException("a todo needs a description. Give it a little something to do!");
         }
-        addTask(new Todo(description), tasks, storage);
+        return addTask(new Todo(description));
     }
 
     /**
      * Adds a deadline task when its description and due time are separated by {@code /by}.
      *
-     * @param command the complete deadline command, such as {@code deadline return book /by Sunday}.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @param command the complete deadline command.
+     * @return the response for the added task.
      * @throws SevenSixException if the deadline format or its details are invalid.
      */
-    private static void addDeadline(String command, TaskList tasks, TaskStorage storage)
-            throws SevenSixException {
+    private String addDeadline(String command) throws SevenSixException {
         String details = command.substring(COMMAND_DEADLINE.length()).trim();
         int byMarkerIndex = details.indexOf(" /by ");
         if (byMarkerIndex == -1) {
@@ -150,20 +167,18 @@ public class SevenSix {
             throw new SevenSixException("a deadline needs both a description and a due time.");
         }
         DateTimeParser.ParsedDateTime parsedBy = DateTimeParser.parse(by);
-        addTask(new Deadline(description, parsedBy.getDate(), parsedBy.getTime()), tasks, storage);
+        return addTask(new Deadline(description, parsedBy.getDate(), parsedBy.getTime()));
     }
 
     /**
      * Adds an event task when its description, start, and end are separated by {@code /from} and
      * {@code /to}.
      *
-     * @param command the complete event command, such as {@code event team meeting /from Mon 2pm /to 4pm}.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @param command the complete event command.
+     * @return the response for the added task.
      * @throws SevenSixException if the event format or its details are invalid.
      */
-    private static void addEvent(String command, TaskList tasks, TaskStorage storage)
-            throws SevenSixException {
+    private String addEvent(String command) throws SevenSixException {
         String details = command.substring(COMMAND_EVENT.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
         int toMarkerIndex = details.indexOf(" /to ", fromMarkerIndex + " /from ".length());
@@ -179,35 +194,25 @@ public class SevenSix {
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        addTask(new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
-                parsedTo.getDate(), parsedTo.getTime()), tasks, storage);
+        return addTask(new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
+                parsedTo.getDate(), parsedTo.getTime()));
     }
 
     /**
-     * Prints a themed message for an input exception.
-     *
-     * @param message the explanation of the input error.
-     */
-    private static void printError(String message) {
-        System.out.println("676767!!! " + message);
-    }
-
-    /**
-     * Stores a task in the collection and reports the updated number of stored tasks.
+     * Stores a task and reports the updated number of stored tasks.
      *
      * @param task the task to store.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @return the response for the added task.
      */
-    private static void addTask(Task task, TaskList tasks, TaskStorage storage) {
+    private String addTask(Task task) {
         tasks.add(task);
-        saveTasks(tasks, storage);
+        saveTasks();
         int numberOfTasks = tasks.size();
-
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + numberOfTasks + " "
-                + getTaskCountDescription(numberOfTasks) + " in the list.");
+        return String.join(System.lineSeparator(),
+                "Got it. I've added this task:",
+                "  " + task,
+                "Now you have " + numberOfTasks + " "
+                        + getTaskCountDescription(numberOfTasks) + " in the list.");
     }
 
     /**
@@ -216,111 +221,89 @@ public class SevenSix {
      * @param numberOfTasks the number of stored tasks.
      * @return {@code task} for one task, or {@code tasks} otherwise.
      */
-    private static String getTaskCountDescription(int numberOfTasks) {
+    private String getTaskCountDescription(int numberOfTasks) {
         return numberOfTasks == 1 ? "task" : "tasks";
     }
 
     /**
-     * Prints every stored task with a one-based number.
+     * Returns every stored task with a one-based number.
      *
-     * @param tasks the collection that holds the tasks.
+     * @return the formatted task list.
      */
-    private static void printTasks(TaskList tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
+    private String printTasks() {
+        if (tasks.size() == 0) {
+            return "There are no tasks in your list.";
         }
+
+        StringBuilder response = new StringBuilder();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (i > 0) {
+                response.append(System.lineSeparator());
+            }
+            response.append(i + 1).append('.').append(tasks.get(i));
+        }
+        return response.toString();
     }
 
     /**
      * Marks a task as done and reports the task to the user.
      *
-     * @param command the complete mark command, such as {@code mark 2}.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @param command the complete mark command.
+     * @return the response for the marked task.
      * @throws SevenSixException if the task number is invalid or not in the list.
      */
-    private static void markTask(String command, TaskList tasks, TaskStorage storage)
-            throws SevenSixException {
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(command.substring(COMMAND_MARK.length()).trim());
-        } catch (NumberFormatException exception) {
-            throw new SevenSixException("please specify a valid task number.");
-        }
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new SevenSixException("that task number is not in your list.");
-        }
-
-        int taskIndex = taskNumber - 1;
-        tasks.get(taskIndex).markAsDone();
-        saveTasks(tasks, storage);
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks.get(taskIndex));
+    private String markTask(String command) throws SevenSixException {
+        int taskNumber = parseTaskNumber(command, COMMAND_MARK);
+        Task task = getTask(taskNumber);
+        task.markAsDone();
+        saveTasks();
+        return String.join(System.lineSeparator(),
+                "Nice! I've marked this task as done:", "  " + task);
     }
 
     /**
      * Marks a task as not done and reports the task to the user.
      *
-     * @param command the complete unmark command, such as {@code unmark 2}.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @param command the complete unmark command.
+     * @return the response for the unmarked task.
      * @throws SevenSixException if the task number is invalid or not in the list.
      */
-    private static void unmarkTask(String command, TaskList tasks, TaskStorage storage)
-            throws SevenSixException {
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(command.substring(COMMAND_UNMARK.length()).trim());
-        } catch (NumberFormatException exception) {
-            throw new SevenSixException("please specify a valid task number.");
-        }
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new SevenSixException("that task number is not in your list.");
-        }
-
-        int taskIndex = taskNumber - 1;
-        tasks.get(taskIndex).markAsNotDone();
-        saveTasks(tasks, storage);
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks.get(taskIndex));
+    private String unmarkTask(String command) throws SevenSixException {
+        int taskNumber = parseTaskNumber(command, COMMAND_UNMARK);
+        Task task = getTask(taskNumber);
+        task.markAsNotDone();
+        saveTasks();
+        return String.join(System.lineSeparator(),
+                "OK, I've marked this task as not done yet:", "  " + task);
     }
 
     /**
      * Deletes a task by its one-based number and reports the updated task count.
      *
-     * @param command the complete delete command, such as {@code delete 3}.
-     * @param tasks the collection that holds the tasks.
-     * @param storage the storage destination.
+     * @param command the complete delete command.
+     * @return the response for the removed task.
      * @throws SevenSixException if the task number is invalid or not in the list.
      */
-    private static void deleteTask(String command, TaskList tasks, TaskStorage storage)
-            throws SevenSixException {
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(command.substring(COMMAND_DELETE.length()).trim());
-        } catch (NumberFormatException exception) {
-            throw new SevenSixException("please specify a valid task number.");
-        }
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new SevenSixException("that task number is not in your list.");
-        }
-
-        Task removedTask = tasks.remove(taskNumber - 1);
-        saveTasks(tasks, storage);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removedTask);
-        System.out.println("Now you have " + tasks.size() + " "
-                + getTaskCountDescription(tasks.size()) + " in the list.");
+    private String deleteTask(String command) throws SevenSixException {
+        int taskNumber = parseTaskNumber(command, COMMAND_DELETE);
+        Task removedTask = getTask(taskNumber);
+        tasks.remove(taskNumber - 1);
+        saveTasks();
+        return String.join(System.lineSeparator(),
+                "Noted. I've removed this task:",
+                "  " + removedTask,
+                "Now you have " + tasks.size() + " "
+                        + getTaskCountDescription(tasks.size()) + " in the list.");
     }
 
     /**
-     * Finds tasks whose descriptions contain the requested keyword and prints the results.
+     * Finds tasks whose descriptions contain the requested keyword.
      *
-     * @param command the complete find command, such as {@code find book}.
-     * @param tasks the collection that holds the tasks.
+     * @param command the complete find command.
+     * @return the matching tasks or a no-matches message.
      * @throws SevenSixException if the search keyword is empty.
      */
-    private static void findTasks(String command, TaskList tasks) throws SevenSixException {
+    private String findTasks(String command) throws SevenSixException {
         String keyword = command.substring(COMMAND_FIND.length()).trim();
         if (keyword.isBlank()) {
             throw new SevenSixException("a find command needs a keyword to search for.");
@@ -328,23 +311,51 @@ public class SevenSix {
 
         List<Task> matchingTasks = tasks.find(keyword);
         if (matchingTasks.isEmpty()) {
-            System.out.println("There are no matching tasks in your list.");
-            return;
+            return "There are no matching tasks in your list.";
         }
 
-        System.out.println("Here are the matching tasks in your list:");
+        StringBuilder response = new StringBuilder("Here are the matching tasks in your list:");
         for (int i = 0; i < matchingTasks.size(); i++) {
-            System.out.println((i + 1) + "." + matchingTasks.get(i));
+            response.append(System.lineSeparator())
+                    .append(i + 1).append('.').append(matchingTasks.get(i));
+        }
+        return response.toString();
+    }
+
+    /**
+     * Parses a one-based task number from a command.
+     *
+     * @param command the command containing a task number.
+     * @param commandKeyword the keyword at the start of the command.
+     * @return the parsed task number.
+     * @throws SevenSixException if the task number is not an integer.
+     */
+    private int parseTaskNumber(String command, String commandKeyword) throws SevenSixException {
+        try {
+            return Integer.parseInt(command.substring(commandKeyword.length()).trim());
+        } catch (NumberFormatException exception) {
+            throw new SevenSixException("please specify a valid task number.");
         }
     }
 
     /**
-     * Saves the task list after a command changes it.
+     * Returns a task by its one-based number.
      *
-     * @param tasks the changed task list.
-     * @param storage the storage destination.
+     * @param taskNumber the one-based task number.
+     * @return the requested task.
+     * @throws SevenSixException if the task number is not in the list.
      */
-    private static void saveTasks(TaskList tasks, TaskStorage storage) {
+    private Task getTask(int taskNumber) throws SevenSixException {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new SevenSixException("that task number is not in your list.");
+        }
+        return tasks.get(taskNumber - 1);
+    }
+
+    /**
+     * Saves the task list after a command changes it.
+     */
+    private void saveTasks() {
         if (!storage.save(tasks)) {
             System.err.println("SevenSix could not save the task list to disk.");
         }
