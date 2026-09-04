@@ -2,6 +2,17 @@
 
 This project is named SevenSix. Given below are instructions on how to use it.
 
+## Running the JavaFX GUI
+
+Use JDK 25, then run the following command from the project root:
+
+```bash
+./gradlew run
+```
+
+The GUI accepts the same commands as the console version. Press Enter or click `Send` to submit a
+command. Tasks are saved to `data/duke.txt` by default.
+
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.
