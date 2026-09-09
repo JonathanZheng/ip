@@ -63,40 +63,61 @@ public class SevenSix {
     public String getResponse(String command) {
         String normalizedCommand = command == null ? "" : command.trim();
         try {
-            if (normalizedCommand.equals("bye")) {
-                return "Bye. Hope to see you again soon!";
-            }
-
-            if (normalizedCommand.equals(COMMAND_TODO)
-                    || normalizedCommand.startsWith(COMMAND_TODO + " ")) {
-                return addTodo(normalizedCommand);
-            } else if (normalizedCommand.equals(COMMAND_DEADLINE)
-                    || normalizedCommand.startsWith(COMMAND_DEADLINE + " ")) {
-                return addDeadline(normalizedCommand);
-            } else if (normalizedCommand.equals(COMMAND_EVENT)
-                    || normalizedCommand.startsWith(COMMAND_EVENT + " ")) {
-                return addEvent(normalizedCommand);
-            } else if (normalizedCommand.equals("list")) {
-                return printTasks();
-            } else if (normalizedCommand.equals(COMMAND_MARK)
-                    || normalizedCommand.startsWith(COMMAND_MARK + " ")) {
-                return markTask(normalizedCommand);
-            } else if (normalizedCommand.equals(COMMAND_UNMARK)
-                    || normalizedCommand.startsWith(COMMAND_UNMARK + " ")) {
-                return unmarkTask(normalizedCommand);
-            } else if (normalizedCommand.equals(COMMAND_DELETE)
-                    || normalizedCommand.startsWith(COMMAND_DELETE + " ")) {
-                return deleteTask(normalizedCommand);
-            } else if (normalizedCommand.equals(COMMAND_FIND)
-                    || normalizedCommand.startsWith(COMMAND_FIND + " ")) {
-                return findTasks(normalizedCommand);
-            }
-            throw new SevenSixException(
-                    "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
-                            + " or find.");
+            return processCommand(normalizedCommand);
         } catch (SevenSixException exception) {
             return ERROR_PREFIX + exception.getMessage();
         }
+    }
+
+    /**
+     * Routes a normalized command to the handler for its command type.
+     *
+     * @param command the normalized command to process.
+     * @return the response produced by the selected command handler.
+     * @throws SevenSixException if the command contains invalid details or is unknown.
+     */
+    private String processCommand(String command) throws SevenSixException {
+        if (command.equals("bye")) {
+            return "Bye. Hope to see you again soon!";
+        }
+        if (isCommand(command, COMMAND_TODO)) {
+            return addTodo(command);
+        }
+        if (isCommand(command, COMMAND_DEADLINE)) {
+            return addDeadline(command);
+        }
+        if (isCommand(command, COMMAND_EVENT)) {
+            return addEvent(command);
+        }
+        if (command.equals("list")) {
+            return printTasks();
+        }
+        if (isCommand(command, COMMAND_MARK)) {
+            return markTask(command);
+        }
+        if (isCommand(command, COMMAND_UNMARK)) {
+            return unmarkTask(command);
+        }
+        if (isCommand(command, COMMAND_DELETE)) {
+            return deleteTask(command);
+        }
+        if (isCommand(command, COMMAND_FIND)) {
+            return findTasks(command);
+        }
+        throw new SevenSixException(
+                "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
+                        + " or find.");
+    }
+
+    /**
+     * Checks whether a command is exactly a keyword or starts with that keyword and a space.
+     *
+     * @param command the normalized command to inspect.
+     * @param commandKeyword the command keyword to match.
+     * @return {@code true} when the command uses the supplied keyword.
+     */
+    private boolean isCommand(String command, String commandKeyword) {
+        return command.equals(commandKeyword) || command.startsWith(commandKeyword + " ");
     }
 
     /**
