@@ -81,13 +81,10 @@ public class TaskList implements Iterable<Task> {
     public List<Task> find(String keyword) {
         assert keyword != null && !keyword.isBlank() : "A blank keyword must be rejected before searching";
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword)) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase(Locale.ROOT)
+                        .contains(normalizedKeyword))
+                .toList();
     }
 
     /**

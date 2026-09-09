@@ -4,6 +4,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 /**
  * Processes SevenSix commands and provides the console entry point.
@@ -353,22 +356,18 @@ public class SevenSix {
         return formatTaskList(tasks);
     }
 
-    /** Formats every task with its one-based list number.
+    /**
+     * Formats every task with its one-based list number.
      *
      * @param taskCollection the tasks to format.
      * @return the numbered task list.
      */
     private String formatTaskList(Iterable<Task> taskCollection) {
-        StringBuilder response = new StringBuilder();
-        int taskNumber = 1;
-        for (Task task : taskCollection) {
-            if (taskNumber > 1) {
-                response.append(System.lineSeparator());
-            }
-            response.append(taskNumber).append('.').append(task);
-            taskNumber++;
-        }
-        return response.toString();
+        List<Task> taskSnapshot = StreamSupport.stream(taskCollection.spliterator(), false)
+                .collect(Collectors.toList());
+        return IntStream.range(0, taskSnapshot.size())
+                .mapToObj(index -> (index + 1) + "." + taskSnapshot.get(index))
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
@@ -498,8 +497,12 @@ public class SevenSix {
         if (matchingTasks.isEmpty()) {
             return "There are no matching tasks in your list.";
         }
+
+        String numberedTasks = IntStream.range(0, matchingTasks.size())
+                .mapToObj(index -> (index + 1) + "." + matchingTasks.get(index))
+                .collect(Collectors.joining(System.lineSeparator()));
         return "Here are the matching tasks in your list:"
-                + System.lineSeparator() + formatTaskList(matchingTasks);
+                + System.lineSeparator() + numberedTasks;
     }
 
     /**
