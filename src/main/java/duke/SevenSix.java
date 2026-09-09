@@ -24,6 +24,8 @@ public class SevenSix {
     private static final String COMMAND_DELETE = "delete";
     /** Command keyword for searching task descriptions. */
     private static final String COMMAND_FIND = "find";
+    /** Prefix used to make input errors recognizable in the user interface. */
+    private static final String ERROR_PREFIX = "676767!!! ";
     /** Default relative path for persisted tasks. */
     private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
     /** System property that overrides the default data-file path during automated runs. */
@@ -93,7 +95,7 @@ public class SevenSix {
                     "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
                             + " or find.");
         } catch (SevenSixException exception) {
-            return exception.getMessage();
+            return ERROR_PREFIX + exception.getMessage();
         }
     }
 
