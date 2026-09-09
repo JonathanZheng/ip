@@ -47,6 +47,7 @@ public class SevenSix {
      * @param dataFile the path used to persist tasks.
      */
     public SevenSix(Path dataFile) {
+        assert dataFile != null : "The data-file path is resolved before the chatbot is created";
         storage = new TaskStorage(dataFile);
         tasks = new TaskList(storage.load());
     }
@@ -150,6 +151,7 @@ public class SevenSix {
      * @throws SevenSixException if the to-do description is empty.
      */
     private String addTodo(String command) throws SevenSixException {
+        assert command.startsWith(COMMAND_TODO) : "getResponse routes only todo commands here, so the cut is safe";
         String description = command.substring(COMMAND_TODO.length()).trim();
         if (description.isBlank()) {
             throw new SevenSixException("a todo needs a description. Give it a little something to do!");
@@ -165,6 +167,8 @@ public class SevenSix {
      * @throws SevenSixException if the deadline format or its details are invalid.
      */
     private String addDeadline(String command) throws SevenSixException {
+        assert command.startsWith(COMMAND_DEADLINE)
+                : "getResponse routes only deadline commands here, so the cut is safe";
         String details = command.substring(COMMAND_DEADLINE.length()).trim();
         int byMarkerIndex = details.indexOf(" /by ");
         if (byMarkerIndex == -1) {
@@ -189,6 +193,7 @@ public class SevenSix {
      * @throws SevenSixException if the event format or its details are invalid.
      */
     private String addEvent(String command) throws SevenSixException {
+        assert command.startsWith(COMMAND_EVENT) : "getResponse routes only event commands here, so the cut is safe";
         String details = command.substring(COMMAND_EVENT.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
         int toMarkerIndex = details.indexOf(" /to ", fromMarkerIndex + " /from ".length());
@@ -196,6 +201,7 @@ public class SevenSix {
             throw new SevenSixException("event format is: event <description> /from <start> /to <end>.");
         }
 
+        assert toMarkerIndex > fromMarkerIndex : "The /to marker is searched for only after the /from marker";
         String description = details.substring(0, fromMarkerIndex).trim();
         String from = details.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
         String to = details.substring(toMarkerIndex + " /to ".length()).trim();
@@ -232,6 +238,7 @@ public class SevenSix {
      * @return {@code task} for one task, or {@code tasks} otherwise.
      */
     private String getTaskCountDescription(int numberOfTasks) {
+        assert numberOfTasks >= 0 : "A task count is reported only after the list size is read";
         return numberOfTasks == 1 ? "task" : "tasks";
     }
 
@@ -297,6 +304,7 @@ public class SevenSix {
     private String deleteTask(String command) throws SevenSixException {
         int taskNumber = parseTaskNumber(command, COMMAND_DELETE);
         Task removedTask = getTask(taskNumber);
+        assert taskNumber >= 1 && taskNumber <= tasks.size() : "getTask has already rejected an unusable number";
         tasks.remove(taskNumber - 1);
         saveTasks();
         return joinResponseLines(
@@ -314,6 +322,7 @@ public class SevenSix {
      * @throws SevenSixException if the search keyword is empty.
      */
     private String findTasks(String command) throws SevenSixException {
+        assert command.startsWith(COMMAND_FIND) : "getResponse routes only find commands here, so the cut is safe";
         String keyword = command.substring(COMMAND_FIND.length()).trim();
         if (keyword.isBlank()) {
             throw new SevenSixException("a find command needs a keyword to search for.");
@@ -341,6 +350,7 @@ public class SevenSix {
      * @throws SevenSixException if the task number is not an integer.
      */
     private int parseTaskNumber(String command, String commandKeyword) throws SevenSixException {
+        assert command.startsWith(commandKeyword) : "Each caller passes the keyword that its command starts with";
         try {
             return Integer.parseInt(command.substring(commandKeyword.length()).trim());
         } catch (NumberFormatException exception) {
