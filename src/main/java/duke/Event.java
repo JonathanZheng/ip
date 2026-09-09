@@ -51,6 +51,8 @@ public class Event extends Task {
     public Event(String description, LocalDate from, LocalTime fromTime, LocalDate to,
             LocalTime toTime) {
         super(description, TaskType.EVENT);
+        assert from != null && to != null
+                : "An event always has start and end dates; only their times are optional";
         this.from = from;
         this.fromTime = fromTime;
         this.to = to;

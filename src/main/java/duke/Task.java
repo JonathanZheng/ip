@@ -27,6 +27,9 @@ public class Task {
      * @param taskType the type of this task.
      */
     public Task(String description, TaskType taskType) {
+        assert description != null && !description.isBlank()
+                : "Command parsing must reject an empty description before a task is created";
+        assert taskType != null : "Every task must carry a type so it can be displayed and saved";
         this.description = description;
         this.isDone = false;
         this.taskType = taskType;
