@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 /**
  * Processes SevenSix commands and provides the console entry point.
@@ -355,8 +356,17 @@ public class SevenSix {
         return formatTaskList(tasks);
     }
 
-        return IntStream.range(0, tasks.size())
-                .mapToObj(index -> (index + 1) + "." + tasks.get(index))
+    /**
+     * Formats every task with its one-based list number.
+     *
+     * @param taskCollection the tasks to format.
+     * @return the numbered task list.
+     */
+    private String formatTaskList(Iterable<Task> taskCollection) {
+        List<Task> taskSnapshot = StreamSupport.stream(taskCollection.spliterator(), false)
+                .collect(Collectors.toList());
+        return IntStream.range(0, taskSnapshot.size())
+                .mapToObj(index -> (index + 1) + "." + taskSnapshot.get(index))
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 
@@ -492,7 +502,7 @@ public class SevenSix {
                 .mapToObj(index -> (index + 1) + "." + matchingTasks.get(index))
                 .collect(Collectors.joining(System.lineSeparator()));
         return "Here are the matching tasks in your list:"
-                + System.lineSeparator() + + numberedTasks;
+                + System.lineSeparator() + numberedTasks;
     }
 
     /**
