@@ -135,21 +135,51 @@ public class SevenSix {
      */
     public static void main(String[] args) {
         SevenSix chatbot = new SevenSix();
+        printGreeting();
+        runConsoleLoop(chatbot);
+    }
+
+    /** Prints the greeting shown when the console application starts. */
+    private static void printGreeting() {
         System.out.println(SEPARATOR);
         System.out.println("Hello! I'm SevenSix.");
         System.out.println("What can I do for you?");
         System.out.println(SEPARATOR);
+    }
 
+    /** Processes console input until the input ends or the user says goodbye.
+     *
+     * @param chatbot the command processor used for each input line.
+     */
+    private static void runConsoleLoop(SevenSix chatbot) {
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
-            System.out.println(SEPARATOR);
-            System.out.println(chatbot.getResponse(command));
-            System.out.println(SEPARATOR);
-            if (command.trim().equals("bye")) {
+            printCommandResponse(chatbot, command);
+            if (isExitCommand(command)) {
                 return;
             }
         }
+    }
+
+    /** Prints one command response with the console separators.
+     *
+     * @param chatbot the command processor used to produce the response.
+     * @param command the command entered by the user.
+     */
+    private static void printCommandResponse(SevenSix chatbot, String command) {
+        System.out.println(SEPARATOR);
+        System.out.println(chatbot.getResponse(command));
+        System.out.println(SEPARATOR);
+    }
+
+    /** Checks whether a console command ends the application.
+     *
+     * @param command the command entered by the user.
+     * @return {@code true} when the command is {@code bye}.
+     */
+    private static boolean isExitCommand(String command) {
+        return command.trim().equals("bye");
     }
 
     /**
@@ -198,6 +228,16 @@ public class SevenSix {
      * @throws SevenSixException if the deadline format or its details are invalid.
      */
     private String addDeadline(String command) throws SevenSixException {
+        return addTask(parseDeadline(command));
+    }
+
+    /** Parses a deadline command into a deadline task.
+     *
+     * @param command the complete deadline command.
+     * @return the parsed deadline task.
+     * @throws SevenSixException if the deadline details are invalid.
+     */
+    private Deadline parseDeadline(String command) throws SevenSixException {
         assert command.startsWith(COMMAND_DEADLINE)
                 : "getResponse routes only deadline commands here, so the cut is safe";
         String details = command.substring(COMMAND_DEADLINE.length()).trim();
@@ -212,7 +252,7 @@ public class SevenSix {
             throw new SevenSixException("a deadline needs both a description and a due time.");
         }
         DateTimeParser.ParsedDateTime parsedBy = DateTimeParser.parse(by);
-        return addTask(new Deadline(description, parsedBy.getDate(), parsedBy.getTime()));
+        return new Deadline(description, parsedBy.getDate(), parsedBy.getTime());
     }
 
     /**
@@ -224,6 +264,16 @@ public class SevenSix {
      * @throws SevenSixException if the event format or its details are invalid.
      */
     private String addEvent(String command) throws SevenSixException {
+        return addTask(parseEvent(command));
+    }
+
+    /** Parses an event command into an event task.
+     *
+     * @param command the complete event command.
+     * @return the parsed event task.
+     * @throws SevenSixException if the event details are invalid.
+     */
+    private Event parseEvent(String command) throws SevenSixException {
         assert command.startsWith(COMMAND_EVENT) : "getResponse routes only event commands here, so the cut is safe";
         String details = command.substring(COMMAND_EVENT.length()).trim();
         int fromMarkerIndex = details.indexOf(" /from ");
@@ -241,8 +291,8 @@ public class SevenSix {
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        return addTask(new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
-                parsedTo.getDate(), parsedTo.getTime()));
+        return new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
+                parsedTo.getDate(), parsedTo.getTime());
     }
 
     /**
@@ -252,9 +302,26 @@ public class SevenSix {
      * @return the response for the added task.
      */
     private String addTask(Task task) {
+        addTaskToList(task);
+        saveTasks();
+        return formatAddedTaskResponse(task);
+    }
+
+    /** Adds a task to the in-memory list while saving its undo state.
+     *
+     * @param task the task to add.
+     */
+    private void addTaskToList(Task task) {
         saveUndoState();
         tasks.add(task);
-        saveTasks();
+    }
+
+    /** Formats the response shown after a task is added.
+     *
+     * @param task the task that was added.
+     * @return the response for the added task.
+     */
+    private String formatAddedTaskResponse(Task task) {
         int numberOfTasks = tasks.size();
         return joinResponseLines(
                 "Got it. I've added this task:",
@@ -283,13 +350,23 @@ public class SevenSix {
         if (tasks.size() == 0) {
             return "There are no tasks in your list.";
         }
+        return formatTaskList(tasks);
+    }
 
+    /** Formats every task with its one-based list number.
+     *
+     * @param taskCollection the tasks to format.
+     * @return the numbered task list.
+     */
+    private String formatTaskList(Iterable<Task> taskCollection) {
         StringBuilder response = new StringBuilder();
-        for (int i = 0; i < tasks.size(); i++) {
-            if (i > 0) {
+        int taskNumber = 1;
+        for (Task task : taskCollection) {
+            if (taskNumber > 1) {
                 response.append(System.lineSeparator());
             }
-            response.append(i + 1).append('.').append(tasks.get(i));
+            response.append(taskNumber).append('.').append(task);
+            taskNumber++;
         }
         return response.toString();
     }
@@ -304,9 +381,26 @@ public class SevenSix {
     private String markTask(String command) throws SevenSixException {
         int taskNumber = parseTaskNumber(command, COMMAND_MARK);
         Task task = getTask(taskNumber);
+        markTaskAsDone(task);
+        return formatMarkedTaskResponse(task);
+    }
+
+    /** Marks a task as done and saves the updated task list.
+     *
+     * @param task the task to mark as done.
+     */
+    private void markTaskAsDone(Task task) {
         saveUndoState();
         task.markAsDone();
         saveTasks();
+    }
+
+    /** Formats the response shown after a task is marked as done.
+     *
+     * @param task the task that was marked as done.
+     * @return the response for the marked task.
+     */
+    private String formatMarkedTaskResponse(Task task) {
         return joinResponseLines(
                 "Nice! I've marked this task as done:", "  " + task);
     }
@@ -321,9 +415,26 @@ public class SevenSix {
     private String unmarkTask(String command) throws SevenSixException {
         int taskNumber = parseTaskNumber(command, COMMAND_UNMARK);
         Task task = getTask(taskNumber);
+        markTaskAsNotDone(task);
+        return formatUnmarkedTaskResponse(task);
+    }
+
+    /** Marks a task as not done and saves the updated task list.
+     *
+     * @param task the task to mark as not done.
+     */
+    private void markTaskAsNotDone(Task task) {
         saveUndoState();
         task.markAsNotDone();
         saveTasks();
+    }
+
+    /** Formats the response shown after a task is marked as not done.
+     *
+     * @param task the task that was marked as not done.
+     * @return the response for the unmarked task.
+     */
+    private String formatUnmarkedTaskResponse(Task task) {
         return joinResponseLines(
                 "OK, I've marked this task as not done yet:", "  " + task);
     }
@@ -337,11 +448,31 @@ public class SevenSix {
      */
     private String deleteTask(String command) throws SevenSixException {
         int taskNumber = parseTaskNumber(command, COMMAND_DELETE);
+        Task removedTask = removeTask(taskNumber);
+        return formatDeletedTaskResponse(removedTask);
+    }
+
+    /** Removes a task by its one-based number and saves the updated task list.
+     *
+     * @param taskNumber the one-based task number.
+     * @return the removed task.
+     * @throws SevenSixException if the task number is not in the list.
+     */
+    private Task removeTask(int taskNumber) throws SevenSixException {
         Task removedTask = getTask(taskNumber);
         assert taskNumber >= 1 && taskNumber <= tasks.size() : "getTask has already rejected an unusable number";
         saveUndoState();
         tasks.remove(taskNumber - 1);
         saveTasks();
+        return removedTask;
+    }
+
+    /** Formats the response shown after a task is deleted.
+     *
+     * @param removedTask the task that was deleted.
+     * @return the response for the deleted task.
+     */
+    private String formatDeletedTaskResponse(Task removedTask) {
         return joinResponseLines(
                 "Noted. I've removed this task:",
                 "  " + removedTask,
@@ -367,13 +498,8 @@ public class SevenSix {
         if (matchingTasks.isEmpty()) {
             return "There are no matching tasks in your list.";
         }
-
-        StringBuilder response = new StringBuilder("Here are the matching tasks in your list:");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            response.append(System.lineSeparator())
-                    .append(i + 1).append('.').append(matchingTasks.get(i));
-        }
-        return response.toString();
+        return "Here are the matching tasks in your list:"
+                + System.lineSeparator() + formatTaskList(matchingTasks);
     }
 
     /**
