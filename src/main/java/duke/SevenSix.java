@@ -3,6 +3,8 @@ package duke;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Processes SevenSix commands and provides the console entry point.
@@ -24,6 +26,8 @@ public class SevenSix {
     private static final String COMMAND_DELETE = "delete";
     /** Command keyword for searching task descriptions. */
     private static final String COMMAND_FIND = "find";
+    /** Prefix used to make error responses match SevenSix's theme. */
+    private static final String ERROR_PREFIX = "676767!!! ";
     /** Default relative path for persisted tasks. */
     private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
     /** System property that overrides the default data-file path during automated runs. */
@@ -92,7 +96,7 @@ public class SevenSix {
                     "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
                             + " or find.");
         } catch (SevenSixException exception) {
-            return exception.getMessage();
+            return ERROR_PREFIX + exception.getMessage();
         }
     }
 
@@ -245,14 +249,9 @@ public class SevenSix {
             return "There are no tasks in your list.";
         }
 
-        StringBuilder response = new StringBuilder();
-        for (int i = 0; i < tasks.size(); i++) {
-            if (i > 0) {
-                response.append(System.lineSeparator());
-            }
-            response.append(i + 1).append('.').append(tasks.get(i));
-        }
-        return response.toString();
+        return IntStream.range(0, tasks.size())
+                .mapToObj(index -> (index + 1) + "." + tasks.get(index))
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
@@ -324,12 +323,10 @@ public class SevenSix {
             return "There are no matching tasks in your list.";
         }
 
-        StringBuilder response = new StringBuilder("Here are the matching tasks in your list:");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            response.append(System.lineSeparator())
-                    .append(i + 1).append('.').append(matchingTasks.get(i));
-        }
-        return response.toString();
+        String numberedTasks = IntStream.range(0, matchingTasks.size())
+                .mapToObj(index -> (index + 1) + "." + matchingTasks.get(index))
+                .collect(Collectors.joining(System.lineSeparator()));
+        return "Here are the matching tasks in your list:" + System.lineSeparator() + numberedTasks;
     }
 
     /**

@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
 
 /**
  * Reads and writes SevenSix tasks on the local hard disk.
@@ -42,14 +44,10 @@ public class TaskStorage {
                 return new ArrayList<>();
             }
 
-            List<Task> tasks = new ArrayList<>();
-            for (String line : Files.readAllLines(dataFile, StandardCharsets.UTF_8)) {
-                Task task = parseTask(line);
-                if (task != null) {
-                    tasks.add(task);
-                }
-            }
-            return tasks;
+            return Files.readAllLines(dataFile, StandardCharsets.UTF_8).stream()
+                    .map(this::parseTask)
+                    .filter(Objects::nonNull)
+                    .toList();
         } catch (IOException exception) {
             return new ArrayList<>();
         }
@@ -64,10 +62,9 @@ public class TaskStorage {
     public boolean save(Iterable<Task> tasks) {
         try {
             createParentDirectory();
-            List<String> lines = new ArrayList<>();
-            for (Task task : tasks) {
-                lines.add(formatTask(task));
-            }
+            List<String> lines = StreamSupport.stream(tasks.spliterator(), false)
+                    .map(this::formatTask)
+                    .toList();
             Files.write(dataFile, lines, StandardCharsets.UTF_8,
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING,
