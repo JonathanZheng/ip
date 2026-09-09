@@ -65,6 +65,18 @@ class SevenSixTest {
     }
 
     /**
+     * Unknown commands should use the same themed error prefix as invalid task commands.
+     */
+    @Test
+    void getResponseUnknownCommandReturnsThemedError() {
+        SevenSix chatbot = createChatbot();
+
+        assertEquals("676767!!! I don't know that command yet. Try todo, deadline, event, list, mark,"
+                        + " unmark, delete, or find.",
+                chatbot.getResponse("blah"));
+    }
+
+    /**
      * Creates a chatbot with an isolated data file.
      *
      * @return a chatbot backed by the test directory.

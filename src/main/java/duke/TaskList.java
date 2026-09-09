@@ -25,6 +25,7 @@ public class TaskList implements Iterable<Task> {
      * @param tasks the initial tasks.
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "A task list is built either from storage or from an empty list";
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -34,6 +35,7 @@ public class TaskList implements Iterable<Task> {
      * @param task the task to add.
      */
     public void add(Task task) {
+        assert task != null : "A null task must never enter the list, as every task is displayed and saved";
         tasks.add(task);
     }
 
@@ -44,6 +46,8 @@ public class TaskList implements Iterable<Task> {
      * @return the task at the index.
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size()
+                : "The caller must reject an out-of-range task number before reading a task";
         return tasks.get(index);
     }
 
@@ -54,6 +58,8 @@ public class TaskList implements Iterable<Task> {
      * @return the removed task.
      */
     public Task remove(int index) {
+        assert index >= 0 && index < tasks.size()
+                : "The caller must reject an out-of-range task number before removing a task";
         return tasks.remove(index);
     }
 
@@ -73,6 +79,7 @@ public class TaskList implements Iterable<Task> {
      * @return a new list containing the matching tasks in their original order.
      */
     public List<Task> find(String keyword) {
+        assert keyword != null && !keyword.isBlank() : "A blank keyword must be rejected before searching";
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
         return tasks.stream()
                 .filter(task -> task.getDescription().toLowerCase(Locale.ROOT)
