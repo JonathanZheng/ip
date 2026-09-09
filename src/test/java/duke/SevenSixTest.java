@@ -77,6 +77,39 @@ class SevenSixTest {
     }
 
     /**
+     * Undoing an added task should restore the previous empty task list.
+     */
+    @Test
+    void getResponseUndoAddTaskRestoresPreviousTaskList() {
+        SevenSix chatbot = createChatbot();
+
+        chatbot.getResponse("todo read book");
+
+        assertEquals("OK, I've undone the last command.", chatbot.getResponse("undo"));
+        assertEquals("There are no tasks in your list.", chatbot.getResponse("list"));
+        assertEquals("676767!!! there is no command to undo.", chatbot.getResponse("undo"));
+    }
+
+    /**
+     * Undoing a status change should restore the task and persist its previous state.
+     */
+    @Test
+    void getResponseUndoMarkTaskRestoresAndPersistsPreviousState() {
+        Path dataFile = temporaryDirectory.resolve("undo-tasks.txt");
+        SevenSix chatbot = new SevenSix(dataFile);
+
+        chatbot.getResponse("deadline submit report /by 2019-06-06");
+        chatbot.getResponse("mark 1");
+
+        assertEquals("OK, I've undone the last command.", chatbot.getResponse("undo"));
+        assertEquals("1.[D][ ] submit report (by: Jun 06 2019)", chatbot.getResponse("list"));
+
+        SevenSix reloadedChatbot = new SevenSix(dataFile);
+        assertEquals("1.[D][ ] submit report (by: Jun 06 2019)",
+                reloadedChatbot.getResponse("list"));
+    }
+
+    /**
      * Creates a chatbot with an isolated data file.
      *
      * @return a chatbot backed by the test directory.

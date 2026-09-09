@@ -1,6 +1,7 @@
 package duke;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,6 +25,8 @@ public class SevenSix {
     private static final String COMMAND_DELETE = "delete";
     /** Command keyword for searching task descriptions. */
     private static final String COMMAND_FIND = "find";
+    /** Command keyword for undoing the most recent task-changing command. */
+    private static final String COMMAND_UNDO = "undo";
     /** Prefix used to make input errors recognizable in the user interface. */
     private static final String ERROR_PREFIX = "676767!!! ";
     /** Default relative path for persisted tasks. */
@@ -35,6 +38,8 @@ public class SevenSix {
     private final TaskStorage storage;
     /** The in-memory task list used by this chatbot instance. */
     private final TaskList tasks;
+    /** A copy of the task list before the most recent task-changing command. */
+    private List<Task> undoTasks;
 
     /**
      * Creates a chatbot using the configured data-file path.
@@ -79,6 +84,9 @@ public class SevenSix {
     private String processCommand(String command) throws SevenSixException {
         if (command.equals("bye")) {
             return "Bye. Hope to see you again soon!";
+        }
+        if (command.equals(COMMAND_UNDO)) {
+            return undoLastCommand();
         }
         if (isCommand(command, COMMAND_TODO)) {
             return addTodo(command);
@@ -244,6 +252,7 @@ public class SevenSix {
      * @return the response for the added task.
      */
     private String addTask(Task task) {
+        saveUndoState();
         tasks.add(task);
         saveTasks();
         int numberOfTasks = tasks.size();
@@ -295,6 +304,7 @@ public class SevenSix {
     private String markTask(String command) throws SevenSixException {
         int taskNumber = parseTaskNumber(command, COMMAND_MARK);
         Task task = getTask(taskNumber);
+        saveUndoState();
         task.markAsDone();
         saveTasks();
         return joinResponseLines(
@@ -311,6 +321,7 @@ public class SevenSix {
     private String unmarkTask(String command) throws SevenSixException {
         int taskNumber = parseTaskNumber(command, COMMAND_UNMARK);
         Task task = getTask(taskNumber);
+        saveUndoState();
         task.markAsNotDone();
         saveTasks();
         return joinResponseLines(
@@ -328,6 +339,7 @@ public class SevenSix {
         int taskNumber = parseTaskNumber(command, COMMAND_DELETE);
         Task removedTask = getTask(taskNumber);
         assert taskNumber >= 1 && taskNumber <= tasks.size() : "getTask has already rejected an unusable number";
+        saveUndoState();
         tasks.remove(taskNumber - 1);
         saveTasks();
         return joinResponseLines(
@@ -393,6 +405,60 @@ public class SevenSix {
             throw new SevenSixException("that task number is not in your list.");
         }
         return tasks.get(taskNumber - 1);
+    }
+
+    /**
+     * Saves a deep copy of the current task list for a subsequent undo command.
+     */
+    private void saveUndoState() {
+        undoTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            undoTasks.add(copyTask(task));
+        }
+    }
+
+    /**
+     * Creates an independent copy of a task, including its type-specific details and status.
+     *
+     * @param task the task to copy.
+     * @return an independent copy of the task.
+     */
+    private Task copyTask(Task task) {
+        Task copiedTask;
+        if (task instanceof Deadline deadline) {
+            copiedTask = new Deadline(deadline.getDescription(), deadline.getBy(), deadline.getByTime());
+        } else if (task instanceof Event event) {
+            copiedTask = new Event(event.getDescription(), event.getFrom(), event.getFromTime(),
+                    event.getTo(), event.getToTime());
+        } else {
+            copiedTask = new Todo(task.getDescription());
+        }
+        if (task.isDone()) {
+            copiedTask.markAsDone();
+        }
+        return copiedTask;
+    }
+
+    /**
+     * Restores the task list saved before the most recent task-changing command.
+     *
+     * @return the response for the undo command.
+     * @throws SevenSixException if there is no task-changing command to undo.
+     */
+    private String undoLastCommand() throws SevenSixException {
+        if (undoTasks == null) {
+            throw new SevenSixException("there is no command to undo.");
+        }
+
+        while (tasks.size() > 0) {
+            tasks.remove(tasks.size() - 1);
+        }
+        for (Task task : undoTasks) {
+            tasks.add(task);
+        }
+        undoTasks = null;
+        saveTasks();
+        return "OK, I've undone the last command.";
     }
 
     /**
