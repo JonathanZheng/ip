@@ -70,4 +70,7 @@ shadowJar {
 
 run {
     standardInput = System.in
+    // Assertions are off by default in the JVM, so enable them when running from Gradle.
+    // The 'test' task already enables them by default, so JUnit runs check them too.
+    enableAssertions = true
 }

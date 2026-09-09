@@ -24,6 +24,7 @@ public class TaskStorage {
      * @param dataFile the relative or absolute path of the task data file.
      */
     public TaskStorage(Path dataFile) {
+        assert dataFile != null : "Storage needs a data-file path, which is resolved before construction";
         this.dataFile = dataFile;
     }
 
@@ -201,6 +202,7 @@ public class TaskStorage {
             field.append('\\');
         }
         fields.add(field.toString().trim());
+        assert !fields.isEmpty() : "Splitting always yields at least one field, so callers may check field counts";
         return fields;
     }
 
