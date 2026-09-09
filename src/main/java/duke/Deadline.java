@@ -42,6 +42,7 @@ public class Deadline extends Task {
      */
     public Deadline(String description, LocalDate by, LocalTime byTime) {
         super(description, TaskType.DEADLINE);
+        assert by != null : "A deadline always has a due date; only its due time is optional";
         this.by = by;
         this.byTime = byTime;
     }
