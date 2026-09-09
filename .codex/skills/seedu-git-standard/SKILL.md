@@ -13,15 +13,59 @@ standard for details: <https://se-education.org/guides/conventions/git.html>.
 - Write a clear subject for every commit.
 - Prefer 50 characters or fewer and never exceed 72 characters.
 - Use the imperative mood, capitalize the first letter, and do not end with a period.
-- Add a scope or category prefix only when it improves clarity.
+- Add a scope or category prefix only when it improves clarity, in the form
+  `Person class: Remove static imports` or `bug fix: Add space after name`.
 
 ## Body
 
 - Add a body for non-trivial commits, separated from the subject by a blank line.
 - Wrap body lines at 72 characters and separate paragraphs with blank lines.
 - Explain what changed and why; leave implementation details to the diff.
-- Describe the current situation in present tense, then explain why it needs to change and what the
-  commit does about it.
-- Avoid vague repetition and words such as `currently` or `originally`.
+- Give enough explanation that a reader can judge whether the change is a good
+  idea without reading the diff.
+- Minimize repeating information already stated in the code comments of the same
+  commit.
+- Avoid vague repetition and words such as `currently` or `originally`; they are
+  implied by the description of the current situation.
 
-Keep commits focused so that each commit represents one coherent change.
+### Body structure
+
+Order the body as follows:
+
+```
+{current situation} -- use present tense
+
+{why it needs to change}
+
+{what is being done about it} -- use imperative mood
+
+{why it is done that way}
+
+{any other relevant info}
+```
+
+Use the word `Let's` to mark where the description of the change begins.
+
+Use bullet points instead of prose paragraphs where a list reads more clearly,
+typically when the commit does several related things.
+
+### Worked example
+
+```
+Find command: make matching case-insensitive
+
+Find command is case-sensitive.
+
+A case-insensitive find is more user-friendly because users cannot be
+expected to remember the exact case of the keywords.
+
+Let's,
+* update the search algorithm to use case-insensitive matching
+* add a script to migrate stress tests to the new format
+```
+
+## Commit scope
+
+Keep commits focused so that each commit represents one coherent change. If the
+body grows long enough that it is hard to write, treat that as a signal to split
+the commit into finer-grained pieces.
