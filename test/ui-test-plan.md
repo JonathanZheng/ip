@@ -383,3 +383,44 @@ ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test case: undo the most recent task change
+
+- Aim: The undo command removes the most recently added task and reports an error when there is no task-changing command left to undo.
+- Run command: `rm -f .ui-test-data/undo.txt && java -ea -Dsevensix.data.file=.ui-test-data/undo.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+todo read book
+undo
+list
+undo
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 task in the list.
+____________________________________________________________
+____________________________________________________________
+OK, I've undone the last command.
+____________________________________________________________
+____________________________________________________________
+There are no tasks in your list.
+____________________________________________________________
+____________________________________________________________
+676767!!! there is no command to undo.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
