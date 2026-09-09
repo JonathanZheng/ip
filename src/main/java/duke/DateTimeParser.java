@@ -48,6 +48,7 @@ public final class DateTimeParser {
      * @throws SevenSixException if the text does not use a supported format.
      */
     public static ParsedDateTime parse(String text) throws SevenSixException {
+        assert text != null && !text.isBlank() : "Command parsing must reject blank date text before parsing";
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
             try {
                 LocalDateTime dateTime = LocalDateTime.parse(text, formatter);
@@ -77,6 +78,7 @@ public final class DateTimeParser {
      * @return a readable date, with a time when one was supplied.
      */
     public static String formatForDisplay(LocalDate date, LocalTime time) {
+        assert date != null : "A task always stores a date; only its time is allowed to be null";
         String formattedDate = date.format(DISPLAY_DATE_FORMATTER);
         if (time == null) {
             return formattedDate;
@@ -92,6 +94,7 @@ public final class DateTimeParser {
      * @return an unambiguous machine-readable date or date-time.
      */
     public static String formatForStorage(LocalDate date, LocalTime time) {
+        assert date != null : "A task always stores a date; only its time is allowed to be null";
         String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
         if (time == null) {
             return formattedDate;
