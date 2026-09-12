@@ -20,6 +20,9 @@ standard for details: <https://se-education.org/guides/conventions/git.html>.
 
 - Add a body for non-trivial commits, separated from the subject by a blank line.
 - Wrap body lines at 72 characters and separate paragraphs with blank lines.
+  This is a hard limit on every line, including the first line of a paragraph
+  and each bullet point. Insert the line breaks yourself; do not rely on the
+  editor or terminal to wrap the text for you.
 - Explain what changed and why; leave implementation details to the diff.
 - Give enough explanation that a reader can judge whether the change is a good
   idea without reading the diff.
@@ -63,6 +66,21 @@ Let's,
 * update the search algorithm to use case-insensitive matching
 * add a script to migrate stress tests to the new format
 ```
+
+## Verify the wrapping before committing
+
+Unwrapped body lines are the most common problem reported against this
+repository. Write the message to a file, check it, then commit from that file so
+that what you verified is what gets stored.
+
+```
+awk 'length > 72 {print NR ": " length " chars"}' /tmp/commitmsg.txt
+git commit -F /tmp/commitmsg.txt
+```
+
+The command prints nothing when the message is correctly wrapped. If it prints a
+line number, break that line and check again. Do not amend past commits to fix
+wrapping; rewriting history changes commit timestamps that the course uses.
 
 ## Commit scope
 

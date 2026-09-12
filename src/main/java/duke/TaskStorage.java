@@ -269,18 +269,18 @@ public class TaskStorage {
     private List<String> splitFields(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
-        boolean escaped = false;
+        boolean isEscaped = false;
         for (int i = 0; i < line.length(); i++) {
             char character = line.charAt(i);
-            if (escaped) {
+            if (isEscaped) {
                 if (character == '|' || character == '\\') {
                     field.append(character);
                 } else {
                     field.append('\\').append(character);
                 }
-                escaped = false;
+                isEscaped = false;
             } else if (character == '\\') {
-                escaped = true;
+                isEscaped = true;
             } else if (character == '|') {
                 fields.add(field.toString().trim());
                 field.setLength(0);
@@ -288,7 +288,7 @@ public class TaskStorage {
                 field.append(character);
             }
         }
-        if (escaped) {
+        if (isEscaped) {
             field.append('\\');
         }
         fields.add(field.toString().trim());
@@ -300,7 +300,7 @@ public class TaskStorage {
      * Escapes characters that have a special meaning in the storage format.
      *
      * @param value the text to escape.
-     * @return escaped text.
+     * @return the escaped text.
      */
     private String escape(String value) {
         return value.replace("\\", "\\\\").replace("|", "\\|");

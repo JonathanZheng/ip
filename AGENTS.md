@@ -45,6 +45,42 @@ Follow the project skill `seedu-java-coding-standard` in
 changing Java source or tests, and keep new code compliant with the SE-EDU basic and intermediate
 Java coding standard.
 
+## Code quality self-check
+
+An automated course script reports style problems in this repository, and it
+checks more than Checkstyle does. Before handing any change back, run
+`./gradlew checkstyleMain checkstyleTest` and then follow the project skill
+`code-quality-self-check` in `.codex/skills/code-quality-self-check/SKILL.md`.
+It covers the aspects Checkstyle cannot enforce: predicate naming for booleans,
+class size, method length, the Single Level of Abstraction Principle, dead code,
+informative header comments, binary files in the repository, and commit message
+wrapping.
+
+Design code so that every statement in a method sits at the same level of
+abstraction. A method either orchestrates named steps or performs one step, not
+both. The `seedu-java-coding-standard` skill states the rule and shows a worked
+example.
+
+### How the main classes divide the work
+
+Keep new code in the class that owns the responsibility, rather than adding it
+to `SevenSix`.
+
+* `SevenSix` decides what each command does, and holds no parsing or wording.
+* `Parser` owns every rule about the shape of a command, and turns command text
+  into descriptions, tasks, keywords, and task numbers.
+* `Ui` owns every user-visible string, and drives the console loop.
+* `UndoHistory` remembers the task list from before the last task-changing
+  command.
+* `TaskList` and `TaskStorage` own the in-memory list and its persistence.
+
+### Known code quality debt
+
+Mention this when relevant, and fix it only when the user asks.
+
+* `src/main/java/duke/TaskStorage.java` is a little over 300 lines. It has one
+  responsibility, so the length is mostly Javadoc rather than mixed concerns.
+
 ## Git commit message standard
 
 Follow the project skill `seedu-git-standard` in `.codex/skills/seedu-git-standard/SKILL.md` for all
