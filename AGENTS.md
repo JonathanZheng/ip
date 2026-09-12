@@ -61,19 +61,25 @@ abstraction. A method either orchestrates named steps or performs one step, not
 both. The `seedu-java-coding-standard` skill states the rule and shows a worked
 example.
 
+### How the main classes divide the work
+
+Keep new code in the class that owns the responsibility, rather than adding it
+to `SevenSix`.
+
+* `SevenSix` decides what each command does, and holds no parsing or wording.
+* `Parser` owns every rule about the shape of a command, and turns command text
+  into descriptions, tasks, keywords, and task numbers.
+* `Ui` owns every user-visible string, and drives the console loop.
+* `UndoHistory` remembers the task list from before the last task-changing
+  command.
+* `TaskList` and `TaskStorage` own the in-memory list and its persistence.
+
 ### Known code quality debt
 
-These are existing problems, not caused by any single change. Mention them when
-relevant, and fix them only when the user asks.
+Mention this when relevant, and fix it only when the user asks.
 
-* `src/main/java/duke/SevenSix.java` is around 600 lines and mixes console
-  input and output, command parsing, command behaviour, undo state, and saving.
-  Splitting out a `Ui` class and a `Parser` class is the natural first step.
-* Some boolean locals are named as adjectives rather than predicates, for
-  example `escaped` in `TaskStorage.splitFields`.
-* `SevenSix.findTasks` mixes levels of abstraction: it extracts and validates
-  the keyword, searches, and then builds a numbered list with an index-based
-  stream, duplicating at a lower level what `formatTaskList` already does.
+* `src/main/java/duke/TaskStorage.java` is a little over 300 lines. It has one
+  responsibility, so the length is mostly Javadoc rather than mixed concerns.
 
 ## Git commit message standard
 
