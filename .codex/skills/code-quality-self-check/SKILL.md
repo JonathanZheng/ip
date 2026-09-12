@@ -34,12 +34,17 @@ variable, field, parameter, and method must start with a predicate prefix such
 as `is`, `has`, `can`, `should`, or `was`.
 
 ```
-grep -rn "boolean " src/main/java src/test/java
+grep -rn "boolean " src/main/java src/test/java | grep -vE "boolean (is|has|can|should|was)[A-Z]"
 ```
 
-For each hit, confirm the name after `boolean` begins with a predicate prefix.
-`boolean escaped` is wrong; `boolean isEscaped` is right. The same rule applies
-to methods returning `boolean`.
+The second `grep` drops the names that already follow the rule, so anything it
+prints needs a look. `boolean escaped` is wrong; `boolean isEscaped` is right.
+
+One legitimate exception survives the filter: a method that performs an action
+and returns whether it succeeded keeps its verb name, the way `TaskStorage.save`
+and the JDK's `File.delete` do. A predicate prefix would misdescribe it, because
+calling it changes something. The rule binds every boolean that answers a
+question rather than doing a job.
 
 ### 2. Class size
 
