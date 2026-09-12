@@ -45,6 +45,36 @@ Follow the project skill `seedu-java-coding-standard` in
 changing Java source or tests, and keep new code compliant with the SE-EDU basic and intermediate
 Java coding standard.
 
+## Code quality self-check
+
+An automated course script reports style problems in this repository, and it
+checks more than Checkstyle does. Before handing any change back, run
+`./gradlew checkstyleMain checkstyleTest` and then follow the project skill
+`code-quality-self-check` in `.codex/skills/code-quality-self-check/SKILL.md`.
+It covers the aspects Checkstyle cannot enforce: predicate naming for booleans,
+class size, method length, the Single Level of Abstraction Principle, dead code,
+informative header comments, binary files in the repository, and commit message
+wrapping.
+
+Design code so that every statement in a method sits at the same level of
+abstraction. A method either orchestrates named steps or performs one step, not
+both. The `seedu-java-coding-standard` skill states the rule and shows a worked
+example.
+
+### Known code quality debt
+
+These are existing problems, not caused by any single change. Mention them when
+relevant, and fix them only when the user asks.
+
+* `src/main/java/duke/SevenSix.java` is around 600 lines and mixes console
+  input and output, command parsing, command behaviour, undo state, and saving.
+  Splitting out a `Ui` class and a `Parser` class is the natural first step.
+* Some boolean locals are named as adjectives rather than predicates, for
+  example `escaped` in `TaskStorage.splitFields`.
+* `SevenSix.findTasks` mixes levels of abstraction: it extracts and validates
+  the keyword, searches, and then builds a numbered list with an index-based
+  stream, duplicating at a lower level what `formatTaskList` already does.
+
 ## Git commit message standard
 
 Follow the project skill `seedu-git-standard` in `.codex/skills/seedu-git-standard/SKILL.md` for all
