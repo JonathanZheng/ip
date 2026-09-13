@@ -17,7 +17,7 @@ public class Ui {
     /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
     /** Prefix used to make input errors recognizable in the user interface. */
-    private static final String ERROR_PREFIX = "676767!!! ";
+    private static final String ERROR_PREFIX = "Error: ";
 
     /** Prevents instantiation of this helper class. */
     private Ui() {
