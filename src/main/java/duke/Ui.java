@@ -80,6 +80,17 @@ public class Ui {
     }
 
     /**
+     * Checks whether a chatbot response reports an input error, so that the graphical
+     * interface can highlight it.
+     *
+     * @param response the response returned by the chatbot.
+     * @return {@code true} when the response was produced by {@link #formatError(String)}.
+     */
+    public static boolean isErrorResponse(String response) {
+        return response.startsWith(ERROR_PREFIX);
+    }
+
+    /**
      * Returns the message shown when the user says goodbye.
      *
      * @return the farewell message.

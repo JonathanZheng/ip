@@ -89,3 +89,14 @@
     -fx-text-fill: #1e293b;
     -fx-padding: 8 12 8 12;
 }
+
+/* Errors use a red tint and a thick left edge so they catch the eye. */
+.error-message {
+    -fx-background-color: #fef2f2;
+    -fx-background-radius: 8;
+    -fx-border-color: #fca5a5 #fca5a5 #fca5a5 #dc2626;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 8;
+    -fx-text-fill: #991b1b;
+    -fx-padding: 8 12 8 10;
+}

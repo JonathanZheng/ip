@@ -171,7 +171,19 @@ public class SevenSixGui extends Application {
      */
     private void displayCommandResponse(String command) {
         addMessage(DialogBox.getUserDialog(command));
-        addMessage(DialogBox.getBotDialog(chatbot.getResponse(command)));
+        addMessage(createReplyDialog(chatbot.getResponse(command)));
+    }
+
+    /**
+     * Creates the message row for a chatbot reply, highlighting replies that report errors.
+     *
+     * @param response the chatbot reply.
+     * @return an error row for error replies, or a normal reply row otherwise.
+     */
+    private DialogBox createReplyDialog(String response) {
+        return Ui.isErrorResponse(response)
+                ? DialogBox.getErrorDialog(response)
+                : DialogBox.getBotDialog(response);
     }
 
     /**

@@ -55,4 +55,14 @@ public class DialogBox extends HBox {
     public static DialogBox getBotDialog(String message) {
         return new DialogBox(message, "bot-message", Pos.TOP_LEFT);
     }
+
+    /**
+     * Creates a left-aligned, highlighted card for a chatbot reply that reports an error.
+     *
+     * @param message the error reply text.
+     * @return the chatbot's error message row.
+     */
+    public static DialogBox getErrorDialog(String message) {
+        return new DialogBox(message, "error-message", Pos.TOP_LEFT);
+    }
 }
