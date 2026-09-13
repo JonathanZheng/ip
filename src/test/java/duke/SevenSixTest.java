@@ -54,24 +54,24 @@ class SevenSixTest {
     }
 
     /**
-     * Invalid input should use the chatbot's themed error response.
+     * Invalid input should use a clearly labeled error response.
      */
     @Test
     void getResponseInvalidCommandReturnsHelpfulError() {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("676767!!! a todo needs a description. Give it a little something to do!",
+        assertEquals("Error: a todo needs a description. Give it a little something to do!",
                 chatbot.getResponse("todo"));
     }
 
     /**
-     * Unknown commands should use the same themed error prefix as invalid task commands.
+     * Unknown commands should use the same error prefix as invalid task commands.
      */
     @Test
-    void getResponseUnknownCommandReturnsThemedError() {
+    void getResponseUnknownCommandReturnsLabeledError() {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("676767!!! I don't know that command yet. Try todo, deadline, event, list, mark,"
+        assertEquals("Error: I don't know that command yet. Try todo, deadline, event, list, mark,"
                         + " unmark, delete, or find.",
                 chatbot.getResponse("blah"));
     }
@@ -87,7 +87,7 @@ class SevenSixTest {
 
         assertEquals("OK, I've undone the last command.", chatbot.getResponse("undo"));
         assertEquals("There are no tasks in your list.", chatbot.getResponse("list"));
-        assertEquals("676767!!! there is no command to undo.", chatbot.getResponse("undo"));
+        assertEquals("Error: there is no command to undo.", chatbot.getResponse("undo"));
     }
 
     /**

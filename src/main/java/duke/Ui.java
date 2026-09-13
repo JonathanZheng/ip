@@ -17,7 +17,7 @@ public class Ui {
     /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
     /** Prefix used to make input errors recognizable in the user interface. */
-    private static final String ERROR_PREFIX = "676767!!! ";
+    private static final String ERROR_PREFIX = "Error: ";
 
     /** Prevents instantiation of this helper class. */
     private Ui() {
@@ -77,6 +77,17 @@ public class Ui {
      */
     public static String formatError(String message) {
         return ERROR_PREFIX + message;
+    }
+
+    /**
+     * Checks whether a chatbot response reports an input error, so that the graphical
+     * interface can highlight it.
+     *
+     * @param response the response returned by the chatbot.
+     * @return {@code true} when the response was produced by {@link #formatError(String)}.
+     */
+    public static boolean isErrorResponse(String response) {
+        return response.startsWith(ERROR_PREFIX);
     }
 
     /**

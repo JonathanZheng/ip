@@ -1,0 +1,117 @@
+/* Window-wide look of the SevenSix GUI. */
+
+.root {
+    -fx-font-family: "System";
+    -fx-font-size: 13px;
+    -fx-background-color: #f8fafc;
+}
+
+/* A slim header keeps most of the window for the conversation. */
+.header {
+    -fx-background-color: #0f172a;
+    -fx-padding: 8 14 8 14;
+    -fx-spacing: 8;
+}
+
+.title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.subtitle {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 12px;
+}
+
+.conversation,
+.conversation > .viewport {
+    -fx-background: #f8fafc;
+    -fx-background-color: #f8fafc;
+}
+
+.dialog-container {
+    -fx-padding: 10 10 10 10;
+    -fx-spacing: 8;
+}
+
+.input-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 8 10 10 10;
+    -fx-spacing: 8;
+}
+
+.command-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-padding: 7 10 7 10;
+}
+
+.command-field:focused {
+    -fx-border-color: #2563eb;
+}
+
+.send-button {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 8;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-padding: 7 16 7 16;
+    -fx-cursor: hand;
+}
+
+.send-button:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+/* Messages: the user's commands and the chatbot's replies look different. */
+
+.message {
+    -fx-line-spacing: 2;
+}
+
+.user-message {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 12 12 3 12;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 6 12 6 12;
+}
+
+.bot-message {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-text-fill: #1e293b;
+    -fx-padding: 8 12 8 12;
+}
+
+/* Errors use a red tint and a thick left edge so they catch the eye. */
+.error-message {
+    -fx-background-color: #fef2f2;
+    -fx-background-radius: 8;
+    -fx-border-color: #fca5a5 #fca5a5 #fca5a5 #dc2626;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 8;
+    -fx-text-fill: #991b1b;
+    -fx-padding: 8 12 8 10;
+}
+
+/* A small round avatar marks chatbot replies without taking space from the text. */
+.dialog-row {
+    -fx-spacing: 6;
+}
+
+.avatar-circle {
+    -fx-fill: #0f172a;
+}
+
+.avatar-text {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}

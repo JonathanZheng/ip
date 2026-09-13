@@ -2,7 +2,7 @@ package duke;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,6 +18,9 @@ import javafx.stage.Stage;
  * Provides a JavaFX graphical interface for the SevenSix chatbot.
  */
 public class SevenSixGui extends Application {
+    /** Classpath location of the stylesheet that defines the window's look. */
+    private static final String STYLESHEET = "/css/main.css";
+
     /** The conversation messages displayed in the scroll pane. */
     private VBox dialogContainer;
     /** The scroll pane containing the conversation. */
@@ -43,7 +46,7 @@ public class SevenSixGui extends Application {
      */
     @Override
     public void start(Stage stage) {
-        VBox header = createHeader();
+        HBox header = createHeader();
         scrollPane = createConversation();
         HBox inputBar = createInputBar();
         configureInputHandlers();
@@ -54,15 +57,18 @@ public class SevenSixGui extends Application {
 
     /** Creates the title and subtitle displayed above the conversation.
      *
+     * <p>Both labels share one row so that the header uses little vertical space.
+     *
      * @return the configured conversation header.
      */
-    private VBox createHeader() {
+    private HBox createHeader() {
         Label title = new Label("SevenSix");
-        title.setStyle("-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
+        title.getStyleClass().add("title");
         Label subtitle = new Label("Your friendly task assistant");
-        subtitle.setStyle("-fx-text-fill: #64748b;");
-        VBox header = new VBox(3.0, title, subtitle);
-        header.setPadding(new Insets(18.0, 20.0, 14.0, 20.0));
+        subtitle.getStyleClass().add("subtitle");
+        HBox header = new HBox(title, subtitle);
+        header.setAlignment(Pos.BASELINE_LEFT);
+        header.getStyleClass().add("header");
         return header;
     }
 
@@ -71,13 +77,12 @@ public class SevenSixGui extends Application {
      * @return the configured conversation scroll pane.
      */
     private ScrollPane createConversation() {
-        dialogContainer = new VBox(12.0);
-        dialogContainer.setPadding(new Insets(16.0));
-        dialogContainer.setStyle("-fx-background-color: white;");
+        dialogContainer = new VBox();
+        dialogContainer.getStyleClass().add("dialog-container");
         ScrollPane conversation = new ScrollPane(dialogContainer);
         conversation.setFitToWidth(true);
         conversation.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        conversation.setStyle("-fx-background: white; -fx-background-color: white;");
+        conversation.getStyleClass().add("conversation");
         dialogContainer.heightProperty().addListener((observable, oldHeight, newHeight) ->
                 conversation.setVvalue(1.0));
         return conversation;
@@ -90,13 +95,12 @@ public class SevenSixGui extends Application {
     private HBox createInputBar() {
         userInput = new TextField();
         userInput.setPromptText("Enter a command, such as: todo read book");
-        userInput.setPrefHeight(42.0);
+        userInput.getStyleClass().add("command-field");
         sendButton = new Button("Send");
         sendButton.setDefaultButton(true);
-        sendButton.setPrefHeight(42.0);
-        sendButton.setPrefWidth(82.0);
-        HBox inputBar = new HBox(10.0, userInput, sendButton);
-        inputBar.setPadding(new Insets(12.0, 16.0, 16.0, 16.0));
+        sendButton.getStyleClass().add("send-button");
+        HBox inputBar = new HBox(userInput, sendButton);
+        inputBar.getStyleClass().add("input-bar");
         HBox.setHgrow(userInput, Priority.ALWAYS);
         return inputBar;
     }
@@ -113,12 +117,11 @@ public class SevenSixGui extends Application {
      * @param inputBar the command input displayed at the bottom.
      * @return the configured main layout.
      */
-    private BorderPane createMainLayout(VBox header, HBox inputBar) {
+    private BorderPane createMainLayout(HBox header, HBox inputBar) {
         BorderPane mainLayout = new BorderPane();
         mainLayout.setTop(header);
         mainLayout.setCenter(scrollPane);
         mainLayout.setBottom(inputBar);
-        mainLayout.setStyle("-fx-background-color: white;");
         return mainLayout;
     }
 
@@ -129,16 +132,17 @@ public class SevenSixGui extends Application {
      */
     private void configureStage(Stage stage, BorderPane mainLayout) {
         Scene scene = new Scene(mainLayout, 640.0, 640.0);
+        scene.getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
         stage.setTitle("SevenSix");
-        stage.setMinWidth(480.0);
-        stage.setMinHeight(480.0);
+        stage.setMinWidth(320.0);
+        stage.setMinHeight(360.0);
         stage.setScene(scene);
         stage.show();
     }
 
     /** Displays the initial greeting and focuses the command field. */
     private void showGreeting() {
-        addMessage("Hello! I'm SevenSix.\nWhat can I do for you?", false);
+        addMessage(DialogBox.getBotDialog("Hello! I'm SevenSix.\nWhat can I do for you?"));
         userInput.requestFocus();
     }
 
@@ -166,17 +170,28 @@ public class SevenSixGui extends Application {
      * @param command the command entered by the user.
      */
     private void displayCommandResponse(String command) {
-        addMessage(command, true);
-        addMessage(chatbot.getResponse(command), false);
+        addMessage(DialogBox.getUserDialog(command));
+        addMessage(createReplyDialog(chatbot.getResponse(command)));
     }
 
     /**
-     * Adds one sender-styled message bubble to the conversation.
+     * Creates the message row for a chatbot reply, highlighting replies that report errors.
      *
-     * @param message the message to display.
-     * @param isUserMessage whether the message came from the user.
+     * @param response the chatbot reply.
+     * @return an error row for error replies, or a normal reply row otherwise.
      */
-    private void addMessage(String message, boolean isUserMessage) {
-        dialogContainer.getChildren().add(new DialogBox(message, isUserMessage));
+    private DialogBox createReplyDialog(String response) {
+        return Ui.isErrorResponse(response)
+                ? DialogBox.getErrorDialog(response)
+                : DialogBox.getBotDialog(response);
+    }
+
+    /**
+     * Adds one message row to the end of the conversation.
+     *
+     * @param dialog the message row to display.
+     */
+    private void addMessage(DialogBox dialog) {
+        dialogContainer.getChildren().add(dialog);
     }
 }

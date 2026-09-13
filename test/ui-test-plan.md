@@ -131,7 +131,7 @@ ____________________________________________________________
 
 ## Test case: reject incorrect input and accept trailing spaces
 
-- Aim: Empty task descriptions, unknown commands, and invalid dates produce helpful 67-themed errors without adding tasks, while valid commands with trailing spaces still work.
+- Aim: Empty task descriptions, unknown commands, and invalid dates produce helpful, clearly labeled errors without adding tasks, while valid commands with trailing spaces still work.
 - Run command: `rm -f .ui-test-data/invalid-input.txt && java -ea -Dsevensix.data.file=.ui-test-data/invalid-input.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
@@ -153,16 +153,16 @@ Hello! I'm SevenSix.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-676767!!! a todo needs a description. Give it a little something to do!
+Error: a todo needs a description. Give it a little something to do!
 ____________________________________________________________
 ____________________________________________________________
-676767!!! I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or find.
+Error: I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or find.
 ____________________________________________________________
 ____________________________________________________________
-676767!!! use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+Error: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
 ____________________________________________________________
 ____________________________________________________________
-676767!!! use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+Error: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
 ____________________________________________________________
 ____________________________________________________________
 There are no tasks in your list.
@@ -418,7 +418,7 @@ ____________________________________________________________
 There are no tasks in your list.
 ____________________________________________________________
 ____________________________________________________________
-676767!!! there is no command to undo.
+Error: there is no command to undo.
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
