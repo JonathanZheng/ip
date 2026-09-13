@@ -100,3 +100,18 @@
     -fx-text-fill: #991b1b;
     -fx-padding: 8 12 8 10;
 }
+
+/* A small round avatar marks chatbot replies without taking space from the text. */
+.dialog-row {
+    -fx-spacing: 6;
+}
+
+.avatar-circle {
+    -fx-fill: #0f172a;
+}
+
+.avatar-text {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
