@@ -134,8 +134,8 @@ public class SevenSixGui extends Application {
         Scene scene = new Scene(mainLayout, 640.0, 640.0);
         scene.getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
         stage.setTitle("SevenSix");
-        stage.setMinWidth(480.0);
-        stage.setMinHeight(480.0);
+        stage.setMinWidth(320.0);
+        stage.setMinHeight(360.0);
         stage.setScene(scene);
         stage.show();
     }
