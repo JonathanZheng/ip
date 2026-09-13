@@ -142,7 +142,7 @@ public class SevenSixGui extends Application {
 
     /** Displays the initial greeting and focuses the command field. */
     private void showGreeting() {
-        addMessage("Hello! I'm SevenSix.\nWhat can I do for you?", false);
+        addMessage(DialogBox.getBotDialog("Hello! I'm SevenSix.\nWhat can I do for you?"));
         userInput.requestFocus();
     }
 
@@ -170,17 +170,16 @@ public class SevenSixGui extends Application {
      * @param command the command entered by the user.
      */
     private void displayCommandResponse(String command) {
-        addMessage(command, true);
-        addMessage(chatbot.getResponse(command), false);
+        addMessage(DialogBox.getUserDialog(command));
+        addMessage(DialogBox.getBotDialog(chatbot.getResponse(command)));
     }
 
     /**
-     * Adds one sender-styled message bubble to the conversation.
+     * Adds one message row to the end of the conversation.
      *
-     * @param message the message to display.
-     * @param isUserMessage whether the message came from the user.
+     * @param dialog the message row to display.
      */
-    private void addMessage(String message, boolean isUserMessage) {
-        dialogContainer.getChildren().add(new DialogBox(message, isUserMessage));
+    private void addMessage(DialogBox dialog) {
+        dialogContainer.getChildren().add(dialog);
     }
 }

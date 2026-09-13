@@ -1,34 +1,58 @@
 package duke;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 /**
  * Displays one message in the SevenSix conversation.
+ *
+ * <p>The conversation is between a person and an app, so the two sides look different: the
+ * user's short commands appear as compact colored bubbles on the right, while the chatbot's
+ * longer replies appear as plain cards on the left that are easy to read.
  */
 public class DialogBox extends HBox {
+    /** Widest a message may grow, so that long lines stay readable. */
+    private static final double MAX_MESSAGE_WIDTH = 480.0;
+
     /** The label containing the message text. */
     private final Label messageLabel;
 
     /**
-     * Creates a message bubble for the specified sender.
+     * Creates a message row whose look is defined by a stylesheet class.
      *
      * @param message the message text to display.
-     * @param isUserMessage whether the message was entered by the user.
+     * @param styleClass the stylesheet class that gives the message its look.
+     * @param alignment the side of the conversation the message sits on.
      */
-    public DialogBox(String message, boolean isUserMessage) {
+    private DialogBox(String message, String styleClass, Pos alignment) {
         messageLabel = new Label(message);
         messageLabel.setWrapText(true);
-        messageLabel.setMaxWidth(480.0);
-        messageLabel.setPadding(new Insets(10.0, 14.0, 10.0, 14.0));
-        messageLabel.setStyle(isUserMessage
-                ? "-fx-background-color: #dbeafe; -fx-background-radius: 14;"
-                : "-fx-background-color: #f1f5f9; -fx-background-radius: 14;");
+        messageLabel.setMaxWidth(MAX_MESSAGE_WIDTH);
+        messageLabel.getStyleClass().addAll("message", styleClass);
 
         setMaxWidth(Double.MAX_VALUE);
-        setAlignment(isUserMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+        setAlignment(alignment);
         getChildren().add(messageLabel);
+    }
+
+    /**
+     * Creates a right-aligned bubble for a command the user entered.
+     *
+     * @param message the command text.
+     * @return the user's message row.
+     */
+    public static DialogBox getUserDialog(String message) {
+        return new DialogBox(message, "user-message", Pos.TOP_RIGHT);
+    }
+
+    /**
+     * Creates a left-aligned card for a chatbot reply.
+     *
+     * @param message the reply text.
+     * @return the chatbot's message row.
+     */
+    public static DialogBox getBotDialog(String message) {
+        return new DialogBox(message, "bot-message", Pos.TOP_LEFT);
     }
 }
