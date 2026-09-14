@@ -35,6 +35,18 @@ public class UndoHistory {
         return savedTasks != null;
     }
 
+    /** Copies this history so a failed command can restore the previous undo opportunity.
+     *
+     * @return an independent history with the same remembered tasks.
+     */
+    public UndoHistory copy() {
+        UndoHistory copy = new UndoHistory();
+        if (hasSnapshot()) {
+            copy.save(savedTasks);
+        }
+        return copy;
+    }
+
     /**
      * Returns the snapshot and clears it, so that each snapshot is restored at most once.
      *

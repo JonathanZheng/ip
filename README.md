@@ -13,6 +13,34 @@ Use JDK 25, then run the following command from the project root:
 The GUI accepts the same commands as the console version. Press Enter or click `Send command` to submit a
 command. Tasks are saved to `data/duke.txt` by default.
 
+## Input validation and recovering from errors
+
+Extra spaces and tabs are accepted and normalized to single spaces. Task descriptions
+may contain Unicode, punctuation, pipes, and backslashes. Line breaks and control
+characters are rejected because each saved task occupies one line.
+
+- Supply `/by` exactly once for deadlines, or `/from` followed by `/to` exactly once
+  each for events. Descriptions and date values cannot be empty.
+- Use real calendar dates and valid times, with minute precision. For example,
+  `2024-02-29` is valid but `2024-02-30` is not.
+- An event must end strictly after it starts. A date without a time means midnight
+  for this comparison, so a same-day event needs an explicit later end time.
+- A duplicate has the same task type, case-sensitive description, and date/time
+  fields, even if the existing task is marked done. Different schedules are allowed.
+- Task numbers must contain digits only and refer to an existing task. `list`,
+  `undo`, and `bye` do not accept additional arguments.
+
+A missing task file starts an empty list and is created on the first successful
+change. An invalid path, unreadable file, or corrupt/duplicate record produces a
+startup warning in both interfaces. Valid records remain available, but saving is
+disabled for that session. Back up and repair the file or correct its path and
+permissions, then restart. Symbolic links at the task-file path are not supported.
+
+Saves use a temporary file in the same folder and require atomic replacement support
+from the filesystem. If writing or replacement fails, the command reports an error
+and restores both the task list and the previous undo opportunity. Check file/folder
+permissions and free disk space, then retry. The original data file is not truncated.
+
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.
