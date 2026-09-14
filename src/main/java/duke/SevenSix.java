@@ -21,13 +21,13 @@ public class SevenSix {
     /** The in-memory task list used by this chatbot instance. */
     private final TaskList tasks;
     /** The task list as it was before the most recent task-changing command. */
-    private final UndoHistory undoHistory = new UndoHistory();
+    private UndoHistory undoHistory = new UndoHistory();
 
     /**
      * Creates a chatbot using the configured data-file path.
      */
     public SevenSix() {
-        this(resolveDataFile());
+        this(new TaskStorage(resolveDataFile()));
     }
 
     /**
@@ -36,8 +36,15 @@ public class SevenSix {
      * @param dataFile the path used to persist tasks.
      */
     public SevenSix(Path dataFile) {
-        assert dataFile != null : "The data-file path is resolved before the chatbot is created";
-        storage = new TaskStorage(dataFile);
+        this(new TaskStorage(dataFile));
+    }
+
+    /** Initializes a chatbot using storage whose configuration has already been checked.
+     *
+     * @param storage the task storage to load.
+     */
+    private SevenSix(TaskStorage storage) {
+        this.storage = storage;
         tasks = new TaskList(storage.load());
     }
 
@@ -48,7 +55,7 @@ public class SevenSix {
      */
     public static void main(String[] args) {
         SevenSix chatbot = new SevenSix();
-        Ui.printGreeting();
+        Ui.printGreeting(chatbot.getStartupWarning());
         Ui.runConsoleLoop(chatbot);
     }
 
@@ -57,11 +64,11 @@ public class SevenSix {
      *
      * @return the configured data-file path.
      */
-    private static Path resolveDataFile() {
+    private static String resolveDataFile() {
         String configuredPath = System.getProperty(DATA_FILE_PROPERTY);
         return configuredPath == null || configuredPath.isBlank()
-                ? DEFAULT_DATA_FILE
-                : Path.of(configuredPath);
+                ? DEFAULT_DATA_FILE.toString()
+                : configuredPath;
     }
 
     /**
@@ -71,11 +78,37 @@ public class SevenSix {
      * @return the chatbot response, without console separators.
      */
     public String getResponse(String command) {
-        String normalizedCommand = command == null ? "" : command.trim();
         try {
-            return processCommand(normalizedCommand);
+            return processWithRollback(Parser.normalize(command));
         } catch (SevenSixException exception) {
             return Ui.formatError(exception.getMessage());
+        }
+    }
+
+    /** Returns a startup warning for both console and graphical interfaces.
+     *
+     * @return the storage warning, or an empty string when loading succeeded.
+     */
+    public String getStartupWarning() {
+        return storage.getLoadWarning();
+    }
+
+    /** Restores tasks and undo history whenever a command cannot finish successfully.
+     *
+     * @param command the normalized command.
+     * @return the successful command response.
+     * @throws SevenSixException if validation or saving fails.
+     */
+    private String processWithRollback(String command) throws SevenSixException {
+        UndoHistory previousTasks = new UndoHistory();
+        previousTasks.save(tasks);
+        UndoHistory previousHistory = undoHistory.copy();
+        try {
+            return processCommand(command);
+        } catch (SevenSixException exception) {
+            tasks.replaceWith(previousTasks.takeSnapshot());
+            undoHistory = previousHistory;
+            throw exception;
         }
     }
 
@@ -87,37 +120,19 @@ public class SevenSix {
      * @throws SevenSixException if the command contains invalid details or is unknown.
      */
     private String processCommand(String command) throws SevenSixException {
-        if (Parser.isExactCommand(command, Parser.COMMAND_BYE)) {
-            return Ui.getFarewellMessage();
-        }
-        if (Parser.isExactCommand(command, Parser.COMMAND_UNDO)) {
-            return undoLastCommand();
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_TODO)) {
-            return addTodo(command);
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_DEADLINE)) {
-            return addDeadline(command);
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_EVENT)) {
-            return addEvent(command);
-        }
-        if (Parser.isExactCommand(command, Parser.COMMAND_LIST)) {
-            return listTasks();
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_MARK)) {
-            return markTask(command);
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_UNMARK)) {
-            return unmarkTask(command);
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_DELETE)) {
-            return deleteTask(command);
-        }
-        if (Parser.isCommand(command, Parser.COMMAND_FIND)) {
-            return findTasks(command);
-        }
-        throw new SevenSixException(Ui.getUnknownCommandMessage());
+        return switch (Parser.parseCommandKeyword(command)) {
+        case Parser.COMMAND_BYE -> Ui.getFarewellMessage();
+        case Parser.COMMAND_UNDO -> undoLastCommand();
+        case Parser.COMMAND_TODO -> addTodo(command);
+        case Parser.COMMAND_DEADLINE -> addDeadline(command);
+        case Parser.COMMAND_EVENT -> addEvent(command);
+        case Parser.COMMAND_LIST -> listTasks();
+        case Parser.COMMAND_MARK -> markTask(command);
+        case Parser.COMMAND_UNMARK -> unmarkTask(command);
+        case Parser.COMMAND_DELETE -> deleteTask(command);
+        case Parser.COMMAND_FIND -> findTasks(command);
+        default -> throw new SevenSixException(Ui.getUnknownCommandMessage());
+        };
     }
 
     /**
@@ -158,8 +173,13 @@ public class SevenSix {
      *
      * @param task the task to store.
      * @return the response for the added task.
+     * @throws SevenSixException if the task is invalid, duplicated, or cannot be saved.
      */
-    private String addTask(Task task) {
+    private String addTask(Task task) throws SevenSixException {
+        TaskValidation.validate(task);
+        if (tasks.hasDuplicate(task)) {
+            throw new SevenSixException(Ui.DUPLICATE_TASK);
+        }
         undoHistory.save(tasks);
         tasks.add(task);
         saveTasks();
@@ -249,23 +269,9 @@ public class SevenSix {
         if (!undoHistory.hasSnapshot()) {
             throw new SevenSixException("there is nothing in the rollback history yet.");
         }
-        replaceTasks(undoHistory.takeSnapshot());
+        tasks.replaceWith(undoHistory.takeSnapshot());
         saveTasks();
         return Ui.getUndoMessage();
-    }
-
-    /**
-     * Replaces every stored task with the supplied tasks.
-     *
-     * @param replacementTasks the tasks that become the new task list.
-     */
-    private void replaceTasks(List<Task> replacementTasks) {
-        while (tasks.size() > 0) {
-            tasks.remove(tasks.size() - 1);
-        }
-        for (Task task : replacementTasks) {
-            tasks.add(task);
-        }
     }
 
     /**
@@ -284,10 +290,12 @@ public class SevenSix {
 
     /**
      * Saves the task list after a command changes it.
+     *
+     * @throws SevenSixException if saving fails, so the caller can roll back the command.
      */
-    private void saveTasks() {
+    private void saveTasks() throws SevenSixException {
         if (!storage.save(tasks)) {
-            System.err.println("SevenSix could not save the task list to disk.");
+            throw new SevenSixException(Ui.SAVE_FAILURE);
         }
     }
 }

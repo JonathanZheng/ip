@@ -35,6 +35,31 @@ public class Ui {
     /** Defines the label used by the graphical command button. */
     public static final String SEND_BUTTON_LABEL = "Send command  →";
 
+    /** Explains why an empty command cannot be processed. */
+    public static final String EMPTY_COMMAND = "enter a command, such as list or todo <description>.";
+    /** Rejects characters that cannot safely round-trip through a one-line record. */
+    public static final String INVALID_CHARACTERS = "commands cannot contain line breaks or control characters.";
+    /** Explains that argument-free commands cannot accept extra text. */
+    public static final String UNEXPECTED_ARGUMENTS = "list, undo, and bye do not accept extra parameters.";
+    /** Explains why a repeated or misplaced date marker is rejected. */
+    public static final String INVALID_PARAMETERS = "supply each date parameter exactly once, in the expected order.";
+    /** Describes date input when its calendar values or precision are invalid. */
+    public static final String INVALID_DATE = "use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.";
+    /** Explains the required event ordering. */
+    public static final String INVALID_EVENT_RANGE = "an event must end after it starts; omitted times mean midnight.";
+    /** Explains why an existing task cannot be added again. */
+    public static final String DUPLICATE_TASK =
+            "a deliverable with the same type, description, and dates already exists.";
+    /** Reports a blocked load without implying that the data file is empty. */
+    public static final String LOAD_FAILURE = "the task file could not be read. Check its path and permissions,"
+            + " then restart. Saving is disabled to protect existing data.";
+    /** Reports invalid records and protects them from accidental replacement. */
+    public static final String CORRUPT_STORAGE = "invalid or duplicate task records were skipped. Back up and repair"
+            + " the task file, then restart. Saving is disabled to protect existing data.";
+    /** Explains that a failed save leaves both tasks and undo history unchanged. */
+    public static final String SAVE_FAILURE = "the change could not be saved. Check the task file and folder"
+            + " permissions and available disk space. No tasks or undo history were changed.";
+
     /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
     /** Prefix used to make input errors recognizable in the user interface. */
@@ -60,9 +85,18 @@ public class Ui {
 
     /** Prints the greeting shown when the console application starts. */
     public static void printGreeting() {
-        System.out.println(SEPARATOR);
-        System.out.println(getGreeting());
-        System.out.println(SEPARATOR);
+        printResponse(getGreeting());
+    }
+
+    /** Prints the greeting and, when needed, a separate storage warning.
+     *
+     * @param warning the storage warning, or an empty string for healthy storage.
+     */
+    public static void printGreeting(String warning) {
+        printGreeting();
+        if (!warning.isEmpty()) {
+            printResponse(formatError(warning));
+        }
     }
 
     /**
@@ -75,7 +109,7 @@ public class Ui {
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
             printCommandResponse(chatbot, command);
-            if (isExitCommand(command)) {
+            if (Parser.isExitCommand(command)) {
                 return;
             }
         }
@@ -88,19 +122,17 @@ public class Ui {
      * @param command the command entered by the user.
      */
     private static void printCommandResponse(SevenSix chatbot, String command) {
-        System.out.println(SEPARATOR);
-        System.out.println(chatbot.getResponse(command));
-        System.out.println(SEPARATOR);
+        printResponse(chatbot.getResponse(command));
     }
 
-    /**
-     * Checks whether a console command ends the application.
+    /** Prints one complete console block using the shared separators.
      *
-     * @param command the command entered by the user.
-     * @return {@code true} when the command is {@code bye}.
+     * @param response the message to display.
      */
-    private static boolean isExitCommand(String command) {
-        return Parser.isExactCommand(command.trim(), Parser.COMMAND_BYE);
+    private static void printResponse(String response) {
+        System.out.println(SEPARATOR);
+        System.out.println(response);
+        System.out.println(SEPARATOR);
     }
 
     /**

@@ -1,5 +1,8 @@
 package duke;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * Recognizes command keywords and turns command text into the values the chatbot acts on.
  *
@@ -30,14 +33,63 @@ public class Parser {
     public static final String COMMAND_UNDO = "undo";
 
     /** Marker separating a deadline's description from its due time. */
-    private static final String DEADLINE_BY_MARKER = " /by ";
+    private static final String DEADLINE_BY_MARKER = "/by";
     /** Marker separating an event's description from its start. */
-    private static final String EVENT_FROM_MARKER = " /from ";
+    private static final String EVENT_FROM_MARKER = "/from";
     /** Marker separating an event's start from its end. */
-    private static final String EVENT_TO_MARKER = " /to ";
+    private static final String EVENT_TO_MARKER = "/to";
+    /** Recognizes parameter tokens without mistaking dates or paths for parameters. */
+    private static final Pattern PARAMETER = Pattern.compile("(?<!\\S)/(?:by|from|to)(?!\\S)");
 
     /** Prevents instantiation of this helper class. */
     private Parser() {
+    }
+
+    /** Normalizes horizontal whitespace and rejects empty or unsafe input.
+     *
+     * @param command the raw command, possibly null.
+     * @return the command with single spaces between words.
+     * @throws SevenSixException if the command is empty or contains control characters.
+     */
+    public static String normalize(String command) throws SevenSixException {
+        if (command == null || command.isBlank()) {
+            throw new SevenSixException(Ui.EMPTY_COMMAND);
+        }
+        if (command.codePoints().anyMatch(character -> Character.isISOControl(character) && character != '\t')) {
+            throw new SevenSixException(Ui.INVALID_CHARACTERS);
+        }
+        String normalizedCommand = command.replaceAll("\\h+", " ").strip();
+        if (normalizedCommand.isEmpty()) {
+            throw new SevenSixException(Ui.EMPTY_COMMAND);
+        }
+        return normalizedCommand;
+    }
+
+    /** Extracts the routing keyword and validates commands that accept no arguments.
+     *
+     * @param command the normalized command.
+     * @return the command keyword.
+     * @throws SevenSixException if an argument-free command includes extra text.
+     */
+    public static String parseCommandKeyword(String command) throws SevenSixException {
+        String keyword = command.split(" ", 2)[0];
+        if (List.of(COMMAND_LIST, COMMAND_UNDO, COMMAND_BYE).contains(keyword) && !command.equals(keyword)) {
+            throw new SevenSixException(Ui.UNEXPECTED_ARGUMENTS);
+        }
+        return keyword;
+    }
+
+    /** Recognizes an exit command using the same whitespace rules as command processing.
+     *
+     * @param command the raw input.
+     * @return true only for a valid, argument-free bye command.
+     */
+    public static boolean isExitCommand(String command) {
+        try {
+            return normalize(command).equals(COMMAND_BYE);
+        } catch (SevenSixException exception) {
+            return false;
+        }
     }
 
     /**
@@ -88,14 +140,9 @@ public class Parser {
     public static Deadline parseDeadline(String command) throws SevenSixException {
         assert isCommand(command, COMMAND_DEADLINE)
                 : "getResponse routes only deadline commands here, so the cut is safe";
-        String details = removeKeyword(command, COMMAND_DEADLINE);
-        int byMarkerIndex = details.indexOf(DEADLINE_BY_MARKER);
-        if (byMarkerIndex == -1) {
-            throw new SevenSixException("the agreed deadline format is: deadline <description> /by <deadline>.");
-        }
-
-        String description = details.substring(0, byMarkerIndex).trim();
-        String by = details.substring(byMarkerIndex + DEADLINE_BY_MARKER.length()).trim();
+        String[] fields = parseDateParameters(command, COMMAND_DEADLINE, List.of(DEADLINE_BY_MARKER));
+        String description = fields[0].strip();
+        String by = fields[1].strip();
         if (description.isBlank() || by.isBlank()) {
             throw new SevenSixException("a deadline needs both a description and a due time to be actionable.");
         }
@@ -112,24 +159,37 @@ public class Parser {
      */
     public static Event parseEvent(String command) throws SevenSixException {
         assert isCommand(command, COMMAND_EVENT) : "getResponse routes only event commands here, so the cut is safe";
-        String details = removeKeyword(command, COMMAND_EVENT);
-        int fromMarkerIndex = details.indexOf(EVENT_FROM_MARKER);
-        int toMarkerIndex = details.indexOf(EVENT_TO_MARKER, fromMarkerIndex + EVENT_FROM_MARKER.length());
-        if (fromMarkerIndex == -1 || toMarkerIndex == -1) {
-            throw new SevenSixException("the agreed event format is: event <description> /from <start> /to <end>.");
-        }
-
-        assert toMarkerIndex > fromMarkerIndex : "The /to marker is searched for only after the /from marker";
-        String description = details.substring(0, fromMarkerIndex).trim();
-        String from = details.substring(fromMarkerIndex + EVENT_FROM_MARKER.length(), toMarkerIndex).trim();
-        String to = details.substring(toMarkerIndex + EVENT_TO_MARKER.length()).trim();
+        String[] fields = parseDateParameters(command, COMMAND_EVENT, List.of(EVENT_FROM_MARKER, EVENT_TO_MARKER));
+        String description = fields[0].strip();
+        String from = fields[1].strip();
+        String to = fields[2].strip();
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
             throw new SevenSixException("an event needs a description, a start, and an end before I can calendar it.");
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        return new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
+        Event event = new Event(description, parsedFrom.getDate(), parsedFrom.getTime(),
                 parsedTo.getDate(), parsedTo.getTime());
+        TaskValidation.validate(event);
+        return event;
+    }
+
+    /** Splits date parameters only after checking their count and order.
+     *
+     * @param command the complete command.
+     * @param keyword the command keyword.
+     * @param expectedMarkers the permitted markers in their required order.
+     * @return description and date fields, including empty fields for validation.
+     * @throws SevenSixException if markers are missing, repeated, or misplaced.
+     */
+    private static String[] parseDateParameters(String command, String keyword, List<String> expectedMarkers)
+            throws SevenSixException {
+        String details = removeKeyword(normalize(command), keyword);
+        List<String> markers = PARAMETER.matcher(details).results().map(result -> result.group()).toList();
+        if (!markers.equals(expectedMarkers)) {
+            throw new SevenSixException(Ui.INVALID_PARAMETERS);
+        }
+        return PARAMETER.split(details, -1);
     }
 
     /**
@@ -158,8 +218,12 @@ public class Parser {
      */
     public static int parseTaskNumber(String command, String commandKeyword) throws SevenSixException {
         assert isCommand(command, commandKeyword) : "Each caller passes the keyword that its command starts with";
+        String argument = removeKeyword(command, commandKeyword);
         try {
-            return Integer.parseInt(removeKeyword(command, commandKeyword));
+            if (!argument.matches("[0-9]+")) {
+                throw new NumberFormatException();
+            }
+            return Integer.parseInt(argument);
         } catch (NumberFormatException exception) {
             throw new SevenSixException("please reference a valid deliverable number.");
         }

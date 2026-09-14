@@ -34,6 +34,269 @@ Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
+## Test case: normalize whitespace and preserve undo after duplicate input
+
+- Aim: Leading, trailing, and repeated spaces are accepted; duplicate rejection leaves the previous undo usable.
+- Run command: `rm -f .ui-test-data/more-whitespace.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-whitespace.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+  todo   read    book
+mark   1
+todo read book
+list
+undo
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Circling back on your ask. I've actioned this deliverable:
+  [T][ ] read book
+Your pipeline now holds 1 deliverable.
+____________________________________________________________
+____________________________________________________________
+Love to see it. This deliverable has shipped:
+  [T][X] read book
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: a deliverable with the same type, description, and dates already exists.
+____________________________________________________________
+____________________________________________________________
+1.[T][X] read book
+____________________________________________________________
+____________________________________________________________
+Rolled back. Your pipeline is restored to its previous state.
+____________________________________________________________
+____________________________________________________________
+1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: reject repeated missing and misplaced date parameters
+
+- Aim: Invalid deadline and event parameters return errors without adding tasks.
+- Run command: `rm -f .ui-test-data/more-parameters.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-parameters.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+deadline report /by 2024-01-01 /by 2024-01-02
+deadline report /by
+event meeting /to 2024-01-02 /from 2024-01-01
+event meeting /from 2024-01-01 /to 2024-01-02 /to 2024-01-03
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: supply each date parameter exactly once, in the expected order.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: a deadline needs both a description and a due time to be actionable.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: supply each date parameter exactly once, in the expected order.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: supply each date parameter exactly once, in the expected order.
+____________________________________________________________
+____________________________________________________________
+Your pipeline is empty. Nothing to action right now.
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: reject impossible dates and nonpositive event durations
+
+- Aim: Impossible calendar dates and equal or reversed event endpoints produce errors without changing tasks.
+- Run command: `rm -f .ui-test-data/more-dates.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-dates.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+deadline report /by 2024-02-30
+event meeting /from 2024-01-01 /to 2024-01-01
+event meeting /from 2024-01-02 /to 2024-01-01
+event meeting /from 2024-01-01 1200 /to 2024-01-01 1200
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: an event must end after it starts; omitted times mean midnight.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: an event must end after it starts; omitted times mean midnight.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: an event must end after it starts; omitted times mean midnight.
+____________________________________________________________
+____________________________________________________________
+Your pipeline is empty. Nothing to action right now.
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: reject invalid task numbers and extra arguments
+
+- Aim: Malformed and out-of-range task numbers, blank input, and extra arguments do not change tasks or prematurely exit.
+- Run command: `rm -f .ui-test-data/more-numbers.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-numbers.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+mark +1
+delete 999999999999999999999
+mark 0
+list all
+undo 1
+bye now
+
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: please reference a valid deliverable number.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: please reference a valid deliverable number.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: that deliverable number is not in your pipeline.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: list, undo, and bye do not accept extra parameters.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: list, undo, and bye do not accept extra parameters.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: list, undo, and bye do not accept extra parameters.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: enter a command, such as list or todo <description>.
+____________________________________________________________
+____________________________________________________________
+Your pipeline is empty. Nothing to action right now.
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: report inaccessible storage and roll back attempted changes
+
+- Aim: A directory in place of the data file produces a startup warning; failed additions leave the task list empty.
+- Run command: `mkdir -p .ui-test-data/more-directory && java -ea -Dsevensix.data.file=.ui-test-data/more-directory -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+todo read book
+list
+undo
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: the task file could not be read. Check its path and permissions, then restart. Saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: the change could not be saved. Check the task file and folder permissions and available disk space. No tasks or undo history were changed.
+____________________________________________________________
+____________________________________________________________
+Your pipeline is empty. Nothing to action right now.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: there is nothing in the rollback history yet.
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: preserve corrupt storage when a change is attempted
+
+- Aim: Corrupt records remain on disk and valid tasks remain unchanged after an attempted addition.
+- Run command: `mkdir -p .ui-test-data && printf 'T | 0 | saved task\nbroken record\n' > .ui-test-data/more-corrupt.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-corrupt.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+todo new task
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: invalid or duplicate task records were skipped. Back up and repair the task file, then restart. Saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: the change could not be saved. Check the task file and folder permissions and available disk space. No tasks or undo history were changed.
+____________________________________________________________
+____________________________________________________________
+1.[T][ ] saved task
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
 ## Test case: add, mark, unmark, and list to-do tasks
 
 - Aim: To-do tasks can be added, marked done, unmarked, and listed with their type and status.
@@ -307,7 +570,7 @@ ____________________________________________________________
 
 ## Test case: ignore corrupted task records
 
-- Aim: A malformed record does not stop SevenSix from loading valid records from the same file.
+- Aim: A malformed record produces a warning and blocks saving while valid records remain available to list.
 - Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | 2019-06-06\n' > .ui-test-data/corrupted.txt && java -ea -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip duke.SevenSix`
 
 ### Inputs
@@ -323,6 +586,9 @@ bye
 ____________________________________________________________
 Hello! I'm SevenSix, your productivity thought partner.
 Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: invalid or duplicate task records were skipped. Back up and repair the task file, then restart. Saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
 1.[T][X] valid saved task

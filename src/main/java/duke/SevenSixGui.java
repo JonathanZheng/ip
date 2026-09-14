@@ -193,14 +193,23 @@ public class SevenSixGui extends Application {
     /** Displays the initial greeting and focuses the command field. */
     private void showGreeting() {
         addMessage(DialogBox.getBotDialog(Ui.getGreeting()));
+        showStorageWarning();
         userInput.requestFocus();
+    }
+
+    /** Makes storage problems visible before the user attempts a change. */
+    private void showStorageWarning() {
+        String warning = chatbot.getStartupWarning();
+        if (!warning.isEmpty()) {
+            addMessage(DialogBox.getErrorDialog(Ui.formatError(warning)));
+        }
     }
 
     /**
      * Adds the entered command and the chatbot response to the conversation.
      */
     private void handleUserInput() {
-        String command = userInput.getText().trim();
+        String command = userInput.getText();
         if (command.isBlank()) {
             return;
         }
@@ -208,7 +217,7 @@ public class SevenSixGui extends Application {
         displayCommandResponse(command);
         userInput.clear();
 
-        if (command.equals("bye")) {
+        if (Parser.isExitCommand(command)) {
             Platform.exit();
             return;
         }
