@@ -52,9 +52,11 @@ class ConsoleProcessTest {
     void mainReloadsTasksFromUnicodePathWithSpaces() throws Exception {
         String configuredPath = "资料/task list.txt";
         runConsole(configuredPath, "todo 借书\nbye\n");
+        assertEquals("T | 0 | 借书" + System.lineSeparator(),
+                Files.readString(temporaryDirectory.resolve(configuredPath)));
         String output = runConsole(configuredPath, "list\nbye\n");
 
-        assertTrue(output.contains("1.[T][ ] 借书"));
+        assertTrue(output.contains("1.[T][ ] 借书"), output);
         assertTrue(Files.exists(temporaryDirectory.resolve(configuredPath)));
     }
 
@@ -111,7 +113,9 @@ class ConsoleProcessTest {
         if (configuredPath != null) {
             command.add("-Dsevensix.data.file=" + configuredPath);
         }
-        command.addAll(List.of("-Dfile.encoding=UTF-8", "-Duser.language=" + System.getProperty("user.language"),
+        // Standard output and error have separate encodings from the default file charset on Windows.
+        command.addAll(List.of("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8",
+                "-Duser.language=" + System.getProperty("user.language"),
                 "-Duser.country=" + System.getProperty("user.country", ""), "-cp",
                 Path.of(SevenSix.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toString(),
                 "duke.SevenSix"));
