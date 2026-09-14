@@ -26,11 +26,11 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -55,29 +55,29 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] read book
-Now you have 1 task in the list.
+Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-Nice! I've marked this task as done:
+Love to see it. This deliverable has shipped:
   [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] borrow book
-Now you have 2 tasks in the list.
+Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
 1.[T][X] read book
 2.[T][ ] borrow book
 ____________________________________________________________
 ____________________________________________________________
-OK, I've marked this task as not done yet:
+Understood. I've moved this deliverable back into the pipeline:
   [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
@@ -85,7 +85,7 @@ ____________________________________________________________
 2.[T][ ] borrow book
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -107,25 +107,25 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 1 task in the list.
+Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [D][ ] do homework (by: Dec 02 2019 6:00 PM)
-Now you have 2 tasks in the list.
+Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
 1.[D][ ] return book (by: Jun 06 2019)
 2.[D][ ] do homework (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -149,26 +149,26 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Error: a todo needs a description. Give it a little something to do!
+Flagging a blocker: a todo needs a description. Let us put some substance behind it.
 ____________________________________________________________
 ____________________________________________________________
-Error: I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or find.
+Flagging a blocker: that one is outside my wheelhouse. My core competencies are todo, deadline, event, list, mark, unmark, delete, and find.
 ____________________________________________________________
 ____________________________________________________________
-Error: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+Flagging a blocker: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
 ____________________________________________________________
 ____________________________________________________________
-Error: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
+Flagging a blocker: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
 ____________________________________________________________
 ____________________________________________________________
-There are no tasks in your list.
+Your pipeline is empty. Nothing to action right now.
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -194,28 +194,28 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] read book
-Now you have 1 task in the list.
+Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
-Now you have 3 tasks in the list.
+Your pipeline now holds 3 deliverables.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] join sports club
-Now you have 4 tasks in the list.
+Your pipeline now holds 4 deliverables.
 ____________________________________________________________
 ____________________________________________________________
 1.[T][ ] read book
@@ -224,9 +224,9 @@ ____________________________________________________________
 4.[T][ ] join sports club
 ____________________________________________________________
 ____________________________________________________________
-Noted. I've removed this task:
+Noted. I've descoped this deliverable:
   [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
-Now you have 3 tasks in the list.
+Your pipeline now holds 3 deliverables.
 ____________________________________________________________
 ____________________________________________________________
 1.[T][ ] read book
@@ -234,7 +234,7 @@ ____________________________________________________________
 3.[T][ ] join sports club
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -256,25 +256,25 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
-Now you have 1 task in the list.
+Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [E][ ] orientation week (from: Oct 04 2019 to: Oct 11 2019)
-Now you have 2 tasks in the list.
+Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
 1.[E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 2.[E][ ] orientation week (from: Oct 04 2019 to: Oct 11 2019)
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -294,14 +294,14 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
 1.[D][ ] saved deadline (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -321,15 +321,15 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
 1.[T][X] valid saved task
 2.[D][ ] return book (by: Jun 06 2019)
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -353,34 +353,34 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] read book
-Now you have 1 task in the list.
+Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [D][ ] return book (by: Jun 06 2019)
-Now you have 2 tasks in the list.
+Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] join sports club
-Now you have 3 tasks in the list.
+Your pipeline now holds 3 deliverables.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Here is what surfaced in your pipeline:
 1.[T][ ] read book
 2.[D][ ] return book (by: Jun 06 2019)
 ____________________________________________________________
 ____________________________________________________________
-There are no matching tasks in your list.
+Nothing in your pipeline matches that search.
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
 
@@ -403,24 +403,24 @@ bye
 
 ```text
 ____________________________________________________________
-Hello! I'm SevenSix.
-What can I do for you?
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Circling back on your ask. I've actioned this deliverable:
   [T][ ] read book
-Now you have 1 task in the list.
+Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-OK, I've undone the last command.
+Rolled back. Your pipeline is restored to its previous state.
 ____________________________________________________________
 ____________________________________________________________
-There are no tasks in your list.
+Your pipeline is empty. Nothing to action right now.
 ____________________________________________________________
 ____________________________________________________________
-Error: there is no command to undo.
+Flagging a blocker: there is nothing in the rollback history yet.
 ____________________________________________________________
 ____________________________________________________________
-Bye. Hope to see you again soon!
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```

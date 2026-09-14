@@ -73,7 +73,7 @@ public class Parser {
         assert isCommand(command, COMMAND_TODO) : "getResponse routes only todo commands here, so the cut is safe";
         String description = removeKeyword(command, COMMAND_TODO);
         if (description.isBlank()) {
-            throw new SevenSixException("a todo needs a description. Give it a little something to do!");
+            throw new SevenSixException("a todo needs a description. Let us put some substance behind it.");
         }
         return description;
     }
@@ -91,13 +91,13 @@ public class Parser {
         String details = removeKeyword(command, COMMAND_DEADLINE);
         int byMarkerIndex = details.indexOf(DEADLINE_BY_MARKER);
         if (byMarkerIndex == -1) {
-            throw new SevenSixException("deadline format is: deadline <description> /by <deadline>.");
+            throw new SevenSixException("the agreed deadline format is: deadline <description> /by <deadline>.");
         }
 
         String description = details.substring(0, byMarkerIndex).trim();
         String by = details.substring(byMarkerIndex + DEADLINE_BY_MARKER.length()).trim();
         if (description.isBlank() || by.isBlank()) {
-            throw new SevenSixException("a deadline needs both a description and a due time.");
+            throw new SevenSixException("a deadline needs both a description and a due time to be actionable.");
         }
         DateTimeParser.ParsedDateTime parsedBy = DateTimeParser.parse(by);
         return new Deadline(description, parsedBy.getDate(), parsedBy.getTime());
@@ -116,7 +116,7 @@ public class Parser {
         int fromMarkerIndex = details.indexOf(EVENT_FROM_MARKER);
         int toMarkerIndex = details.indexOf(EVENT_TO_MARKER, fromMarkerIndex + EVENT_FROM_MARKER.length());
         if (fromMarkerIndex == -1 || toMarkerIndex == -1) {
-            throw new SevenSixException("event format is: event <description> /from <start> /to <end>.");
+            throw new SevenSixException("the agreed event format is: event <description> /from <start> /to <end>.");
         }
 
         assert toMarkerIndex > fromMarkerIndex : "The /to marker is searched for only after the /from marker";
@@ -124,7 +124,7 @@ public class Parser {
         String from = details.substring(fromMarkerIndex + EVENT_FROM_MARKER.length(), toMarkerIndex).trim();
         String to = details.substring(toMarkerIndex + EVENT_TO_MARKER.length()).trim();
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
-            throw new SevenSixException("an event needs a description, a start, and an end.");
+            throw new SevenSixException("an event needs a description, a start, and an end before I can calendar it.");
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
@@ -143,7 +143,7 @@ public class Parser {
         assert isCommand(command, COMMAND_FIND) : "getResponse routes only find commands here, so the cut is safe";
         String keyword = removeKeyword(command, COMMAND_FIND);
         if (keyword.isBlank()) {
-            throw new SevenSixException("a find command needs a keyword to search for.");
+            throw new SevenSixException("a find needs a keyword before I can surface anything.");
         }
         return keyword;
     }
@@ -161,7 +161,7 @@ public class Parser {
         try {
             return Integer.parseInt(removeKeyword(command, commandKeyword));
         } catch (NumberFormatException exception) {
-            throw new SevenSixException("please specify a valid task number.");
+            throw new SevenSixException("please reference a valid deliverable number.");
         }
     }
 

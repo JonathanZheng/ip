@@ -11,7 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 /**
@@ -46,30 +49,68 @@ public class SevenSixGui extends Application {
      */
     @Override
     public void start(Stage stage) {
-        HBox header = createHeader();
+        VBox header = createHeader();
         scrollPane = createConversation();
-        HBox inputBar = createInputBar();
+        VBox inputBar = createInputBar();
         configureInputHandlers();
         BorderPane mainLayout = createMainLayout(header, inputBar);
         configureStage(stage, mainLayout);
         showGreeting();
     }
 
-    /** Creates the title and subtitle displayed above the conversation.
-     *
-     * <p>Both labels share one row so that the header uses little vertical space.
+    /** Creates the branded header and short explanation displayed above the conversation.
      *
      * @return the configured conversation header.
      */
-    private HBox createHeader() {
-        Label title = new Label("SevenSix");
-        title.getStyleClass().add("title");
-        Label subtitle = new Label("Your friendly task assistant");
-        subtitle.getStyleClass().add("subtitle");
-        HBox header = new HBox(title, subtitle);
-        header.setAlignment(Pos.BASELINE_LEFT);
+    private VBox createHeader() {
+        HBox brandRow = createBrandRow();
+        Label eyebrow = new Label(Ui.HEADER_EYEBROW);
+        eyebrow.getStyleClass().add("eyebrow");
+        Label title = new Label(Ui.HEADER_TITLE);
+        title.getStyleClass().add("hero-title");
+        title.setWrapText(true);
+        Label subtitle = new Label(Ui.HEADER_SUBTITLE);
+        subtitle.getStyleClass().add("hero-subtitle");
+        subtitle.setWrapText(true);
+        VBox headerCopy = new VBox(eyebrow, title, subtitle);
+        headerCopy.getStyleClass().add("header-copy");
+        VBox header = new VBox(brandRow, headerCopy);
         header.getStyleClass().add("header");
         return header;
+    }
+
+    /** Creates the application identity row and readiness indicator.
+     *
+     * @return the configured brand row.
+     */
+    private HBox createBrandRow() {
+        StackPane brandMark = createBrandMark();
+        Label title = new Label(Ui.APPLICATION_NAME);
+        title.getStyleClass().add("title");
+        Label subtitle = new Label(Ui.APPLICATION_SUBTITLE);
+        subtitle.getStyleClass().add("subtitle");
+        VBox identity = new VBox(title, subtitle);
+        identity.getStyleClass().add("identity");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label status = new Label(Ui.READY_STATUS);
+        status.getStyleClass().add("status-pill");
+        HBox brandRow = new HBox(brandMark, identity, spacer, status);
+        brandRow.setAlignment(Pos.CENTER_LEFT);
+        brandRow.getStyleClass().add("brand-row");
+        return brandRow;
+    }
+
+    /** Creates the small geometric mark used in the application header.
+     *
+     * @return the configured brand mark.
+     */
+    private StackPane createBrandMark() {
+        Circle circle = new Circle(19.0);
+        circle.getStyleClass().add("brand-mark");
+        Label initials = new Label("76");
+        initials.getStyleClass().add("brand-mark-text");
+        return new StackPane(circle, initials);
     }
 
     /** Creates the scrollable conversation area.
@@ -88,20 +129,28 @@ public class SevenSixGui extends Application {
         return conversation;
     }
 
-    /** Creates the command input field and send button.
+    /** Creates the command composer, helper text, and send button.
      *
      * @return the configured input bar.
      */
-    private HBox createInputBar() {
+    private VBox createInputBar() {
+        Label composerLabel = new Label(Ui.COMPOSER_LABEL);
+        composerLabel.getStyleClass().add("composer-label");
         userInput = new TextField();
-        userInput.setPromptText("Enter a command, such as: todo read book");
+        userInput.setPromptText(Ui.INPUT_PROMPT);
         userInput.getStyleClass().add("command-field");
-        sendButton = new Button("Send");
+        sendButton = new Button(Ui.SEND_BUTTON_LABEL);
         sendButton.setDefaultButton(true);
         sendButton.getStyleClass().add("send-button");
-        HBox inputBar = new HBox(userInput, sendButton);
-        inputBar.getStyleClass().add("input-bar");
+        sendButton.setMinWidth(Region.USE_PREF_SIZE);
+        HBox controlRow = new HBox(userInput, sendButton);
+        controlRow.getStyleClass().add("control-row");
         HBox.setHgrow(userInput, Priority.ALWAYS);
+        Label helperText = new Label(Ui.COMPOSER_HINT);
+        helperText.getStyleClass().add("composer-hint");
+        helperText.setWrapText(true);
+        VBox inputBar = new VBox(composerLabel, controlRow, helperText);
+        inputBar.getStyleClass().add("input-bar");
         return inputBar;
     }
 
@@ -117,11 +166,12 @@ public class SevenSixGui extends Application {
      * @param inputBar the command input displayed at the bottom.
      * @return the configured main layout.
      */
-    private BorderPane createMainLayout(HBox header, HBox inputBar) {
+    private BorderPane createMainLayout(VBox header, VBox inputBar) {
         BorderPane mainLayout = new BorderPane();
         mainLayout.setTop(header);
         mainLayout.setCenter(scrollPane);
         mainLayout.setBottom(inputBar);
+        mainLayout.getStyleClass().add("app-shell");
         return mainLayout;
     }
 
@@ -131,18 +181,18 @@ public class SevenSixGui extends Application {
      * @param mainLayout the layout displayed in the window.
      */
     private void configureStage(Stage stage, BorderPane mainLayout) {
-        Scene scene = new Scene(mainLayout, 640.0, 640.0);
+        Scene scene = new Scene(mainLayout, 900.0, 720.0);
         scene.getStylesheets().add(getClass().getResource(STYLESHEET).toExternalForm());
-        stage.setTitle("SevenSix");
-        stage.setMinWidth(320.0);
-        stage.setMinHeight(360.0);
+        stage.setTitle(Ui.APPLICATION_NAME);
+        stage.setMinWidth(560.0);
+        stage.setMinHeight(520.0);
         stage.setScene(scene);
         stage.show();
     }
 
     /** Displays the initial greeting and focuses the command field. */
     private void showGreeting() {
-        addMessage(DialogBox.getBotDialog("Hello! I'm SevenSix.\nWhat can I do for you?"));
+        addMessage(DialogBox.getBotDialog(Ui.getGreeting()));
         userInput.requestFocus();
     }
 

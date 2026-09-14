@@ -23,9 +23,9 @@ class SevenSixTest {
         SevenSix chatbot = createChatbot();
 
         assertEquals(String.join(System.lineSeparator(),
-                "Got it. I've added this task:",
+                "Circling back on your ask. I've actioned this deliverable:",
                 "  [T][ ] read book",
-                "Now you have 1 task in the list."), chatbot.getResponse("todo read book"));
+                "Your pipeline now holds 1 deliverable."), chatbot.getResponse("todo read book"));
         assertEquals("1.[T][ ] read book", chatbot.getResponse("list"));
     }
 
@@ -36,7 +36,8 @@ class SevenSixTest {
     void getResponseListWithNoTasksReturnsHelpfulMessage() {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("There are no tasks in your list.", chatbot.getResponse("list"));
+        assertEquals("Your pipeline is empty. Nothing to action right now.",
+                chatbot.getResponse("list"));
     }
 
     /**
@@ -60,7 +61,8 @@ class SevenSixTest {
     void getResponseInvalidCommandReturnsHelpfulError() {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("Error: a todo needs a description. Give it a little something to do!",
+        assertEquals("Flagging a blocker: a todo needs a description."
+                        + " Let us put some substance behind it.",
                 chatbot.getResponse("todo"));
     }
 
@@ -71,8 +73,8 @@ class SevenSixTest {
     void getResponseUnknownCommandReturnsLabeledError() {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("Error: I don't know that command yet. Try todo, deadline, event, list, mark,"
-                        + " unmark, delete, or find.",
+        assertEquals("Flagging a blocker: that one is outside my wheelhouse. My core competencies"
+                        + " are todo, deadline, event, list, mark, unmark, delete, and find.",
                 chatbot.getResponse("blah"));
     }
 
@@ -85,9 +87,12 @@ class SevenSixTest {
 
         chatbot.getResponse("todo read book");
 
-        assertEquals("OK, I've undone the last command.", chatbot.getResponse("undo"));
-        assertEquals("There are no tasks in your list.", chatbot.getResponse("list"));
-        assertEquals("Error: there is no command to undo.", chatbot.getResponse("undo"));
+        assertEquals("Rolled back. Your pipeline is restored to its previous state.",
+                chatbot.getResponse("undo"));
+        assertEquals("Your pipeline is empty. Nothing to action right now.",
+                chatbot.getResponse("list"));
+        assertEquals("Flagging a blocker: there is nothing in the rollback history yet.",
+                chatbot.getResponse("undo"));
     }
 
     /**
@@ -101,7 +106,8 @@ class SevenSixTest {
         chatbot.getResponse("deadline submit report /by 2019-06-06");
         chatbot.getResponse("mark 1");
 
-        assertEquals("OK, I've undone the last command.", chatbot.getResponse("undo"));
+        assertEquals("Rolled back. Your pipeline is restored to its previous state.",
+                chatbot.getResponse("undo"));
         assertEquals("1.[D][ ] submit report (by: Jun 06 2019)", chatbot.getResponse("list"));
 
         SevenSix reloadedChatbot = new SevenSix(dataFile);
