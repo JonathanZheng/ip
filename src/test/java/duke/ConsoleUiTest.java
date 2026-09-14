@@ -1,12 +1,15 @@
 package duke;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -90,6 +93,37 @@ class ConsoleUiTest {
             SevenSix.main(new String[0]);
 
             assertEquals(block(GREETING) + block("Great sync. Let's touch base again soon!"), console.getOutput());
+        } finally {
+            if (previousPath == null) {
+                System.clearProperty("sevensix.data.file");
+            } else {
+                System.setProperty("sevensix.data.file", previousPath);
+            }
+        }
+    }
+
+    /** Unicode configuration values set inside Java must preserve tasks across console invocations.
+     *
+     * @throws IOException if the saved task file cannot be read.
+     */
+    @Test
+    void mainReloadsTasksFromUnicodeConfiguredPath() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("资料/task list.txt");
+        String previousPath = System.getProperty("sevensix.data.file");
+        try {
+            System.setProperty("sevensix.data.file", dataFile.toString());
+            try (ConsoleCapture console = new ConsoleCapture("todo 借书\nbye\n")) {
+                SevenSix.main(new String[0]);
+
+                assertTrue(console.getOutput().contains("[T][ ] 借书"), console.getOutput());
+                assertEquals("T | 0 | 借书" + System.lineSeparator(), Files.readString(dataFile));
+            }
+            try (ConsoleCapture console = new ConsoleCapture("list\nbye\n")) {
+                SevenSix.main(new String[0]);
+
+                assertEquals(block(GREETING) + block("1.[T][ ] 借书")
+                        + block("Great sync. Let's touch base again soon!"), console.getOutput());
+            }
         } finally {
             if (previousPath == null) {
                 System.clearProperty("sevensix.data.file");

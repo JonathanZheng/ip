@@ -47,17 +47,22 @@ class ConsoleProcessTest {
                 Files.readString(temporaryDirectory.resolve("data/duke.txt")));
     }
 
-    /** Paths containing spaces and Unicode are valid and should be reloaded in a fresh JVM. */
+    /** Unicode working directories and filenames containing spaces survive a fresh JVM restart. */
     @Test
-    void mainReloadsTasksFromUnicodePathWithSpaces() throws Exception {
-        String configuredPath = "资料/task list.txt";
-        runConsole(configuredPath, "todo 借书\nbye\n");
+    void mainReloadsTasksFromUnicodeWorkingDirectoryWithSpaces() throws Exception {
+        Path workingDirectory = Files.createDirectory(temporaryDirectory.resolve("资料 workspace"));
+        // Keep launcher arguments ASCII: Windows can replace unmappable characters before Java starts.
+        String configuredPath = "task list.txt";
+        Path dataFile = workingDirectory.resolve(configuredPath);
+        String creationOutput = runConsole(workingDirectory, configuredPath, "todo 借书\nbye\n");
+
+        assertTrue(creationOutput.contains("[T][ ] 借书"), creationOutput);
+        assertTrue(Files.exists(dataFile), creationOutput);
         assertEquals("T | 0 | 借书" + System.lineSeparator(),
-                Files.readString(temporaryDirectory.resolve(configuredPath)));
-        String output = runConsole(configuredPath, "list\nbye\n");
+                Files.readString(dataFile));
+        String output = runConsole(workingDirectory, configuredPath, "list\nbye\n");
 
         assertTrue(output.contains("1.[T][ ] 借书"), output);
-        assertTrue(Files.exists(temporaryDirectory.resolve(configuredPath)));
     }
 
     /** A bad default path must produce a visible warning and remain intact. */
@@ -80,8 +85,20 @@ class ConsoleProcessTest {
      * @throws Exception if launch, input, or process completion fails.
      */
     private String runConsole(String configuredPath, String input) throws Exception {
+        return runConsole(temporaryDirectory, configuredPath, input);
+    }
+
+    /** Runs the production entry point in the supplied directory without putting that path in JVM arguments.
+     *
+     * @param workingDirectory the existing directory used for relative task paths.
+     * @param configuredPath the optional data-file property.
+     * @param input the complete UTF-8 console input.
+     * @return the combined output of a successful child JVM.
+     * @throws Exception if launch, input, or process completion fails.
+     */
+    private String runConsole(Path workingDirectory, String configuredPath, String input) throws Exception {
         Process process = new ProcessBuilder(launchCommand(configuredPath))
-                .directory(temporaryDirectory.toFile()).redirectErrorStream(true).start();
+                .directory(workingDirectory.toFile()).redirectErrorStream(true).start();
         try {
             try (var commands = process.getOutputStream()) {
                 commands.write(input.getBytes(StandardCharsets.UTF_8));

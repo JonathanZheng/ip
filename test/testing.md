@@ -46,7 +46,8 @@ private methods or changing production code for coverage:
 - Exact console separators, greeting, startup warnings, EOF, CRLF input, and stopping
   at `bye` without processing later lines.
 - Real child-JVM startup with missing/blank configuration, default paths, Unicode
-  paths containing spaces, and an obstructed data directory.
+  working directories, configured filenames containing spaces, and an obstructed
+  data directory. Unicode configuration values are also tested inside Java.
 - English, Chinese, and Turkish locale behavior for dates and case-insensitive search.
 - Assertion contracts for invalid internal model, parser, and list operations.
 
@@ -56,19 +57,40 @@ to the parent test report using an absolute destination. Tests restore process-w
 streams, properties, and locale settings after use. POSIX permission and symlink
 tests use assumptions on unsupported platforms; inspect skipped results on each OS.
 
+### Windows launcher limitation
+
+The [OpenJDK 25 Windows launcher](https://github.com/openjdk/jdk/blob/jdk-25-ga/src/java.base/share/native/launcher/main.c#L74)
+converts command-line arguments through the system ANSI code page before starting
+Java. Characters that cannot be represented there can be replaced, so passing
+`-Dsevensix.data.file=资料/task list.txt` is not portable across Windows settings.
+Setting `file.encoding`, `stdout.encoding`, or the JVM language does not repair a
+path that was already changed by the native launcher.
+
+The subprocess test therefore starts in a real Unicode working directory via
+`ProcessBuilder.directory` and passes an ASCII relative filename containing spaces.
+It still verifies Unicode task content on disk and reloading in a fresh JVM.
+`ConsoleUiTest` separately sets a Unicode configuration value using
+`System.setProperty` and verifies saving and reloading through `SevenSix.main`.
+This preserves application-level coverage without claiming that arbitrary Unicode
+launcher arguments work on every Windows code page. Production code is unchanged.
+The subprocess streams explicitly use UTF-8 to match the test's input and output.
+
 ## Recorded result
 
 On 2026-09-14, macOS 26.5.1 with Zulu JavaFX JDK 25.0.3:
 
 | Check | Result |
 | --- | --- |
-| Default-locale JUnit | 162 passed, none skipped |
-| Chinese-locale JUnit | 162 passed, none skipped |
+| Default-locale JUnit | 163 passed, none skipped |
+| Chinese-locale JUnit | 163 passed, none skipped |
 | Non-GUI line coverage | 511/512 (99.8%) |
 | Non-GUI branch coverage | 264/267 (98.9%) |
 | Non-GUI method coverage | 152/152 (100%) |
 | Checkstyle and coverage gates | Passed |
 | Recorded console UI cases | 16 passed |
+
+These local results include the revised Unicode-path tests. Confirmation of the
+revised tests on the Windows CI runner is still pending.
 
 The previous suite had 63 tests, 85.9% line coverage, and 77.5% branch coverage with
 the same GUI exclusions. Coverage measures execution, not proof of correctness.
