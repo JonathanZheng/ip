@@ -17,17 +17,30 @@ public class Ui {
     /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
     /** Prefix used to make input errors recognizable in the user interface. */
-    private static final String ERROR_PREFIX = "Error: ";
+    private static final String ERROR_PREFIX = "Flagging a blocker: ";
 
     /** Prevents instantiation of this helper class. */
     private Ui() {
     }
 
+    /**
+     * Returns the greeting shown when the chatbot starts.
+     *
+     * <p>The console and the graphical interface both read the greeting from here so that
+     * the two interfaces always introduce the chatbot in the same words.
+     *
+     * @return the greeting, as one line per sentence.
+     */
+    public static String getGreeting() {
+        return joinResponseLines(
+                "Hello! I'm SevenSix, your productivity thought partner.",
+                "Which deliverables are we unlocking today?");
+    }
+
     /** Prints the greeting shown when the console application starts. */
     public static void printGreeting() {
         System.out.println(SEPARATOR);
-        System.out.println("Hello! I'm SevenSix.");
-        System.out.println("What can I do for you?");
+        System.out.println(getGreeting());
         System.out.println(SEPARATOR);
     }
 
@@ -96,7 +109,7 @@ public class Ui {
      * @return the farewell message.
      */
     public static String getFarewellMessage() {
-        return "Bye. Hope to see you again soon!";
+        return "Great sync. Let's touch base again soon!";
     }
 
     /**
@@ -105,7 +118,7 @@ public class Ui {
      * @return the empty-list message.
      */
     public static String getEmptyListMessage() {
-        return "There are no tasks in your list.";
+        return "Your pipeline is empty. Nothing to action right now.";
     }
 
     /**
@@ -114,7 +127,7 @@ public class Ui {
      * @return the no-matches message.
      */
     public static String getNoMatchesMessage() {
-        return "There are no matching tasks in your list.";
+        return "Nothing in your pipeline matches that search.";
     }
 
     /**
@@ -123,7 +136,7 @@ public class Ui {
      * @return the undo confirmation message.
      */
     public static String getUndoMessage() {
-        return "OK, I've undone the last command.";
+        return "Rolled back. Your pipeline is restored to its previous state.";
     }
 
     /**
@@ -132,8 +145,8 @@ public class Ui {
      * @return the unknown-command message.
      */
     public static String getUnknownCommandMessage() {
-        return "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete,"
-                + " or find.";
+        return "that one is outside my wheelhouse. My core competencies are todo, deadline,"
+                + " event, list, mark, unmark, delete, and find.";
     }
 
     /**
@@ -145,7 +158,7 @@ public class Ui {
      */
     public static String formatAddedTask(Task task, int numberOfTasks) {
         return joinResponseLines(
-                "Got it. I've added this task:",
+                "Circling back on your ask. I've actioned this deliverable:",
                 "  " + task,
                 formatTaskCount(numberOfTasks));
     }
@@ -158,7 +171,7 @@ public class Ui {
      */
     public static String formatMarkedTask(Task task) {
         return joinResponseLines(
-                "Nice! I've marked this task as done:", "  " + task);
+                "Love to see it. This deliverable has shipped:", "  " + task);
     }
 
     /**
@@ -169,7 +182,7 @@ public class Ui {
      */
     public static String formatUnmarkedTask(Task task) {
         return joinResponseLines(
-                "OK, I've marked this task as not done yet:", "  " + task);
+                "Understood. I've moved this deliverable back into the pipeline:", "  " + task);
     }
 
     /**
@@ -181,7 +194,7 @@ public class Ui {
      */
     public static String formatDeletedTask(Task removedTask, int numberOfTasks) {
         return joinResponseLines(
-                "Noted. I've removed this task:",
+                "Noted. I've descoped this deliverable:",
                 "  " + removedTask,
                 formatTaskCount(numberOfTasks));
     }
@@ -208,7 +221,7 @@ public class Ui {
      */
     public static String formatMatchingTasks(List<Task> matchingTasks) {
         return joinResponseLines(
-                "Here are the matching tasks in your list:",
+                "Here is what surfaced in your pipeline:",
                 formatTaskList(matchingTasks));
     }
 
@@ -220,8 +233,8 @@ public class Ui {
      */
     private static String formatTaskCount(int numberOfTasks) {
         assert numberOfTasks >= 0 : "A task count is reported only after the list size is read";
-        return "Now you have " + numberOfTasks + " "
-                + getTaskCountDescription(numberOfTasks) + " in the list.";
+        return "Your pipeline now holds " + numberOfTasks + " "
+                + getTaskCountDescription(numberOfTasks) + ".";
     }
 
     /**
@@ -231,7 +244,7 @@ public class Ui {
      * @return {@code task} for one task, or {@code tasks} otherwise.
      */
     private static String getTaskCountDescription(int numberOfTasks) {
-        return numberOfTasks == 1 ? "task" : "tasks";
+        return numberOfTasks == 1 ? "deliverable" : "deliverables";
     }
 
     /**

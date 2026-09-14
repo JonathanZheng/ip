@@ -21,7 +21,8 @@ class UiTest {
      */
     @Test
     void isErrorResponseFormattedErrorReturnsTrue() {
-        assertTrue(Ui.isErrorResponse(Ui.formatError("that task number is not in your list.")));
+        assertTrue(Ui.isErrorResponse(
+                Ui.formatError("that deliverable number is not in your pipeline.")));
     }
 
     /**
