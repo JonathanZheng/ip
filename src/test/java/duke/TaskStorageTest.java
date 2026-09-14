@@ -22,6 +22,32 @@ class TaskStorageTest {
     @TempDir
     private Path temporaryDirectory;
 
+    /** Empty and whitespace-only files represent a healthy empty list that can still be saved. */
+    @Test
+    void loadBlankLinesAllowsSubsequentSave() throws IOException {
+        Path file = temporaryDirectory.resolve("blank.txt");
+        Files.writeString(file, "\n \r\n\t\n");
+        TaskStorage storage = new TaskStorage(file);
+
+        assertTrue(storage.load().isEmpty());
+        assertEquals("", storage.getLoadWarning());
+        assertTrue(storage.save(List.of(new Todo("first"))));
+        assertEquals("first", storage.load().get(0).getDescription());
+        assertTrue(storage.save(List.of()));
+        assertEquals(0, Files.size(file));
+        assertTrue(new TaskStorage(file).load().isEmpty());
+    }
+
+    /** An unresolved path must fail safely even if save is called before load. */
+    @Test
+    void saveUnresolvedPathReturnsFalse() {
+        TaskStorage storage = new TaskStorage((Path) null);
+
+        assertFalse(storage.save(List.of(new Todo("never saved"))));
+        assertTrue(storage.load().isEmpty());
+        assertEquals(Ui.LOAD_FAILURE, storage.getLoadWarning());
+    }
+
     /**
      * Saving and loading should preserve task types, details, dates, times, and status.
      */
