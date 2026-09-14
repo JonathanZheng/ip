@@ -41,6 +41,15 @@ from the filesystem. If writing or replacement fails, the command reports an err
 and restores both the task list and the previous undo opportunity. Check file/folder
 permissions and free disk space, then retry. The original data file is not truncated.
 
+## Testing
+
+With Java 25, run `./gradlew check` for JUnit, Checkstyle, and non-GUI coverage checks.
+Run `./gradlew testChineseLocale` to repeat the JUnit suite with Chinese JVM defaults.
+Use `gradlew.bat` on Windows.
+
+See [automated testing and coverage](test/testing.md) for reports and coverage limits,
+and [the manual GUI test plan](test/gui-test-plan.md) for display and OS checks.
+
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.
