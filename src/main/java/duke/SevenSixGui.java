@@ -64,7 +64,7 @@ public class SevenSixGui extends Application {
     private HBox createHeader() {
         Label title = new Label("SevenSix");
         title.getStyleClass().add("title");
-        Label subtitle = new Label("Your friendly task assistant");
+        Label subtitle = new Label("Aligning your deliverables end to end");
         subtitle.getStyleClass().add("subtitle");
         HBox header = new HBox(title, subtitle);
         header.setAlignment(Pos.BASELINE_LEFT);
@@ -94,9 +94,9 @@ public class SevenSixGui extends Application {
      */
     private HBox createInputBar() {
         userInput = new TextField();
-        userInput.setPromptText("Enter a command, such as: todo read book");
+        userInput.setPromptText("Share an action item, such as: todo read book");
         userInput.getStyleClass().add("command-field");
-        sendButton = new Button("Send");
+        sendButton = new Button("Action it");
         sendButton.setDefaultButton(true);
         sendButton.getStyleClass().add("send-button");
         HBox inputBar = new HBox(userInput, sendButton);
@@ -142,7 +142,7 @@ public class SevenSixGui extends Application {
 
     /** Displays the initial greeting and focuses the command field. */
     private void showGreeting() {
-        addMessage(DialogBox.getBotDialog("Hello! I'm SevenSix.\nWhat can I do for you?"));
+        addMessage(DialogBox.getBotDialog(Ui.getGreeting()));
         userInput.requestFocus();
     }
 

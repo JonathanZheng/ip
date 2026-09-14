@@ -1,7 +1,7 @@
 /* Window-wide look of the SevenSix GUI. */
 
 .root {
-    -fx-font-family: "System";
+    -fx-font-family: "Avenir Next", "Segoe UI", "System";
     -fx-font-size: 13px;
     -fx-background-color: #f8fafc;
 }
@@ -52,11 +52,11 @@
 }
 
 .command-field:focused {
-    -fx-border-color: #2563eb;
+    -fx-border-color: #0d9488;
 }
 
 .send-button {
-    -fx-background-color: #2563eb;
+    -fx-background-color: #0d9488;
     -fx-background-radius: 8;
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
@@ -65,7 +65,7 @@
 }
 
 .send-button:hover {
-    -fx-background-color: #1d4ed8;
+    -fx-background-color: #0f766e;
 }
 
 /* Messages: the user's commands and the chatbot's replies look different. */
@@ -75,7 +75,7 @@
 }
 
 .user-message {
-    -fx-background-color: #2563eb;
+    -fx-background-color: #0d9488;
     -fx-background-radius: 12 12 3 12;
     -fx-text-fill: #ffffff;
     -fx-padding: 6 12 6 12;
@@ -107,7 +107,7 @@
 }
 
 .avatar-circle {
-    -fx-fill: #0f172a;
+    -fx-fill: #b45309;
 }
 
 .avatar-text {
