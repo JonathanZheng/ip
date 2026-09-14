@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
@@ -13,6 +14,57 @@ java {
 checkstyle {
     toolVersion = '10.26.1'
     configFile = file('config/checkstyle/checkstyle.xml')
+}
+
+// JaCoCo 0.8.14 supports the Java 25 bytecode used by this project.
+jacoco {
+    toolVersion = '0.8.14'
+}
+
+// Exclude only the JavaFX window, message widgets, and their launcher.
+def nonGuiClasses = sourceSets.main.output.asFileTree.matching {
+    exclude 'duke/SevenSixGui*', 'duke/DialogBox*', 'duke/Launcher*'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required = true
+    }
+    classDirectories.setFrom(nonGuiClasses)
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+    classDirectories.setFrom(nonGuiClasses)
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                minimum = 0.99
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.97
+            }
+        }
+    }
+}
+
+check {
+    dependsOn jacocoTestReport, jacocoTestCoverageVerification
+}
+
+// Exercise the entire suite in a fresh JVM whose default language is Chinese.
+tasks.register('testChineseLocale', Test) {
+    description = 'Runs all JUnit tests with the zh-CN JVM locale.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform()
+    systemProperty 'user.language', 'zh'
+    systemProperty 'user.country', 'CN'
 }
 
 repositories {
@@ -34,6 +86,7 @@ dependencies {
     implementation("org.openjfx:javafx-graphics:${javaFxVersion}:linux")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${jUnitVersion}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
