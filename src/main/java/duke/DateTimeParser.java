@@ -48,16 +48,45 @@ public final class DateTimeParser {
      * @throws SevenSixException if the text does not use a supported format.
      */
     public static ParsedDateTime parse(String text) throws SevenSixException {
-        assert text != null && !text.isBlank() : "Command parsing must reject blank date text before parsing";
+        if (text == null || text.isBlank()) {
+            throw new SevenSixException(Ui.INVALID_DATE);
+        }
+        ParsedDateTime parsed = parseDateTime(text);
+        if (parsed == null) {
+            parsed = parseDate(text);
+        }
+        if (parsed == null) {
+            throw new SevenSixException(Ui.INVALID_DATE);
+        }
+        return parsed;
+    }
+
+    /** Tries the supported date-time formats without accepting precision that storage would discard.
+     *
+     * @param text the date-time input.
+     * @return the parsed value, or null when no supported format matches.
+     */
+    private static ParsedDateTime parseDateTime(String text) {
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
             try {
                 LocalDateTime dateTime = LocalDateTime.parse(text, formatter);
+                if (dateTime.getSecond() != 0 || dateTime.getNano() != 0) {
+                    continue;
+                }
                 return new ParsedDateTime(dateTime.toLocalDate(), dateTime.toLocalTime());
             } catch (DateTimeParseException exception) {
                 // Try the next supported format.
             }
         }
+        return null;
+    }
 
+    /** Tries the supported date-only formats with strict calendar validation.
+     *
+     * @param text the date input.
+     * @return the parsed value, or null when no supported format matches.
+     */
+    private static ParsedDateTime parseDate(String text) {
         for (DateTimeFormatter formatter : DATE_FORMATTERS) {
             try {
                 return new ParsedDateTime(LocalDate.parse(text, formatter), null);
@@ -66,8 +95,7 @@ public final class DateTimeParser {
             }
         }
 
-        throw new SevenSixException(
-                "use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.");
+        return null;
     }
 
     /**

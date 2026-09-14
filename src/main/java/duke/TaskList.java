@@ -39,6 +39,24 @@ public class TaskList implements Iterable<Task> {
         tasks.add(task);
     }
 
+    /** Checks whether an equivalent task already exists, regardless of its status.
+     *
+     * @param candidate the task to check.
+     * @return true if its type, description, and date details are already present.
+     */
+    public boolean hasDuplicate(Task candidate) {
+        return tasks.stream().anyMatch(task -> TaskValidation.hasSameDetails(task, candidate));
+    }
+
+    /** Restores all tasks from an independently copied snapshot.
+     *
+     * @param replacementTasks the tasks that become the new task list.
+     */
+    public void replaceWith(List<Task> replacementTasks) {
+        tasks.clear();
+        tasks.addAll(replacementTasks);
+    }
+
     /**
      * Returns the task at a zero-based index.
      *
