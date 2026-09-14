@@ -14,6 +14,27 @@ import java.util.stream.StreamSupport;
  * holds no state of its own.
  */
 public class Ui {
+    /** Defines the application name used by the graphical interface. */
+    public static final String APPLICATION_NAME = "SevenSix";
+    /** Defines the short product description shown beside the application name. */
+    public static final String APPLICATION_SUBTITLE = "PRODUCTIVITY PARTNER";
+    /** Defines the small label above the graphical interface introduction. */
+    public static final String HEADER_EYEBROW = "COMMAND CENTER";
+    /** Defines the graphical interface introduction title. */
+    public static final String HEADER_TITLE = "Keep every deliverable moving.";
+    /** Defines the graphical interface introduction subtitle. */
+    public static final String HEADER_SUBTITLE = "Capture, review, and close out your work in one focused space.";
+    /** Defines the readiness label shown in the graphical interface header. */
+    public static final String READY_STATUS = "● READY";
+    /** Defines the label shown above the graphical command field. */
+    public static final String COMPOSER_LABEL = "NEW COMMAND";
+    /** Defines the placeholder shown in the graphical command field. */
+    public static final String INPUT_PROMPT = "Try: todo review proposal";
+    /** Defines the hint shown below the graphical command field. */
+    public static final String COMPOSER_HINT = "Press Enter to send  ·  Try list, find, or undo anytime";
+    /** Defines the label used by the graphical command button. */
+    public static final String SEND_BUTTON_LABEL = "Send command  →";
+
     /** Separates the chatbot's greeting, responses, and prompts. */
     private static final String SEPARATOR = "____________________________________________________________";
     /** Prefix used to make input errors recognizable in the user interface. */

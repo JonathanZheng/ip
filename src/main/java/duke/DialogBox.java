@@ -18,9 +18,9 @@ public class DialogBox extends HBox {
     /** Share of the conversation width a user bubble may use, keeping it visibly on one side. */
     private static final double USER_WIDTH_FRACTION = 0.8;
     /** Share of the conversation width a chatbot reply may use; replies can be long. */
-    private static final double REPLY_WIDTH_FRACTION = 1.0;
+    private static final double REPLY_WIDTH_FRACTION = 0.86;
     /** Radius of the chatbot avatar; kept small so it takes little space from the text. */
-    private static final double AVATAR_RADIUS = 12.0;
+    private static final double AVATAR_RADIUS = 14.0;
 
     /** The label containing the message text. */
     private final Label messageLabel;
