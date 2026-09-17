@@ -28,6 +28,7 @@ window dimensions, date, and result for each session.
 | G10 | Use a directory as the task-file path, or a disposable corrupt task file. | Startup warning is visible; failed writes show errors; existing valid tasks remain unchanged. |
 | G11 | Enter `bye`, then separately reopen and close using the window close control. | The application exits without an uncaught exception; saved tasks survive restart. |
 | G12 | Repeat under English and Chinese OS languages, and at different display scaling levels. | Dates retain the documented English format; task text is preserved; controls do not overlap. |
+| G13 | Submit `help` using Enter and Send command, resize to 560x520, then submit `help todo`. | The full guide appears as a normal reply and remains readable by scrolling; extra arguments produce an error; the composer hint points to help. |
 
 ## Recorded local rendering checks
 
@@ -52,9 +53,9 @@ All rows below are pending; do not infer results from JVM locale tests.
 
 | Platform | OS language | Display/scaling examples | Required cases |
 | --- | --- | --- | --- |
-| macOS | English and Chinese | Native Retina and a scaled display mode | G1-G12 with physical input |
-| Windows | English and Chinese | 1366x768 at 100%; 1920x1080 at 150% | G1-G12 |
-| Linux | English and Chinese | 1366x768 and 1920x1080; available HiDPI mode | G1-G12 |
+| macOS | English and Chinese | Native Retina and a scaled display mode | G1-G13 with physical input |
+| Windows | English and Chinese | 1366x768 at 100%; 1920x1080 at 150% | G1-G13 |
+| Linux | English and Chinese | 1366x768 and 1920x1080; available HiDPI mode | G1-G13 |
 
 On each available machine, also run `gradlew check testChineseLocale`, using
 `./gradlew` or `gradlew.bat` as appropriate. Record failures and skipped tests,

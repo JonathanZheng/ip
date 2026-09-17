@@ -31,7 +31,7 @@ public class Ui {
     /** Defines the placeholder shown in the graphical command field. */
     public static final String INPUT_PROMPT = "Try: todo review proposal";
     /** Defines the hint shown below the graphical command field. */
-    public static final String COMPOSER_HINT = "Press Enter to send  ·  Try list, find, or undo anytime";
+    public static final String COMPOSER_HINT = "Press Enter to send  ·  Type help for commands and examples";
     /** Defines the label used by the graphical command button. */
     public static final String SEND_BUTTON_LABEL = "Send command  →";
 
@@ -57,7 +57,7 @@ public class Ui {
     /** Rejects characters that cannot safely round-trip through a one-line record. */
     public static final String INVALID_CHARACTERS = "commands cannot contain line breaks or control characters.";
     /** Explains that argument-free commands cannot accept extra text. */
-    public static final String UNEXPECTED_ARGUMENTS = "list, undo, and bye do not accept extra parameters.";
+    public static final String UNEXPECTED_ARGUMENTS = "list, undo, bye, and help do not accept extra parameters.";
     /** Explains why a repeated or misplaced date marker is rejected. */
     public static final String INVALID_PARAMETERS = "supply each date parameter exactly once, in the expected order.";
     /** Describes date input when its calendar values or precision are invalid. */
@@ -215,8 +215,36 @@ public class Ui {
      * @return the unknown-command message.
      */
     public static String getUnknownCommandMessage() {
-        return "that one is outside my wheelhouse. My core competencies are todo, deadline,"
-                + " event, list, mark, unmark, delete, and find.";
+        return "that one is outside my wheelhouse. Type help for available commands.";
+    }
+
+    /** Returns command syntax and examples shared by both interfaces.
+     *
+     * @return the help guide, with one instruction per line.
+     */
+    public static String getHelpMessage() {
+        return joinResponseLines(
+                "Here is your command playbook:",
+                "  help - Show this guide.",
+                "  todo <description> - Add a task without a date.",
+                "  deadline <description> /by <date/time> - Add a task with a due date.",
+                "  event <description> /from <date/time> /to <date/time> - Add an event.",
+                "  list - Show all tasks and their numbers.",
+                "  mark <number> - Mark a task as done.",
+                "  unmark <number> - Mark a task as not done.",
+                "  delete <number> - Remove a task.",
+                "  find <keyword> - Search descriptions, ignoring letter case.",
+                "  undo - Undo the most recent task change, once.",
+                "  bye - Exit SevenSix.",
+                "Use task numbers from list, starting at 1.",
+                "Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.",
+                "Events must end after they start; omitted times mean midnight.",
+                "Examples:",
+                "  todo read book",
+                "  deadline submit report /by 2026-09-30 1800",
+                "  event team meeting /from 2026-09-18 1400 /to 2026-09-18 1500",
+                "  mark 1",
+                "Help does not change tasks or undo history.");
     }
 
     /**

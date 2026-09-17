@@ -13,6 +13,12 @@ Use JDK 25, then run the following command from the project root:
 The GUI accepts the same commands as the console version. Press Enter or click `Send command` to submit a
 command. Tasks are saved to `data/duke.txt` by default.
 
+## Getting help
+
+Enter `help` in either interface to see all commands, their syntax, date formats,
+and examples. It takes no arguments and does not change tasks or undo history.
+See [the help command guide](docs/README.md#getting-help) for more details.
+
 ## Input validation and recovering from errors
 
 Extra spaces and tabs are accepted and normalized to single spaces. Task descriptions
@@ -28,7 +34,7 @@ characters are rejected because each saved task occupies one line.
 - A duplicate has the same task type, case-sensitive description, and date/time
   fields, even if the existing task is marked done. Different schedules are allowed.
 - Task numbers must contain digits only and refer to an existing task. `list`,
-  `undo`, and `bye` do not accept additional arguments.
+  `undo`, `bye`, and `help` do not accept additional arguments.
 
 A missing task file starts an empty list and is created on the first successful
 change. An invalid path, unreadable file, or corrupt/duplicate record produces a
