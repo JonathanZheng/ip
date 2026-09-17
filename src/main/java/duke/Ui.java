@@ -37,6 +37,23 @@ public class Ui {
 
     /** Explains why an empty command cannot be processed. */
     public static final String EMPTY_COMMAND = "enter a command, such as list or todo <description>.";
+    /** Explains why a to-do command needs a description. */
+    public static final String MISSING_TODO_DESCRIPTION =
+            "a todo needs a description. Let us put some substance behind it.";
+    /** Explains the required deadline details. */
+    public static final String MISSING_DEADLINE_DETAILS =
+            "a deadline needs both a description and a due time to be actionable.";
+    /** Explains the required event details. */
+    public static final String MISSING_EVENT_DETAILS =
+            "an event needs a description, a start, and an end before I can calendar it.";
+    /** Explains why a search needs a keyword. */
+    public static final String MISSING_FIND_KEYWORD = "a find needs a keyword before I can surface anything.";
+    /** Rejects a task number that is not a supported integer. */
+    public static final String INVALID_TASK_NUMBER = "please reference a valid deliverable number.";
+    /** Rejects a task number outside the current list. */
+    public static final String TASK_NOT_FOUND = "that deliverable number is not in your pipeline.";
+    /** Explains why undo cannot run before a task change has been recorded. */
+    public static final String EMPTY_UNDO_HISTORY = "there is nothing in the rollback history yet.";
     /** Rejects characters that cannot safely round-trip through a one-line record. */
     public static final String INVALID_CHARACTERS = "commands cannot contain line breaks or control characters.";
     /** Explains that argument-free commands cannot accept extra text. */
@@ -294,7 +311,7 @@ public class Ui {
      * Returns a grammatically correct description of a number of tasks.
      *
      * @param numberOfTasks the number of stored tasks.
-     * @return {@code task} for one task, or {@code tasks} otherwise.
+     * @return {@code deliverable} for one task, or {@code deliverables} otherwise.
      */
     private static String getTaskCountDescription(int numberOfTasks) {
         return numberOfTasks == 1 ? "deliverable" : "deliverables";

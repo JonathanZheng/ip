@@ -26,12 +26,6 @@ class ParserTest {
     }
 
     @Test
-    void isExactCommandKeywordWithDetailsReturnsFalse() {
-        assertTrue(Parser.isExactCommand("list", Parser.COMMAND_LIST));
-        assertFalse(Parser.isExactCommand("list all", Parser.COMMAND_LIST));
-    }
-
-    @Test
     void parseTodoDescriptionReturnsTrimmedDescription() throws SevenSixException {
         assertEquals("read book", Parser.parseTodoDescription("todo   read book  "));
     }

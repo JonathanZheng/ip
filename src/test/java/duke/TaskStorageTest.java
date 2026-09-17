@@ -56,6 +56,17 @@ class TaskStorageTest {
         Path dataFile = temporaryDirectory.resolve("nested").resolve("tasks.txt");
         TaskStorage storage = new TaskStorage(dataFile);
 
+        assertTrue(storage.save(createMixedTasks()));
+
+        assertMixedTaskData(storage.load());
+        assertTrue(Files.exists(dataFile));
+    }
+
+    /** Creates one task of each type, including escaped text and a completed deadline.
+     *
+     * @return the ordered tasks used to exercise storage round-tripping.
+     */
+    private List<Task> createMixedTasks() {
         Todo todo = new Todo("read | book\\");
         Deadline deadline = new Deadline("return book", LocalDate.of(2019, 6, 6),
                 LocalTime.of(18, 0));
@@ -63,26 +74,56 @@ class TaskStorageTest {
         Event event = new Event("project meeting", LocalDate.of(2019, 8, 6),
                 LocalTime.of(14, 0), LocalDate.of(2019, 8, 6), LocalTime.of(16, 0));
 
-        assertTrue(storage.save(List.of(todo, deadline, event)));
+        return List.of(todo, deadline, event);
+    }
 
-        List<Task> loadedTasks = storage.load();
+    /** Checks the order and details of the mixed-task fixture after reloading.
+     *
+     * @param loadedTasks the tasks restored from storage.
+     */
+    private void assertMixedTaskData(List<Task> loadedTasks) {
         assertEquals(3, loadedTasks.size());
-        assertEquals("read | book\\", loadedTasks.get(0).getDescription());
-        assertFalse(loadedTasks.get(0).isDone());
+        assertLoadedTodo(loadedTasks.get(0));
+        assertLoadedDeadline(loadedTasks.get(1));
+        assertLoadedEvent(loadedTasks.get(2));
+    }
 
-        assertTrue(loadedTasks.get(1) instanceof Deadline);
-        Deadline loadedDeadline = (Deadline) loadedTasks.get(1);
+    /** Checks that escaped text, type, and incomplete status survive reloading.
+     *
+     * @param task the restored to-do task.
+     */
+    private void assertLoadedTodo(Task task) {
+        assertTrue(task instanceof Todo);
+        assertEquals("read | book\\", task.getDescription());
+        assertFalse(task.isDone());
+    }
+
+    /** Checks that a deadline retains its description, due date, time, and completed status.
+     *
+     * @param task the restored deadline.
+     */
+    private void assertLoadedDeadline(Task task) {
+        assertTrue(task instanceof Deadline);
+        Deadline loadedDeadline = (Deadline) task;
+        assertEquals("return book", loadedDeadline.getDescription());
         assertEquals(LocalDate.of(2019, 6, 6), loadedDeadline.getBy());
         assertEquals(LocalTime.of(18, 0), loadedDeadline.getByTime());
         assertTrue(loadedDeadline.isDone());
+    }
 
-        assertTrue(loadedTasks.get(2) instanceof Event);
-        Event loadedEvent = (Event) loadedTasks.get(2);
+    /** Checks that an event retains its description, schedule, and incomplete status.
+     *
+     * @param task the restored event.
+     */
+    private void assertLoadedEvent(Task task) {
+        assertTrue(task instanceof Event);
+        Event loadedEvent = (Event) task;
+        assertEquals("project meeting", loadedEvent.getDescription());
         assertEquals(LocalDate.of(2019, 8, 6), loadedEvent.getFrom());
         assertEquals(LocalTime.of(14, 0), loadedEvent.getFromTime());
         assertEquals(LocalDate.of(2019, 8, 6), loadedEvent.getTo());
         assertEquals(LocalTime.of(16, 0), loadedEvent.getToTime());
-        assertTrue(Files.exists(dataFile));
+        assertFalse(loadedEvent.isDone());
     }
 
     /**

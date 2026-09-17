@@ -74,13 +74,6 @@ to `SevenSix`.
   command.
 * `TaskList` and `TaskStorage` own the in-memory list and its persistence.
 
-### Known code quality debt
-
-Mention this when relevant, and fix it only when the user asks.
-
-* `src/main/java/duke/TaskStorage.java` is a little over 300 lines. It has one
-  responsibility, so the length is mostly Javadoc rather than mixed concerns.
-
 ## Git commit message standard
 
 Follow the project skill `seedu-git-standard` in `.codex/skills/seedu-git-standard/SKILL.md` for all

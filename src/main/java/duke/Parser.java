@@ -104,17 +104,6 @@ public class Parser {
     }
 
     /**
-     * Checks whether a command is exactly a keyword, with no details after it.
-     *
-     * @param command the normalized command to inspect.
-     * @param commandKeyword the command keyword to match.
-     * @return {@code true} when the command is the keyword on its own.
-     */
-    public static boolean isExactCommand(String command, String commandKeyword) {
-        return command.equals(commandKeyword);
-    }
-
-    /**
      * Parses the description of a to-do command.
      *
      * @param command the complete to-do command.
@@ -125,7 +114,7 @@ public class Parser {
         assert isCommand(command, COMMAND_TODO) : "getResponse routes only todo commands here, so the cut is safe";
         String description = removeKeyword(command, COMMAND_TODO);
         if (description.isBlank()) {
-            throw new SevenSixException("a todo needs a description. Let us put some substance behind it.");
+            throw new SevenSixException(Ui.MISSING_TODO_DESCRIPTION);
         }
         return description;
     }
@@ -144,7 +133,7 @@ public class Parser {
         String description = fields[0].strip();
         String by = fields[1].strip();
         if (description.isBlank() || by.isBlank()) {
-            throw new SevenSixException("a deadline needs both a description and a due time to be actionable.");
+            throw new SevenSixException(Ui.MISSING_DEADLINE_DETAILS);
         }
         DateTimeParser.ParsedDateTime parsedBy = DateTimeParser.parse(by);
         return new Deadline(description, parsedBy.getDate(), parsedBy.getTime());
@@ -164,7 +153,7 @@ public class Parser {
         String from = fields[1].strip();
         String to = fields[2].strip();
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
-            throw new SevenSixException("an event needs a description, a start, and an end before I can calendar it.");
+            throw new SevenSixException(Ui.MISSING_EVENT_DETAILS);
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
@@ -203,7 +192,7 @@ public class Parser {
         assert isCommand(command, COMMAND_FIND) : "getResponse routes only find commands here, so the cut is safe";
         String keyword = removeKeyword(command, COMMAND_FIND);
         if (keyword.isBlank()) {
-            throw new SevenSixException("a find needs a keyword before I can surface anything.");
+            throw new SevenSixException(Ui.MISSING_FIND_KEYWORD);
         }
         return keyword;
     }
@@ -225,7 +214,7 @@ public class Parser {
             }
             return Integer.parseInt(argument);
         } catch (NumberFormatException exception) {
-            throw new SevenSixException("please reference a valid deliverable number.");
+            throw new SevenSixException(Ui.INVALID_TASK_NUMBER);
         }
     }
 
