@@ -6,6 +6,8 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Verifies command processing shared by the console and JavaFX interfaces.
@@ -56,14 +58,25 @@ class SevenSixTest {
 
     /**
      * Invalid input should use a clearly labeled error response.
+     *
+     * @param command the rejected command.
+     * @param message the existing user-visible explanation.
      */
-    @Test
-    void getResponseInvalidCommandReturnsHelpfulError() {
+    @ParameterizedTest
+    @CsvSource(value = {
+        "todo|a todo needs a description. Let us put some substance behind it.",
+        "deadline /by 2024-01-01|a deadline needs both a description and a due time to be actionable.",
+        "event /from 2024-01-01 /to 2024-01-02|"
+                + "an event needs a description, a start, and an end before I can calendar it.",
+        "find|a find needs a keyword before I can surface anything.",
+        "mark two|please reference a valid deliverable number.",
+        "mark 1|that deliverable number is not in your pipeline.",
+        "undo|there is nothing in the rollback history yet."
+    }, delimiter = '|')
+    void getResponseInvalidCommandReturnsHelpfulError(String command, String message) {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("Flagging a blocker: a todo needs a description."
-                        + " Let us put some substance behind it.",
-                chatbot.getResponse("todo"));
+        assertEquals("Flagging a blocker: " + message, chatbot.getResponse(command));
     }
 
     /**

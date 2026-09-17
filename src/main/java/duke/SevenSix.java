@@ -267,7 +267,7 @@ public class SevenSix {
      */
     private String undoLastCommand() throws SevenSixException {
         if (!undoHistory.hasSnapshot()) {
-            throw new SevenSixException("there is nothing in the rollback history yet.");
+            throw new SevenSixException(Ui.EMPTY_UNDO_HISTORY);
         }
         tasks.replaceWith(undoHistory.takeSnapshot());
         saveTasks();
@@ -283,7 +283,7 @@ public class SevenSix {
      */
     private Task getTask(int taskNumber) throws SevenSixException {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new SevenSixException("that deliverable number is not in your pipeline.");
+            throw new SevenSixException(Ui.TASK_NOT_FOUND);
         }
         return tasks.get(taskNumber - 1);
     }
