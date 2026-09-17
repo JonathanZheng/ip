@@ -80,7 +80,7 @@ class ParserErrorTest {
     /** Argument-free commands should explain unexpected extra text. */
     @Test
     void parseCommandKeywordRejectsExtraArguments() {
-        for (String command : List.of("list all", "undo 1", "bye now")) {
+        for (String command : List.of("list all", "undo 1", "bye now", "help todo")) {
             SevenSixException error = assertThrows(SevenSixException.class,
                     () -> Parser.parseCommandKeyword(command));
             assertEquals(Ui.UNEXPECTED_ARGUMENTS, error.getMessage());

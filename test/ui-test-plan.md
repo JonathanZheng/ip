@@ -206,13 +206,13 @@ ____________________________________________________________
 Flagging a blocker: that deliverable number is not in your pipeline.
 ____________________________________________________________
 ____________________________________________________________
-Flagging a blocker: list, undo, and bye do not accept extra parameters.
+Flagging a blocker: list, undo, bye, and help do not accept extra parameters.
 ____________________________________________________________
 ____________________________________________________________
-Flagging a blocker: list, undo, and bye do not accept extra parameters.
+Flagging a blocker: list, undo, bye, and help do not accept extra parameters.
 ____________________________________________________________
 ____________________________________________________________
-Flagging a blocker: list, undo, and bye do not accept extra parameters.
+Flagging a blocker: list, undo, bye, and help do not accept extra parameters.
 ____________________________________________________________
 ____________________________________________________________
 Flagging a blocker: enter a command, such as list or todo <description>.
@@ -419,7 +419,7 @@ ____________________________________________________________
 Flagging a blocker: a todo needs a description. Let us put some substance behind it.
 ____________________________________________________________
 ____________________________________________________________
-Flagging a blocker: that one is outside my wheelhouse. My core competencies are todo, deadline, event, list, mark, unmark, delete, and find.
+Flagging a blocker: that one is outside my wheelhouse. Type help for available commands.
 ____________________________________________________________
 ____________________________________________________________
 Flagging a blocker: use yyyy-MM-dd, yyyy-MM-dd HHmm, or d/M/yyyy HHmm for dates and times.
@@ -688,5 +688,176 @@ Flagging a blocker: there is nothing in the rollback history yet.
 ____________________________________________________________
 ____________________________________________________________
 Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: show help in an empty session
+
+- Aim: Help lists every command and examples, allows later commands, and creates no undo opportunity.
+- Run command: `rm -f .ui-test-data/help-empty.txt && java -ea -Dsevensix.data.file=.ui-test-data/help-empty.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+help
+list
+undo
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Here is your command playbook:
+  help - Show this guide.
+  todo <description> - Add a task without a date.
+  deadline <description> /by <date/time> - Add a task with a due date.
+  event <description> /from <date/time> /to <date/time> - Add an event.
+  list - Show all tasks and their numbers.
+  mark <number> - Mark a task as done.
+  unmark <number> - Mark a task as not done.
+  delete <number> - Remove a task.
+  find <keyword> - Search descriptions, ignoring letter case.
+  undo - Undo the most recent task change, once.
+  bye - Exit SevenSix.
+Use task numbers from list, starting at 1.
+Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.
+Events must end after they start; omitted times mean midnight.
+Examples:
+  todo read book
+  deadline submit report /by 2026-09-30 1800
+  event team meeting /from 2026-09-18 1400 /to 2026-09-18 1500
+  mark 1
+Help does not change tasks or undo history.
+____________________________________________________________
+____________________________________________________________
+Your pipeline is empty. Nothing to action right now.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: there is nothing in the rollback history yet.
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: help preserves tasks and undo history
+
+- Aim: Leading whitespace before help is accepted; help and rejected extra arguments preserve task status and the previous undo.
+- Run command: `rm -f .ui-test-data/help-history.txt && java -ea -Dsevensix.data.file=.ui-test-data/help-history.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+todo read book
+mark 1
+  help
+list
+help todo
+undo
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Circling back on your ask. I've actioned this deliverable:
+  [T][ ] read book
+Your pipeline now holds 1 deliverable.
+____________________________________________________________
+____________________________________________________________
+Love to see it. This deliverable has shipped:
+  [T][X] read book
+____________________________________________________________
+____________________________________________________________
+Here is your command playbook:
+  help - Show this guide.
+  todo <description> - Add a task without a date.
+  deadline <description> /by <date/time> - Add a task with a due date.
+  event <description> /from <date/time> /to <date/time> - Add an event.
+  list - Show all tasks and their numbers.
+  mark <number> - Mark a task as done.
+  unmark <number> - Mark a task as not done.
+  delete <number> - Remove a task.
+  find <keyword> - Search descriptions, ignoring letter case.
+  undo - Undo the most recent task change, once.
+  bye - Exit SevenSix.
+Use task numbers from list, starting at 1.
+Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.
+Events must end after they start; omitted times mean midnight.
+Examples:
+  todo read book
+  deadline submit report /by 2026-09-30 1800
+  event team meeting /from 2026-09-18 1400 /to 2026-09-18 1500
+  mark 1
+Help does not change tasks or undo history.
+____________________________________________________________
+____________________________________________________________
+1.[T][X] read book
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: list, undo, bye, and help do not accept extra parameters.
+____________________________________________________________
+____________________________________________________________
+Rolled back. Your pipeline is restored to its previous state.
+____________________________________________________________
+____________________________________________________________
+1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```
+
+## Test case: help accepts trailing whitespace at end of input
+
+- Aim: Trailing spaces and a tab are accepted even when the last command has no newline; end-of-input closes the console normally.
+- Run command: `printf 'help   \t' | java -ea -Dsevensix.data.file=.ui-test-data/help-eof.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Here is your command playbook:
+  help - Show this guide.
+  todo <description> - Add a task without a date.
+  deadline <description> /by <date/time> - Add a task with a due date.
+  event <description> /from <date/time> /to <date/time> - Add an event.
+  list - Show all tasks and their numbers.
+  mark <number> - Mark a task as done.
+  unmark <number> - Mark a task as not done.
+  delete <number> - Remove a task.
+  find <keyword> - Search descriptions, ignoring letter case.
+  undo - Undo the most recent task change, once.
+  bye - Exit SevenSix.
+Use task numbers from list, starting at 1.
+Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.
+Events must end after they start; omitted times mean midnight.
+Examples:
+  todo read book
+  deadline submit report /by 2026-09-30 1800
+  event team meeting /from 2026-09-18 1400 /to 2026-09-18 1500
+  mark 1
+Help does not change tasks or undo history.
 ____________________________________________________________
 ```

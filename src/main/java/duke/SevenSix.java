@@ -122,6 +122,7 @@ public class SevenSix {
     private String processCommand(String command) throws SevenSixException {
         return switch (Parser.parseCommandKeyword(command)) {
         case Parser.COMMAND_BYE -> Ui.getFarewellMessage();
+        case Parser.COMMAND_HELP -> Ui.getHelpMessage();
         case Parser.COMMAND_UNDO -> undoLastCommand();
         case Parser.COMMAND_TODO -> addTodo(command);
         case Parser.COMMAND_DEADLINE -> addDeadline(command);

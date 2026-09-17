@@ -86,8 +86,7 @@ class SevenSixTest {
     void getResponseUnknownCommandReturnsLabeledError() {
         SevenSix chatbot = createChatbot();
 
-        assertEquals("Flagging a blocker: that one is outside my wheelhouse. My core competencies"
-                        + " are todo, deadline, event, list, mark, unmark, delete, and find.",
+        assertEquals("Flagging a blocker: that one is outside my wheelhouse. Type help for available commands.",
                 chatbot.getResponse("blah"));
     }
 

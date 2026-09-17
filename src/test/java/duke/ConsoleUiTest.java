@@ -15,6 +15,8 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /** Verifies complete console output and termination while restoring process-wide streams after each test. */
 @ResourceLock("SYSTEM_STREAMS")
@@ -71,6 +73,21 @@ class ConsoleUiTest {
         }
     }
 
+    /** Help accepts trailing whitespace and standard line endings, including a final line without a newline.
+     *
+     * @param input the help command as delivered by the console input stream.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"help   \n", "help\t\r\n", " help \r", "help   "})
+    void runConsoleLoopProcessesHelpWithWhitespaceAndEndOfInput(String input) {
+        SevenSix chatbot = new SevenSix(temporaryDirectory.resolve("tasks.txt"));
+        try (ConsoleCapture console = new ConsoleCapture(input)) {
+            Ui.runConsoleLoop(chatbot);
+
+            assertEquals(block(Ui.getHelpMessage()), console.getOutput());
+        }
+    }
+
     /** A valid bye stops processing subsequent lines, including with Windows line endings. */
     @Test
     void runConsoleLoopStopsAfterBye() {
@@ -78,7 +95,7 @@ class ConsoleUiTest {
         try (ConsoleCapture console = new ConsoleCapture("bye now\r\n  bye\t\r\ntodo never added\r\n")) {
             Ui.runConsoleLoop(chatbot);
 
-            assertEquals(block("Flagging a blocker: list, undo, and bye do not accept extra parameters.")
+            assertEquals(block("Flagging a blocker: list, undo, bye, and help do not accept extra parameters.")
                     + block("Great sync. Let's touch base again soon!"), console.getOutput());
             assertEquals("Your pipeline is empty. Nothing to action right now.", chatbot.getResponse("list"));
         }

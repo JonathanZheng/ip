@@ -31,6 +31,8 @@ public class Parser {
     public static final String COMMAND_FIND = "find";
     /** Command keyword for undoing the most recent task-changing command. */
     public static final String COMMAND_UNDO = "undo";
+    /** Command keyword for displaying usage instructions. */
+    public static final String COMMAND_HELP = "help";
 
     /** Marker separating a deadline's description from its due time. */
     private static final String DEADLINE_BY_MARKER = "/by";
@@ -55,7 +57,7 @@ public class Parser {
         if (command == null || command.isBlank()) {
             throw new SevenSixException(Ui.EMPTY_COMMAND);
         }
-        if (command.codePoints().anyMatch(character -> Character.isISOControl(character) && character != '\t')) {
+        if (command.codePoints().anyMatch(Parser::isInvalidCommandCharacter)) {
             throw new SevenSixException(Ui.INVALID_CHARACTERS);
         }
         String normalizedCommand = command.replaceAll("\\h+", " ").strip();
@@ -63,6 +65,17 @@ public class Parser {
             throw new SevenSixException(Ui.EMPTY_COMMAND);
         }
         return normalizedCommand;
+    }
+
+    /** Rejects control characters and Unicode line breaks before trimming can hide them.
+     *
+     * @param character the Unicode code point to inspect.
+     * @return true for a line break or a control character other than a horizontal tab.
+     */
+    private static boolean isInvalidCommandCharacter(int character) {
+        return (Character.isISOControl(character) && character != '\t')
+                || Character.getType(character) == Character.LINE_SEPARATOR
+                || Character.getType(character) == Character.PARAGRAPH_SEPARATOR;
     }
 
     /** Extracts the routing keyword and validates commands that accept no arguments.
@@ -73,7 +86,8 @@ public class Parser {
      */
     public static String parseCommandKeyword(String command) throws SevenSixException {
         String keyword = command.split(" ", 2)[0];
-        if (List.of(COMMAND_LIST, COMMAND_UNDO, COMMAND_BYE).contains(keyword) && !command.equals(keyword)) {
+        if (List.of(COMMAND_LIST, COMMAND_UNDO, COMMAND_BYE, COMMAND_HELP).contains(keyword)
+                && !command.equals(keyword)) {
             throw new SevenSixException(Ui.UNEXPECTED_ARGUMENTS);
         }
         return keyword;
