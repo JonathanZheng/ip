@@ -63,7 +63,14 @@ public class SevenSixGui extends Application {
      * @return the configured conversation header.
      */
     private VBox createHeader() {
-        HBox brandRow = createBrandRow();
+        return createHeaderLayout(createBrandRow(), createHeaderCopy());
+    }
+
+    /** Creates the introductory labels beneath the application identity.
+     *
+     * @return the styled introduction.
+     */
+    private VBox createHeaderCopy() {
         Label eyebrow = new Label(Ui.HEADER_EYEBROW);
         eyebrow.getStyleClass().add("eyebrow");
         Label title = new Label(Ui.HEADER_TITLE);
@@ -74,6 +81,16 @@ public class SevenSixGui extends Application {
         subtitle.setWrapText(true);
         VBox headerCopy = new VBox(eyebrow, title, subtitle);
         headerCopy.getStyleClass().add("header-copy");
+        return headerCopy;
+    }
+
+    /** Arranges the identity row and introduction in the header.
+     *
+     * @param brandRow the application identity and readiness indicator.
+     * @param headerCopy the introductory labels.
+     * @return the styled header layout.
+     */
+    private VBox createHeaderLayout(HBox brandRow, VBox headerCopy) {
         VBox header = new VBox(brandRow, headerCopy);
         header.getStyleClass().add("header");
         return header;
