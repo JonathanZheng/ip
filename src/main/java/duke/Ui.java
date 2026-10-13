@@ -145,13 +145,27 @@ public class Ui {
         return "Nothing in your pipeline matches that search.";
     }
 
-    /**
-     * Returns the message shown after a command is undone.
+    /** Describes the reversed action and the affected task before that action.
      *
-     * @return the undo confirmation message.
+     * @param entry the change that was undone.
+     * @return the undo confirmation.
      */
-    public static String getUndoMessage() {
-        return "Rolled back. Your pipeline is restored to its previous state.";
+    public static String formatUndoMessage(UndoEntry entry) {
+        return "Undid " + getChangeDescription(entry.getType()) + ": " + entry.getTask();
+    }
+
+    /** Chooses user-facing wording for a task action.
+     *
+     * @param type the action to describe.
+     * @return the action description.
+     */
+    private static String getChangeDescription(ChangeType type) {
+        return switch (type) {
+        case ADD -> "addition";
+        case MARK -> "mark as done";
+        case UNMARK -> "mark as not done";
+        case DELETE -> "deletion";
+        };
     }
 
     /**

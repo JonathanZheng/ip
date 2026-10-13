@@ -23,10 +23,10 @@ class UndoHistoryTest {
         Event event = new Event("call", day, LocalTime.NOON, day, LocalTime.of(13, 0));
         deadline.markAsDone();
         UndoHistory history = new UndoHistory();
-        history.save(List.of(deadline, event));
+        history.save(List.of(deadline, event), ChangeType.ADD, new Todo("change"));
         deadline.markAsNotDone();
         event.markAsDone();
-        List<Task> restored = history.takeSnapshot();
+        List<Task> restored = history.takeEntry().restoreTasks();
 
         assertNotSame(deadline, restored.get(0));
         assertNotSame(event, restored.get(1));
@@ -38,10 +38,10 @@ class UndoHistoryTest {
     @Test
     void saveEmptyListCreatesConsumableSnapshot() {
         UndoHistory history = new UndoHistory();
-        history.save(List.of());
+        history.save(List.of(), ChangeType.ADD, new Todo("change"));
 
         assertTrue(history.hasSnapshot());
-        assertTrue(history.takeSnapshot().isEmpty());
+        assertTrue(history.takeEntry().restoreTasks().isEmpty());
         assertFalse(history.hasSnapshot());
     }
 
@@ -49,14 +49,28 @@ class UndoHistoryTest {
     @Test
     void copyCreatesIndependentHistoryAndTasks() {
         UndoHistory original = new UndoHistory();
-        original.save(List.of(new Todo("first")));
+        original.save(List.of(new Todo("first")), ChangeType.ADD, new Todo("change"));
         UndoHistory copy = original.copy();
-        original.takeSnapshot().get(0).markAsDone();
+        original.takeEntry().restoreTasks().get(0).markAsDone();
 
         assertFalse(original.hasSnapshot());
         assertTrue(copy.hasSnapshot());
-        assertFalse(copy.takeSnapshot().get(0).isDone());
+        assertFalse(copy.takeEntry().restoreTasks().get(0).isDone());
         assertFalse(new UndoHistory().copy().hasSnapshot());
+    }
+
+    /** Undo descriptions and snapshots must remain stable even if callers mutate returned tasks. */
+    @Test
+    void entryKeepsActionAndTaskIndependentOfLaterChanges() {
+        Todo task = new Todo("read book");
+        UndoEntry entry = new UndoEntry(List.of(task), ChangeType.DELETE, task);
+        task.markAsDone();
+        entry.getTask().markAsDone();
+        entry.restoreTasks().get(0).markAsDone();
+
+        assertEquals(ChangeType.DELETE, entry.getType());
+        assertEquals("Undid deletion: [T][ ] read book", Ui.formatUndoMessage(entry));
+        assertFalse(entry.restoreTasks().get(0).isDone());
     }
 
     @Test
@@ -67,10 +81,10 @@ class UndoHistoryTest {
     @Test
     void takeSnapshotAfterSaveReturnsRememberedTasksAndClearsHistory() {
         UndoHistory history = new UndoHistory();
-        history.save(new TaskList(List.of(new Todo("read book"))));
+        history.save(new TaskList(List.of(new Todo("read book"))), ChangeType.ADD, new Todo("change"));
 
         assertTrue(history.hasSnapshot());
-        List<Task> restoredTasks = history.takeSnapshot();
+        List<Task> restoredTasks = history.takeEntry().restoreTasks();
 
         assertEquals(1, restoredTasks.size());
         assertEquals("read book", restoredTasks.get(0).getDescription());
@@ -81,19 +95,20 @@ class UndoHistoryTest {
     void takeSnapshotAfterTaskIsMarkedReturnsStatusFromBeforeTheChange() {
         Todo task = new Todo("read book");
         UndoHistory history = new UndoHistory();
-        history.save(new TaskList(List.of(task)));
+        history.save(new TaskList(List.of(task)), ChangeType.ADD, new Todo("change"));
 
         task.markAsDone();
 
-        assertFalse(history.takeSnapshot().get(0).isDone());
+        assertFalse(history.takeEntry().restoreTasks().get(0).isDone());
     }
 
     @Test
     void saveReplacesThePreviousSnapshot() {
         UndoHistory history = new UndoHistory();
-        history.save(new TaskList(List.of(new Todo("read book"))));
-        history.save(new TaskList(List.of(new Todo("join sports club"), new Todo("borrow book"))));
+        history.save(new TaskList(List.of(new Todo("read book"))), ChangeType.ADD, new Todo("change"));
+        history.save(new TaskList(List.of(new Todo("join sports club"), new Todo("borrow book"))),
+                ChangeType.ADD, new Todo("change"));
 
-        assertEquals(2, history.takeSnapshot().size());
+        assertEquals(2, history.takeEntry().restoreTasks().size());
     }
 }

@@ -51,6 +51,6 @@ class InvariantTest {
         assertThrows(AssertionError.class, () -> DateTimeParser.formatForDisplay(null, null));
         assertThrows(AssertionError.class, () -> DateTimeParser.formatForStorage(null, null));
         assertThrows(AssertionError.class, () -> Ui.formatAddedTask(new Todo("task"), -1));
-        assertThrows(AssertionError.class, () -> new UndoHistory().takeSnapshot());
+        assertThrows(AssertionError.class, () -> new UndoHistory().takeEntry().restoreTasks());
     }
 }

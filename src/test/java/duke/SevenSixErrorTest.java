@@ -27,7 +27,7 @@ class SevenSixErrorTest {
         assertEquals(Ui.formatError(Ui.DUPLICATE_TASK), chatbot.getResponse("todo  read\tbook"));
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][X] read book",
                 chatbot.getResponse("list"));
-        assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"));
+        assertEquals("Undid mark as done: [T][ ] read book", chatbot.getResponse("undo"));
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
                 chatbot.getResponse("list"));
     }
@@ -64,7 +64,7 @@ class SevenSixErrorTest {
 
         Files.delete(file);
         Files.move(backup, file);
-        assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"), command);
+        assertEquals("Undid mark as done: [T][ ] first", chatbot.getResponse("undo"), command);
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first",
                 new SevenSix(file).getResponse("list"), command);
     }
@@ -93,7 +93,7 @@ class SevenSixErrorTest {
             assertTrue(Ui.isErrorResponse(chatbot.getResponse(command)), command);
             assertEquals(original, Files.readString(file), command);
         }
-        assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"));
+        assertEquals("Undid addition: [T][ ] first", chatbot.getResponse("undo"));
         assertEquals(Ui.getEmptyListMessage(), chatbot.getResponse("list"));
     }
 

@@ -101,7 +101,7 @@ class SevenSixTest {
 
         chatbot.getResponse("todo read book");
 
-        assertEquals("Rolled back. Your pipeline is restored to its previous state.",
+        assertEquals("Undid addition: [T][ ] read book",
                 chatbot.getResponse("undo"));
         assertEquals("Your pipeline is empty. Nothing to action right now.",
                 chatbot.getResponse("list"));
@@ -120,7 +120,7 @@ class SevenSixTest {
         chatbot.getResponse("deadline submit report /by 2019-06-06");
         chatbot.getResponse("mark 1");
 
-        assertEquals("Rolled back. Your pipeline is restored to its previous state.",
+        assertEquals("Undid mark as done: [D][ ] submit report (by: Jun 06 2019)",
                 chatbot.getResponse("undo"));
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[D][ ] submit report (by: Jun 06 2019)",
                 chatbot.getResponse("list"));

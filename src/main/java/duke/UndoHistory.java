@@ -1,83 +1,45 @@
 package duke;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Remembers the task list as it was before the most recent task-changing command.
- *
- * <p>The snapshot holds independent copies of the tasks, so later changes to the live task
- * list cannot alter what an undo command restores. Only one snapshot is kept, which is what
- * limits the chatbot to undoing a single command.
- */
+/** Remembers the latest successful task change and its independent pre-command state. */
 public class UndoHistory {
-    /** Copies of the tasks as they were before the most recent task-changing command. */
-    private List<Task> savedTasks;
+    private UndoEntry savedEntry;
 
-    /**
-     * Replaces the snapshot with independent copies of the supplied tasks.
+    /** Remembers a change before its action modifies the live tasks.
      *
-     * @param tasks the tasks to remember.
+     * @param tasks the task list before the change.
+     * @param type the action about to be performed.
+     * @param task the affected task before the action.
      */
-    public void save(Iterable<Task> tasks) {
-        savedTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            savedTasks.add(copyTask(task));
-        }
+    public void save(Iterable<Task> tasks, ChangeType type, Task task) {
+        savedEntry = new UndoEntry(tasks, type, task);
     }
 
-    /**
-     * Checks whether there is a snapshot available to restore.
+    /** Checks whether a change is available to undo.
      *
-     * @return {@code true} when a task-changing command has been recorded.
+     * @return true when an entry is available.
      */
     public boolean hasSnapshot() {
-        return savedTasks != null;
+        return savedEntry != null;
     }
 
-    /** Copies this history so a failed command can restore the previous undo opportunity.
+    /** Copies the history for recovery after a failed command.
      *
-     * @return an independent history with the same remembered tasks.
+     * @return an independently consumable history sharing only immutable entries.
      */
     public UndoHistory copy() {
         UndoHistory copy = new UndoHistory();
-        if (hasSnapshot()) {
-            copy.save(savedTasks);
-        }
+        copy.savedEntry = savedEntry;
         return copy;
     }
 
-    /**
-     * Returns the snapshot and clears it, so that each snapshot is restored at most once.
+    /** Consumes the saved entry exactly once.
      *
-     * @return the remembered tasks.
+     * @return the change to reverse.
      */
-    public List<Task> takeSnapshot() {
-        assert hasSnapshot() : "Callers check hasSnapshot before taking the snapshot";
-        List<Task> restoredTasks = savedTasks;
-        savedTasks = null;
-        return restoredTasks;
-    }
-
-    /**
-     * Creates an independent copy of a task, including its type-specific details and status.
-     *
-     * @param task the task to copy.
-     * @return an independent copy of the task.
-     */
-    private Task copyTask(Task task) {
-        Task copiedTask;
-        if (task instanceof Deadline deadline) {
-            copiedTask = new Deadline(deadline.getDescription(), deadline.getBy(), deadline.getByTime());
-        } else if (task instanceof Event event) {
-            copiedTask = new Event(event.getDescription(), event.getFrom(), event.getFromTime(),
-                    event.getTo(), event.getToTime());
-        } else {
-            copiedTask = new Todo(task.getDescription());
-        }
-        if (task.isDone()) {
-            copiedTask.markAsDone();
-        }
-        return copiedTask;
+    public UndoEntry takeEntry() {
+        assert hasSnapshot() : "Callers check hasSnapshot before taking an entry";
+        UndoEntry entry = savedEntry;
+        savedEntry = null;
+        return entry;
     }
 }

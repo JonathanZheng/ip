@@ -100,13 +100,12 @@ public class SevenSix {
      * @throws SevenSixException if validation or saving fails.
      */
     private String processWithRollback(String command) throws SevenSixException {
-        UndoHistory previousTasks = new UndoHistory();
-        previousTasks.save(tasks);
+        TaskSnapshot previousTasks = new TaskSnapshot(tasks);
         UndoHistory previousHistory = undoHistory.copy();
         try {
             return processCommand(command);
         } catch (SevenSixException exception) {
-            tasks.replaceWith(previousTasks.takeSnapshot());
+            tasks.replaceWith(previousTasks.restore());
             undoHistory = previousHistory;
             throw exception;
         }
@@ -181,7 +180,7 @@ public class SevenSix {
         if (tasks.hasDuplicate(task)) {
             throw new SevenSixException(Ui.DUPLICATE_TASK);
         }
-        undoHistory.save(tasks);
+        undoHistory.save(tasks, ChangeType.ADD, task);
         tasks.add(task);
         saveTasks();
         return Ui.formatAddedTask(task, tasks.size());
@@ -208,7 +207,7 @@ public class SevenSix {
      */
     private String markTask(String command) throws SevenSixException {
         Task task = getTask(Parser.parseTaskNumber(command, Parser.COMMAND_MARK));
-        undoHistory.save(tasks);
+        undoHistory.save(tasks, ChangeType.MARK, task);
         task.markAsDone();
         saveTasks();
         return Ui.formatMarkedTask(task);
@@ -223,7 +222,7 @@ public class SevenSix {
      */
     private String unmarkTask(String command) throws SevenSixException {
         Task task = getTask(Parser.parseTaskNumber(command, Parser.COMMAND_UNMARK));
-        undoHistory.save(tasks);
+        undoHistory.save(tasks, ChangeType.UNMARK, task);
         task.markAsNotDone();
         saveTasks();
         return Ui.formatUnmarkedTask(task);
@@ -239,7 +238,7 @@ public class SevenSix {
     private String deleteTask(String command) throws SevenSixException {
         int taskNumber = Parser.parseTaskNumber(command, Parser.COMMAND_DELETE);
         Task removedTask = getTask(taskNumber);
-        undoHistory.save(tasks);
+        undoHistory.save(tasks, ChangeType.DELETE, removedTask);
         tasks.remove(taskNumber - 1);
         saveTasks();
         return Ui.formatDeletedTask(removedTask, tasks.size());
@@ -270,9 +269,10 @@ public class SevenSix {
         if (!undoHistory.hasSnapshot()) {
             throw new SevenSixException(Ui.EMPTY_UNDO_HISTORY);
         }
-        tasks.replaceWith(undoHistory.takeSnapshot());
+        UndoEntry entry = undoHistory.takeEntry();
+        tasks.replaceWith(entry.restoreTasks());
         saveTasks();
-        return Ui.getUndoMessage();
+        return Ui.formatUndoMessage(entry);
     }
 
     /**

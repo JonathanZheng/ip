@@ -155,7 +155,8 @@ changes: `undo` after the deletion restores the original but keeps the replaceme
 **Format:** `undo`
 
 Restores and saves the list from before the latest successful add, mark, unmark,
-or delete command.
+or delete command. The reply identifies the reversed action and shows the
+affected task as it was before that action.
 
 ```text
 delete 2

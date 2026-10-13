@@ -75,7 +75,7 @@ Here is your pipeline:
 1.[T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-Rolled back. Your pipeline is restored to its previous state.
+Undid mark as done: [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
 Here is your pipeline:
@@ -689,7 +689,7 @@ Circling back on your ask. I've actioned this deliverable:
 Your pipeline now holds 1 deliverable.
 ____________________________________________________________
 ____________________________________________________________
-Rolled back. Your pipeline is restored to its previous state.
+Undid addition: [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
 Your pipeline is empty. Nothing to action right now.
@@ -822,7 +822,7 @@ ____________________________________________________________
 Flagging a blocker: list, undo, bye, and help do not accept extra parameters.
 ____________________________________________________________
 ____________________________________________________________
-Rolled back. Your pipeline is restored to its previous state.
+Undid mark as done: [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
 Here is your pipeline:

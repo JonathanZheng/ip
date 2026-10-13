@@ -44,7 +44,7 @@ class SevenSixCommandsTest {
                 + System.lineSeparator() + "  [T][ ] first", chatbot.getResponse("unmark 1"));
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first",
                 new SevenSix(file).getResponse("list"));
-        assertEquals("Rolled back. Your pipeline is restored to its previous state.", chatbot.getResponse("undo"));
+        assertEquals("Undid mark as not done: [T][X] first", chatbot.getResponse("undo"));
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][X] first",
                 new SevenSix(file).getResponse("list"));
     }
