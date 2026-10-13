@@ -10,7 +10,7 @@ import java.nio.file.Path;
  */
 public class SevenSix {
     /** Default relative path for persisted tasks. */
-    private static final Path DEFAULT_DATA_FILE = Path.of("data", "duke.txt");
+    private static final Path DEFAULT_DATA_FILE = Path.of("data", "sevensix.txt");
     /** System property that overrides the default data-file path during automated runs. */
     private static final String DATA_FILE_PROPERTY = "sevensix.data.file";
 

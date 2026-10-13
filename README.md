@@ -11,7 +11,7 @@ Use JDK 25, then run the following command from the project root:
 ```
 
 The GUI accepts the same commands as the console version. Press Enter or click `Send command` to submit a
-command. Tasks are saved to `data/duke.txt` by default.
+command. Tasks are saved to `data/sevensix.txt` by default.
 
 ## Getting help
 

@@ -196,13 +196,21 @@ SevenSix records dates; it does not send reminder notifications.
 
 ## Saving and backups
 
-Successful changes save automatically to `data/duke.txt` inside your launch folder.
+Successful changes save automatically to `data/sevensix.txt` inside your launch folder.
 **Launch from the same folder each time** to reload your tasks. A first run starts
 empty; adding a task creates the file. Conversation and undo history are not saved.
 
-To back up or transfer tasks, close SevenSix and copy `data/duke.txt`. On the new
+To back up or transfer tasks, close SevenSix and copy `data/sevensix.txt`. On the new
 computer, install Java 25 and place the copy in your app folder's `data` directory.
 Back up any existing file before replacing it.
+
+### Upgrading from an older data filename
+
+Close the app and back up your existing task file. Rename it to `sevensix.txt`
+inside the same `data` folder before launching this version. If that folder
+already contains `sevensix.txt`, keep both files backed up and choose which task
+list to use; do not overwrite either file without a backup. Older filenames are
+not loaded automatically.
 
 ## Troubleshooting
 
@@ -213,7 +221,7 @@ Back up any existing file before replacing it.
 | Invalid date or parameters | Check the formats above and use each required flag once, in order. |
 | Duplicate task | Use the existing task or change its description/schedule. Completion status does not make it distinct. |
 | Nothing to undo | Make a successful task change first. Repeat undo for earlier changes until this session's history is empty. |
-| Empty list after moving the JAR | Check your launch folder and restore your saved `data/duke.txt` there. |
+| Empty list after moving the JAR | Check your launch folder and restore your saved `data/sevensix.txt` there. |
 | Startup storage warning | Saving is disabled; valid loaded tasks remain viewable. Close the app, back up the file, fix its path/permissions or restore a valid backup, then restart. |
 | A change could not be saved | Tasks and undo history were restored. Check file/folder permissions and free disk space, then retry. |
 | Java version or launch error | Check `java -version` reports 25 and that the terminal is in the folder containing `SevenSix.jar`. |

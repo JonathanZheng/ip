@@ -950,3 +950,37 @@ ____________________________________________________________
 Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```
+
+## Test case: save tasks using the SevenSix default filename
+
+- Aim: Without a path override, tasks are saved to data/sevensix.txt in an isolated working directory.
+- Run command: `mkdir -p .ui-test-data/default-path && rm -f .ui-test-data/default-path/data/sevensix.txt && (cd .ui-test-data/default-path && java -ea -cp ../../out/production/ip sevensix.SevenSix) && test -f .ui-test-data/default-path/data/sevensix.txt`
+
+### Inputs
+
+```text
+todo check default storage
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Circling back on your ask. I've actioned this deliverable:
+  [T][ ] check default storage
+Your pipeline now holds 1 deliverable.
+____________________________________________________________
+____________________________________________________________
+Here is your pipeline:
+1.[T][ ] check default storage
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
+____________________________________________________________
+```

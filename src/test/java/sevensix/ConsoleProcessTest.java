@@ -24,14 +24,16 @@ class ConsoleProcessTest {
     @TempDir
     private Path temporaryDirectory;
 
-    /** An absent configuration must create data/duke.txt relative to the process working directory. */
+    /** An absent configuration must create data/sevensix.txt relative to the process working directory. */
     @Test
     void mainWithoutConfiguredPathCreatesDefaultFile() throws Exception {
         String output = runConsole(null, "todo 读书\nbye\n");
 
         assertTrue(output.contains("Your pipeline now holds 1 deliverable."));
         assertEquals("T | 0 | 读书" + System.lineSeparator(),
-                Files.readString(temporaryDirectory.resolve("data/duke.txt")));
+                Files.readString(temporaryDirectory.resolve("data/sevensix.txt")));
+        String reloadedOutput = runConsole(null, "list\nbye\n");
+        assertTrue(reloadedOutput.contains("1.[T][ ] 读书"), reloadedOutput);
     }
 
     /** Blank configuration uses the same default path as absent configuration.
@@ -44,7 +46,7 @@ class ConsoleProcessTest {
         runConsole(configuredPath, "todo first\nbye\n");
 
         assertEquals("T | 0 | first" + System.lineSeparator(),
-                Files.readString(temporaryDirectory.resolve("data/duke.txt")));
+                Files.readString(temporaryDirectory.resolve("data/sevensix.txt")));
     }
 
     /** Unicode working directories and filenames containing spaces survive a fresh JVM restart. */
