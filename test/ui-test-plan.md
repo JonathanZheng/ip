@@ -71,12 +71,14 @@ ____________________________________________________________
 Flagging a blocker: a deliverable with the same type, description, and dates already exists.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][X] read book
 ____________________________________________________________
 ____________________________________________________________
 Rolled back. Your pipeline is restored to its previous state.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
@@ -290,6 +292,7 @@ ____________________________________________________________
 Flagging a blocker: the change could not be saved. Check the task file and folder permissions and available disk space. No tasks or undo history were changed.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][ ] saved task
 ____________________________________________________________
 ____________________________________________________________
@@ -336,6 +339,7 @@ Circling back on your ask. I've actioned this deliverable:
 Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][X] read book
 2.[T][ ] borrow book
 ____________________________________________________________
@@ -344,6 +348,7 @@ Understood. I've moved this deliverable back into the pipeline:
   [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][ ] read book
 2.[T][ ] borrow book
 ____________________________________________________________
@@ -384,6 +389,7 @@ Circling back on your ask. I've actioned this deliverable:
 Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[D][ ] return book (by: Jun 06 2019)
 2.[D][ ] do homework (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
@@ -481,6 +487,7 @@ Circling back on your ask. I've actioned this deliverable:
 Your pipeline now holds 4 deliverables.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][ ] read book
 2.[D][ ] return book (by: Jun 06 2019)
 3.[E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
@@ -492,6 +499,7 @@ Noted. I've descoped this deliverable:
 Your pipeline now holds 3 deliverables.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][ ] read book
 2.[D][ ] return book (by: Jun 06 2019)
 3.[T][ ] join sports club
@@ -533,6 +541,7 @@ Circling back on your ask. I've actioned this deliverable:
 Your pipeline now holds 2 deliverables.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 2.[E][ ] orientation week (from: Oct 04 2019 to: Oct 11 2019)
 ____________________________________________________________
@@ -561,6 +570,7 @@ Hello! I'm SevenSix, your productivity thought partner.
 Which deliverables are we unlocking today?
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[D][ ] saved deadline (by: Dec 02 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
@@ -591,6 +601,7 @@ ____________________________________________________________
 Flagging a blocker: invalid or duplicate task records were skipped. Back up and repair the task file, then restart. Saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][X] valid saved task
 2.[D][ ] return book (by: Jun 06 2019)
 ____________________________________________________________
@@ -804,6 +815,7 @@ Examples:
 Help does not change tasks or undo history.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][X] read book
 ____________________________________________________________
 ____________________________________________________________
@@ -813,6 +825,7 @@ ____________________________________________________________
 Rolled back. Your pipeline is restored to its previous state.
 ____________________________________________________________
 ____________________________________________________________
+Here is your pipeline:
 1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________

@@ -23,7 +23,7 @@ class SevenSixCommandsTest {
         assertFalse(Ui.isErrorResponse(chatbot.getResponse("todo read book")));
         assertFalse(Ui.isErrorResponse(chatbot.getResponse("deadline return book /by 2024-02-29")));
         assertFalse(Ui.isErrorResponse(chatbot.getResponse("event meeting /from 2024-03-01 1200 /to 2024-03-01 1300")));
-        String expected = String.join(System.lineSeparator(), "1.[T][ ] read book",
+        String expected = String.join(System.lineSeparator(), "Here is your pipeline:", "1.[T][ ] read book",
                 "2.[D][ ] return book (by: Feb 29 2024)",
                 "3.[E][ ] meeting (from: Mar 01 2024 12:00 PM to: Mar 01 2024 1:00 PM)");
 
@@ -42,9 +42,11 @@ class SevenSixCommandsTest {
 
         assertEquals("Understood. I've moved this deliverable back into the pipeline:"
                 + System.lineSeparator() + "  [T][ ] first", chatbot.getResponse("unmark 1"));
-        assertEquals("1.[T][ ] first", new SevenSix(file).getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first",
+                new SevenSix(file).getResponse("list"));
         assertEquals("Rolled back. Your pipeline is restored to its previous state.", chatbot.getResponse("undo"));
-        assertEquals("1.[T][X] first", new SevenSix(file).getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][X] first",
+                new SevenSix(file).getResponse("list"));
     }
 
     /** Deleting the first task renumbers the list and undo restores its original position. */
@@ -56,9 +58,11 @@ class SevenSixCommandsTest {
 
         assertEquals(String.join(System.lineSeparator(), "Noted. I've descoped this deliverable:",
                 "  [T][ ] first", "Your pipeline now holds 1 deliverable."), chatbot.getResponse("delete 1"));
-        assertEquals("1.[T][ ] second", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] second",
+                chatbot.getResponse("list"));
         chatbot.getResponse("undo");
-        assertEquals("1.[T][ ] first" + System.lineSeparator() + "2.[T][ ] second", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first"
+                + System.lineSeparator() + "2.[T][ ] second", chatbot.getResponse("list"));
     }
 
     /** Removing the final task must persist an empty list rather than resurrect it at restart. */
@@ -84,7 +88,8 @@ class SevenSixCommandsTest {
                 chatbot.getResponse("find BOOK"));
         assertEquals("Nothing in your pipeline matches that search.", chatbot.getResponse("find holiday"));
         chatbot.getResponse("undo");
-        assertEquals("1.[T][ ] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
+                chatbot.getResponse("list"));
     }
 
     /** Identical schedules are duplicates, but changing an endpoint yields a distinct task. */
@@ -106,7 +111,8 @@ class SevenSixCommandsTest {
         chatbot.getResponse("todo first");
 
         assertEquals("Great sync. Let's touch base again soon!", chatbot.getResponse("\tbye  "));
-        assertEquals("1.[T][ ] first", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first",
+                chatbot.getResponse("list"));
         chatbot.getResponse("undo");
         assertEquals("Your pipeline is empty. Nothing to action right now.", chatbot.getResponse("list"));
     }

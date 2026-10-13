@@ -28,7 +28,8 @@ class SevenSixTest {
                 "Circling back on your ask. I've actioned this deliverable:",
                 "  [T][ ] read book",
                 "Your pipeline now holds 1 deliverable."), chatbot.getResponse("todo read book"));
-        assertEquals("1.[T][ ] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
+                chatbot.getResponse("list"));
     }
 
     /**
@@ -53,7 +54,8 @@ class SevenSixTest {
 
         SevenSix secondChatbot = new SevenSix(dataFile);
 
-        assertEquals("1.[T][ ] saved task", secondChatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] saved task",
+                secondChatbot.getResponse("list"));
     }
 
     /**
@@ -120,10 +122,11 @@ class SevenSixTest {
 
         assertEquals("Rolled back. Your pipeline is restored to its previous state.",
                 chatbot.getResponse("undo"));
-        assertEquals("1.[D][ ] submit report (by: Jun 06 2019)", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[D][ ] submit report (by: Jun 06 2019)",
+                chatbot.getResponse("list"));
 
         SevenSix reloadedChatbot = new SevenSix(dataFile);
-        assertEquals("1.[D][ ] submit report (by: Jun 06 2019)",
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[D][ ] submit report (by: Jun 06 2019)",
                 reloadedChatbot.getResponse("list"));
     }
 

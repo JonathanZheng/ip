@@ -138,7 +138,7 @@ class ConsoleUiTest {
             try (ConsoleCapture console = new ConsoleCapture("list\nbye\n")) {
                 SevenSix.main(new String[0]);
 
-                assertEquals(block(GREETING) + block("1.[T][ ] 借书")
+                assertEquals(block(GREETING) + block("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] 借书")
                         + block("Great sync. Let's touch base again soon!"), console.getOutput());
             }
         } finally {

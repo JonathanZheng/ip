@@ -34,6 +34,7 @@ list
 You should see:
 
 ```text
+Here is your pipeline:
 1.[T][ ] read book
 2.[D][ ] return book (by: Sep 30 2026 6:00 PM)
 3.[E][ ] study group (from: Sep 20 2026 2:00 PM to: Sep 20 2026 4:00 PM)

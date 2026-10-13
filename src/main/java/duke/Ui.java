@@ -221,13 +221,22 @@ public class Ui {
                 formatTaskCount(numberOfTasks));
     }
 
+    /** Formats the full pipeline under a heading.
+     *
+     * @param tasks the tasks in insertion order.
+     * @return the heading followed by numbered tasks.
+     */
+    public static String formatTaskList(Iterable<Task> tasks) {
+        return joinResponseLines("Here is your pipeline:", formatNumberedTasks(tasks));
+    }
+
     /**
      * Formats every task with its one-based list number.
      *
      * @param taskCollection the tasks to format.
      * @return the numbered task list.
      */
-    public static String formatTaskList(Iterable<Task> taskCollection) {
+    private static String formatNumberedTasks(Iterable<Task> taskCollection) {
         List<Task> taskSnapshot = StreamSupport.stream(taskCollection.spliterator(), false)
                 .collect(Collectors.toList());
         return IntStream.range(0, taskSnapshot.size())
@@ -244,7 +253,7 @@ public class Ui {
     public static String formatMatchingTasks(List<Task> matchingTasks) {
         return joinResponseLines(
                 "Here is what surfaced in your pipeline:",
-                formatTaskList(matchingTasks));
+                formatNumberedTasks(matchingTasks));
     }
 
     /**

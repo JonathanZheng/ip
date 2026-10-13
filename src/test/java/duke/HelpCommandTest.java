@@ -52,10 +52,12 @@ class HelpCommandTest {
 
         assertEquals(Ui.getHelpMessage(), chatbot.getResponse(command));
         assertEquals(Ui.getHelpMessage(), chatbot.getResponse(command));
-        assertEquals("1.[T][X] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][X] read book",
+                chatbot.getResponse("list"));
         assertEquals(savedTasks, Files.readString(file));
         assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"));
-        assertEquals("1.[T][ ] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
+                chatbot.getResponse("list"));
         assertEquals(Ui.getHelpMessage(), chatbot.getResponse(command));
         assertEquals(Ui.formatError(Ui.EMPTY_UNDO_HISTORY), chatbot.getResponse("undo"));
     }
@@ -72,7 +74,8 @@ class HelpCommandTest {
         chatbot.getResponse("todo read book");
 
         assertEquals(Ui.formatError(Ui.UNEXPECTED_ARGUMENTS), chatbot.getResponse(command));
-        assertEquals("1.[T][ ] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
+                chatbot.getResponse("list"));
         assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"));
         assertEquals(Ui.getEmptyListMessage(), chatbot.getResponse("list"));
     }

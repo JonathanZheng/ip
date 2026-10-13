@@ -25,9 +25,11 @@ class SevenSixErrorTest {
         chatbot.getResponse("mark 1");
 
         assertEquals(Ui.formatError(Ui.DUPLICATE_TASK), chatbot.getResponse("todo  read\tbook"));
-        assertEquals("1.[T][X] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][X] read book",
+                chatbot.getResponse("list"));
         assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"));
-        assertEquals("1.[T][ ] read book", chatbot.getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
+                chatbot.getResponse("list"));
     }
 
     /** A failed add, delete, mark, unmark, or undo must retain all previous state. */
@@ -56,13 +58,15 @@ class SevenSixErrorTest {
         Files.createDirectory(file);
 
         assertEquals(Ui.formatError(Ui.SAVE_FAILURE), chatbot.getResponse(command), command);
-        assertEquals("1.[T][X] first", chatbot.getResponse("list"), command);
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][X] first",
+                chatbot.getResponse("list"), command);
         assertEquals(original, Files.readString(backup));
 
         Files.delete(file);
         Files.move(backup, file);
         assertEquals(Ui.getUndoMessage(), chatbot.getResponse("undo"), command);
-        assertEquals("1.[T][ ] first", new SevenSix(file).getResponse("list"), command);
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first",
+                new SevenSix(file).getResponse("list"), command);
     }
 
     /** Startup failures should be exposed to both interfaces and prevent apparent successful adds. */
@@ -100,6 +104,7 @@ class SevenSixErrorTest {
         SevenSix chatbot = new SevenSix(file);
         chatbot.getResponse("  todo\tread | book\\ 日本語  ");
 
-        assertEquals("1.[T][ ] read | book\\ 日本語", new SevenSix(file).getResponse("list"));
+        assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read | book\\ 日本語",
+                new SevenSix(file).getResponse("list"));
     }
 }
