@@ -55,8 +55,8 @@ public class SevenSix {
      */
     public static void main(String[] args) {
         SevenSix chatbot = new SevenSix();
-        Ui.printGreeting(chatbot.getStartupWarning());
-        Ui.runConsoleLoop(chatbot);
+        ConsoleUi.printGreeting(chatbot.getStartupWarning());
+        ConsoleUi.runConsoleLoop(chatbot);
     }
 
     /**

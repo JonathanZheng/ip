@@ -69,7 +69,8 @@ to `SevenSix`.
 * `SevenSix` decides what each command does, and holds no parsing or wording.
 * `Parser` owns every rule about the shape of a command, and turns command text
   into descriptions, tasks, keywords, and task numbers.
-* `Ui` owns every user-visible string, and drives the console loop.
+* `Ui` formats user-visible responses, and `HelpText` owns the command reference.
+* `ConsoleUi` drives the console loop and prints response blocks.
 * `UndoHistory` remembers the task list from before the last task-changing
   command.
 * `TaskList` and `TaskStorage` own the in-memory list and its persistence.

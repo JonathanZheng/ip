@@ -1,15 +1,14 @@
 package duke;
 
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 /**
- * Builds the text shown to the user and drives the console conversation.
+ * Formats responses shared by the console and graphical interfaces.
  *
- * <p>Every user-visible message is produced here, so the console loop and the graphical
+ * <p>Response wording is owned by this UI layer, so the console and the graphical
  * interface show the same wording. The class is a collection of static helpers because it
  * holds no state of its own.
  */
@@ -77,8 +76,6 @@ public class Ui {
     public static final String SAVE_FAILURE = "the change could not be saved. Check the task file and folder"
             + " permissions and available disk space. No tasks or undo history were changed.";
 
-    /** Separates the chatbot's greeting, responses, and prompts. */
-    private static final String SEPARATOR = "____________________________________________________________";
     /** Prefix used to make input errors recognizable in the user interface. */
     private static final String ERROR_PREFIX = "Flagging a blocker: ";
 
@@ -98,58 +95,6 @@ public class Ui {
         return joinResponseLines(
                 "Hello! I'm SevenSix, your productivity thought partner.",
                 "Which deliverables are we unlocking today?");
-    }
-
-    /** Prints the greeting shown when the console application starts. */
-    public static void printGreeting() {
-        printResponse(getGreeting());
-    }
-
-    /** Prints the greeting and, when needed, a separate storage warning.
-     *
-     * @param warning the storage warning, or an empty string for healthy storage.
-     */
-    public static void printGreeting(String warning) {
-        printGreeting();
-        if (!warning.isEmpty()) {
-            printResponse(formatError(warning));
-        }
-    }
-
-    /**
-     * Processes console input until the input ends or the user says goodbye.
-     *
-     * @param chatbot the command processor used for each input line.
-     */
-    public static void runConsoleLoop(SevenSix chatbot) {
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            printCommandResponse(chatbot, command);
-            if (Parser.isExitCommand(command)) {
-                return;
-            }
-        }
-    }
-
-    /**
-     * Prints one command response with the console separators.
-     *
-     * @param chatbot the command processor used to produce the response.
-     * @param command the command entered by the user.
-     */
-    private static void printCommandResponse(SevenSix chatbot, String command) {
-        printResponse(chatbot.getResponse(command));
-    }
-
-    /** Prints one complete console block using the shared separators.
-     *
-     * @param response the message to display.
-     */
-    private static void printResponse(String response) {
-        System.out.println(SEPARATOR);
-        System.out.println(response);
-        System.out.println(SEPARATOR);
     }
 
     /**
@@ -223,28 +168,7 @@ public class Ui {
      * @return the help guide, with one instruction per line.
      */
     public static String getHelpMessage() {
-        return joinResponseLines(
-                "Here is your command playbook:",
-                "  help - Show this guide.",
-                "  todo <description> - Add a task without a date.",
-                "  deadline <description> /by <date/time> - Add a task with a due date.",
-                "  event <description> /from <date/time> /to <date/time> - Add an event.",
-                "  list - Show all tasks and their numbers.",
-                "  mark <number> - Mark a task as done.",
-                "  unmark <number> - Mark a task as not done.",
-                "  delete <number> - Remove a task.",
-                "  find <keyword> - Search descriptions, ignoring letter case.",
-                "  undo - Undo the most recent task change, once.",
-                "  bye - Exit SevenSix.",
-                "Use task numbers from list, starting at 1.",
-                "Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.",
-                "Events must end after they start; omitted times mean midnight.",
-                "Examples:",
-                "  todo read book",
-                "  deadline submit report /by 2026-09-30 1800",
-                "  event team meeting /from 2026-09-18 1400 /to 2026-09-18 1500",
-                "  mark 1",
-                "Help does not change tasks or undo history.");
+        return HelpText.getMessage();
     }
 
     /**

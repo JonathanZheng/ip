@@ -35,7 +35,7 @@ class ConsoleUiTest {
     @Test
     void printGreetingWithoutWarningPrintsOneBlock() {
         try (ConsoleCapture console = new ConsoleCapture("")) {
-            Ui.printGreeting("");
+            ConsoleUi.printGreeting("");
 
             assertEquals(block(GREETING), console.getOutput());
         }
@@ -45,7 +45,7 @@ class ConsoleUiTest {
     @Test
     void printGreetingWithWarningPrintsSeparateErrorBlock() {
         try (ConsoleCapture console = new ConsoleCapture("")) {
-            Ui.printGreeting("storage unavailable");
+            ConsoleUi.printGreeting("storage unavailable");
 
             assertEquals(block(GREETING) + block("Flagging a blocker: storage unavailable"), console.getOutput());
         }
@@ -56,7 +56,7 @@ class ConsoleUiTest {
     void runConsoleLoopStopsAtImmediateEndOfInput() {
         SevenSix chatbot = new SevenSix(temporaryDirectory.resolve("tasks.txt"));
         try (ConsoleCapture console = new ConsoleCapture("")) {
-            Ui.runConsoleLoop(chatbot);
+            ConsoleUi.runConsoleLoop(chatbot);
 
             assertEquals("", console.getOutput());
         }
@@ -67,7 +67,7 @@ class ConsoleUiTest {
     void runConsoleLoopProcessesFinalLineWithoutNewline() {
         SevenSix chatbot = new SevenSix(temporaryDirectory.resolve("tasks.txt"));
         try (ConsoleCapture console = new ConsoleCapture("list")) {
-            Ui.runConsoleLoop(chatbot);
+            ConsoleUi.runConsoleLoop(chatbot);
 
             assertEquals(block("Your pipeline is empty. Nothing to action right now."), console.getOutput());
         }
@@ -82,7 +82,7 @@ class ConsoleUiTest {
     void runConsoleLoopProcessesHelpWithWhitespaceAndEndOfInput(String input) {
         SevenSix chatbot = new SevenSix(temporaryDirectory.resolve("tasks.txt"));
         try (ConsoleCapture console = new ConsoleCapture(input)) {
-            Ui.runConsoleLoop(chatbot);
+            ConsoleUi.runConsoleLoop(chatbot);
 
             assertEquals(block(Ui.getHelpMessage()), console.getOutput());
         }
@@ -93,7 +93,7 @@ class ConsoleUiTest {
     void runConsoleLoopStopsAfterBye() {
         SevenSix chatbot = new SevenSix(temporaryDirectory.resolve("tasks.txt"));
         try (ConsoleCapture console = new ConsoleCapture("bye now\r\n  bye\t\r\ntodo never added\r\n")) {
-            Ui.runConsoleLoop(chatbot);
+            ConsoleUi.runConsoleLoop(chatbot);
 
             assertEquals(block("Flagging a blocker: list, undo, bye, and help do not accept extra parameters.")
                     + block("Great sync. Let's touch base again soon!"), console.getOutput());
