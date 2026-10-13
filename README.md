@@ -11,7 +11,7 @@ Use JDK 25, then run the following command from the project root:
 ```
 
 The GUI accepts the same commands as the console version. Press Enter or click `Send command` to submit a
-command. Tasks are saved to `data/duke.txt` by default.
+command. Tasks are saved to `data/sevensix.txt` by default.
 
 ## Getting help
 
@@ -67,7 +67,7 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    1. If there are any further prompts, accept the defaults.
 1. Configure the project to use **JDK 25** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
    In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/duke/SevenSix.java` file, right-click it, and choose `Run SevenSix.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see the following output:
+1. After that, locate the `src/main/java/sevensix/SevenSix.java` file, right-click it, and choose `Run SevenSix.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see the following output:
    ```
    Welcome to SevenSix!
    ```
@@ -80,11 +80,11 @@ Run the following command from the project root:
 ./gradlew clean shadowJar
 ```
 
-This creates the executable `build/libs/duke.jar`. Copy that file into an empty folder and run
+This creates the executable `build/libs/SevenSix.jar`. Copy that file into an empty folder and run
 the chatbot with:
 
 ```bash
-java -jar duke.jar
+java -jar SevenSix.jar
 ```
 
 The JAR is a generated build artifact and should not be committed to Git.

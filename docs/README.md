@@ -11,19 +11,15 @@ Its “deliverables” are your tasks; your “pipeline” is your task list.
 ## Quick start
 
 1. Install **JDK 25**. Run `java -version` in a terminal to check your version.
-2. Once **v0.2** is published, get its `duke.jar` from
-   [Releases](https://github.com/JonathanZheng/ip/releases). Until then, build the
-   current version below. This is SevenSix despite its filename.
-3. Place it in a writable folder. Open a terminal there and run `java -jar duke.jar`.
+2. Download `SevenSix.jar` from the latest
+   [release](https://github.com/JonathanZheng/ip/releases).
+3. Place it in a writable folder. Open a terminal there and run `java -jar SevenSix.jar`.
 4. Type in the bottom box; press **Enter** or click **Send command**.
    Scroll to revisit replies. Red replies explain errors.
 
-> **Version note:** This guide covers the upcoming **v0.2** release. The older
-> `v0.1` JAR does not include all features described here.
-
 To build: extract the [current source](https://github.com/JonathanZheng/ip/archive/refs/heads/master.zip).
 In the folder containing `gradlew`, run `./gradlew shadowJar` (macOS/Linux) or
-`gradlew.bat shadowJar` (Windows). Copy `build/libs/duke.jar` to your app folder.
+`gradlew.bat shadowJar` (Windows). Copy `build/libs/SevenSix.jar` to your app folder.
 The first build needs internet access.
 
 Try these commands one at a time in a new task list:
@@ -38,6 +34,7 @@ list
 You should see:
 
 ```text
+Here is your pipeline:
 1.[T][ ] read book
 2.[D][ ] return book (by: Sep 30 2026 6:00 PM)
 3.[E][ ] study group (from: Sep 20 2026 2:00 PM to: Sep 20 2026 4:00 PM)
@@ -153,22 +150,24 @@ The replacement appears at the end of the list and starts incomplete. If needed,
 run `list` again and `mark NUMBER` to complete it. Adding and deleting are separate
 changes: `undo` after the deletion restores the original but keeps the replacement.
 
-### Undoing your last change
+### Undoing changes
 
 **Format:** `undo`
 
 Restores and saves the list from before the latest successful add, mark, unmark,
-or delete command.
+or delete command. The reply identifies the reversed action and shows the
+affected task as it was before that action.
 
 ```text
 delete 2
 undo
 ```
 
-This restores task 2 in its original position. There is **one undo step**:
-another task-changing command replaces it; `undo` consumes it. Even marking an
-already-completed task replaces that step. `list`, `find`, `help`, and failed
-commands preserve it. Closing the app clears undo history. There is no redo.
+This restores task 2 in its original position. Repeat `undo` to reverse earlier
+changes, one at a time, until the session history is empty. A new task-changing
+command adds another step, including marking an already-completed task.
+`list`, `find`, `help`, and failed commands preserve the history. A failed save
+does not consume an undo step. Closing the app clears history. There is no redo.
 
 ### Exiting
 
@@ -197,13 +196,21 @@ SevenSix records dates; it does not send reminder notifications.
 
 ## Saving and backups
 
-Successful changes save automatically to `data/duke.txt` inside your launch folder.
+Successful changes save automatically to `data/sevensix.txt` inside your launch folder.
 **Launch from the same folder each time** to reload your tasks. A first run starts
 empty; adding a task creates the file. Conversation and undo history are not saved.
 
-To back up or transfer tasks, close SevenSix and copy `data/duke.txt`. On the new
+To back up or transfer tasks, close SevenSix and copy `data/sevensix.txt`. On the new
 computer, install Java 25 and place the copy in your app folder's `data` directory.
 Back up any existing file before replacing it.
+
+### Upgrading from an older data filename
+
+Close the app and back up your existing task file. Rename it to `sevensix.txt`
+inside the same `data` folder before launching this version. If that folder
+already contains `sevensix.txt`, keep both files backed up and choose which task
+list to use; do not overwrite either file without a backup. Older filenames are
+not loaded automatically.
 
 ## Troubleshooting
 
@@ -213,11 +220,11 @@ Back up any existing file before replacing it.
 | Invalid task number | Run `list` and use an existing number from that list, without a sign or decimal point. |
 | Invalid date or parameters | Check the formats above and use each required flag once, in order. |
 | Duplicate task | Use the existing task or change its description/schedule. Completion status does not make it distinct. |
-| Nothing to undo | Make a successful task change first. Only the latest change in this session can be undone. |
-| Empty list after moving the JAR | Check your launch folder and restore your saved `data/duke.txt` there. |
+| Nothing to undo | Make a successful task change first. Repeat undo for earlier changes until this session's history is empty. |
+| Empty list after moving the JAR | Check your launch folder and restore your saved `data/sevensix.txt` there. |
 | Startup storage warning | Saving is disabled; valid loaded tasks remain viewable. Close the app, back up the file, fix its path/permissions or restore a valid backup, then restart. |
 | A change could not be saved | Tasks and undo history were restored. Check file/folder permissions and free disk space, then retry. |
-| Java version or launch error | Check `java -version` reports 25 and that the terminal is in the folder containing `duke.jar`. |
+| Java version or launch error | Check `java -version` reports 25 and that the terminal is in the folder containing `SevenSix.jar`. |
 
 Correct rejected commands and submit them again. The GUI ignores blank input;
 the console reports an error.

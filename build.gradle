@@ -23,7 +23,7 @@ jacoco {
 
 // Exclude only the JavaFX window, message widgets, and their launcher.
 def nonGuiClasses = sourceSets.main.output.asFileTree.matching {
-    exclude 'duke/SevenSixGui*', 'duke/DialogBox*', 'duke/Launcher*'
+    exclude 'sevensix/SevenSixGui*', 'sevensix/DialogBox*', 'sevensix/Launcher*'
 }
 
 jacocoTestReport {
@@ -107,7 +107,7 @@ test {
 }
 
 application {
-    mainClass = 'duke.Launcher'
+    mainClass = 'sevensix.Launcher'
 }
 
 jar {
@@ -118,7 +118,7 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    archiveFileName = 'SevenSix.jar'
 }
 
 run {
