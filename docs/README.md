@@ -11,19 +11,15 @@ Its “deliverables” are your tasks; your “pipeline” is your task list.
 ## Quick start
 
 1. Install **JDK 25**. Run `java -version` in a terminal to check your version.
-2. Once **v0.2** is published, get its `duke.jar` from
-   [Releases](https://github.com/JonathanZheng/ip/releases). Until then, build the
-   current version below. This is SevenSix despite its filename.
-3. Place it in a writable folder. Open a terminal there and run `java -jar duke.jar`.
+2. Download `SevenSix.jar` from the latest
+   [release](https://github.com/JonathanZheng/ip/releases).
+3. Place it in a writable folder. Open a terminal there and run `java -jar SevenSix.jar`.
 4. Type in the bottom box; press **Enter** or click **Send command**.
    Scroll to revisit replies. Red replies explain errors.
 
-> **Version note:** This guide covers the upcoming **v0.2** release. The older
-> `v0.1` JAR does not include all features described here.
-
 To build: extract the [current source](https://github.com/JonathanZheng/ip/archive/refs/heads/master.zip).
 In the folder containing `gradlew`, run `./gradlew shadowJar` (macOS/Linux) or
-`gradlew.bat shadowJar` (Windows). Copy `build/libs/duke.jar` to your app folder.
+`gradlew.bat shadowJar` (Windows). Copy `build/libs/SevenSix.jar` to your app folder.
 The first build needs internet access.
 
 Try these commands one at a time in a new task list:
@@ -217,7 +213,7 @@ Back up any existing file before replacing it.
 | Empty list after moving the JAR | Check your launch folder and restore your saved `data/duke.txt` there. |
 | Startup storage warning | Saving is disabled; valid loaded tasks remain viewable. Close the app, back up the file, fix its path/permissions or restore a valid backup, then restart. |
 | A change could not be saved | Tasks and undo history were restored. Check file/folder permissions and free disk space, then retry. |
-| Java version or launch error | Check `java -version` reports 25 and that the terminal is in the folder containing `duke.jar`. |
+| Java version or launch error | Check `java -version` reports 25 and that the terminal is in the folder containing `SevenSix.jar`. |
 
 Correct rejected commands and submit them again. The GUI ignores blank input;
 the console reports an error.

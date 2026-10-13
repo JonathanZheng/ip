@@ -80,11 +80,11 @@ Run the following command from the project root:
 ./gradlew clean shadowJar
 ```
 
-This creates the executable `build/libs/duke.jar`. Copy that file into an empty folder and run
+This creates the executable `build/libs/SevenSix.jar`. Copy that file into an empty folder and run
 the chatbot with:
 
 ```bash
-java -jar duke.jar
+java -jar SevenSix.jar
 ```
 
 The JAR is a generated build artifact and should not be committed to Git.

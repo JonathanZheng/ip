@@ -4,7 +4,7 @@ Use disposable task data for every test session. Build with `./gradlew shadowJar
 (Windows: `gradlew.bat shadowJar`), then launch with Java 25:
 
 ```text
-java -Dsevensix.data.file=<absolute-path-to-test-folder>/tasks.txt -jar build/libs/duke.jar
+java -Dsevensix.data.file=<absolute-path-to-test-folder>/tasks.txt -jar build/libs/SevenSix.jar
 ```
 
 Replace the path placeholder and quote the entire `-D...` argument if it contains
