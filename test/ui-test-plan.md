@@ -14,7 +14,7 @@ Use the following fields for every test case:
 ## Test case: greeting and exit
 
 - Aim: The program welcomes the user and exits politely when the user enters `bye`.
-- Run command: `rm -f .ui-test-data/greeting.txt && java -ea -Dsevensix.data.file=.ui-test-data/greeting.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/greeting.txt && java -ea -Dsevensix.data.file=.ui-test-data/greeting.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -37,7 +37,7 @@ ____________________________________________________________
 ## Test case: normalize whitespace and preserve undo after duplicate input
 
 - Aim: Leading, trailing, and repeated spaces are accepted; duplicate rejection leaves the previous undo usable.
-- Run command: `rm -f .ui-test-data/more-whitespace.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-whitespace.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/more-whitespace.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-whitespace.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -89,7 +89,7 @@ ____________________________________________________________
 ## Test case: reject repeated missing and misplaced date parameters
 
 - Aim: Invalid deadline and event parameters return errors without adding tasks.
-- Run command: `rm -f .ui-test-data/more-parameters.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-parameters.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/more-parameters.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-parameters.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -132,7 +132,7 @@ ____________________________________________________________
 ## Test case: reject impossible dates and nonpositive event durations
 
 - Aim: Impossible calendar dates and equal or reversed event endpoints produce errors without changing tasks.
-- Run command: `rm -f .ui-test-data/more-dates.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-dates.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/more-dates.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-dates.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -175,7 +175,7 @@ ____________________________________________________________
 ## Test case: reject invalid task numbers and extra arguments
 
 - Aim: Malformed and out-of-range task numbers, blank input, and extra arguments do not change tasks or prematurely exit.
-- Run command: `rm -f .ui-test-data/more-numbers.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-numbers.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/more-numbers.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-numbers.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -230,7 +230,7 @@ ____________________________________________________________
 ## Test case: report inaccessible storage and roll back attempted changes
 
 - Aim: A directory in place of the data file produces a startup warning; failed additions leave the task list empty.
-- Run command: `mkdir -p .ui-test-data/more-directory && java -ea -Dsevensix.data.file=.ui-test-data/more-directory -cp out/production/ip duke.SevenSix`
+- Run command: `mkdir -p .ui-test-data/more-directory && java -ea -Dsevensix.data.file=.ui-test-data/more-directory -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -268,7 +268,7 @@ ____________________________________________________________
 ## Test case: preserve corrupt storage when a change is attempted
 
 - Aim: Corrupt records remain on disk and valid tasks remain unchanged after an attempted addition.
-- Run command: `mkdir -p .ui-test-data && printf 'T | 0 | saved task\nbroken record\n' > .ui-test-data/more-corrupt.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-corrupt.txt -cp out/production/ip duke.SevenSix`
+- Run command: `mkdir -p .ui-test-data && printf 'T | 0 | saved task\nbroken record\n' > .ui-test-data/more-corrupt.txt && java -ea -Dsevensix.data.file=.ui-test-data/more-corrupt.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -303,7 +303,7 @@ ____________________________________________________________
 ## Test case: add, mark, unmark, and list to-do tasks
 
 - Aim: To-do tasks can be added, marked done, unmarked, and listed with their type and status.
-- Run command: `rm -f .ui-test-data/todo.txt && java -ea -Dsevensix.data.file=.ui-test-data/todo.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/todo.txt && java -ea -Dsevensix.data.file=.ui-test-data/todo.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -360,7 +360,7 @@ ____________________________________________________________
 ## Test case: parse and list deadline dates
 
 - Aim: Deadline tasks parse date and date-time input and display readable formatted values.
-- Run command: `rm -f .ui-test-data/deadline.txt && java -ea -Dsevensix.data.file=.ui-test-data/deadline.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/deadline.txt && java -ea -Dsevensix.data.file=.ui-test-data/deadline.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -401,7 +401,7 @@ ____________________________________________________________
 ## Test case: reject incorrect input and accept trailing spaces
 
 - Aim: Empty task descriptions, unknown commands, and invalid dates produce helpful, clearly labeled errors without adding tasks, while valid commands with trailing spaces still work.
-- Run command: `rm -f .ui-test-data/invalid-input.txt && java -ea -Dsevensix.data.file=.ui-test-data/invalid-input.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/invalid-input.txt && java -ea -Dsevensix.data.file=.ui-test-data/invalid-input.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -444,7 +444,7 @@ ____________________________________________________________
 ## Test case: delete a task and renumber the list
 
 - Aim: A task can be deleted by its one-based list number, and the remaining tasks are renumbered.
-- Run command: `rm -f .ui-test-data/delete.txt && java -ea -Dsevensix.data.file=.ui-test-data/delete.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/delete.txt && java -ea -Dsevensix.data.file=.ui-test-data/delete.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -512,7 +512,7 @@ ____________________________________________________________
 ## Test case: parse and list event dates
 
 - Aim: Event tasks parse date and date-time input and display readable formatted values.
-- Run command: `rm -f .ui-test-data/event.txt && java -ea -Dsevensix.data.file=.ui-test-data/event.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/event.txt && java -ea -Dsevensix.data.file=.ui-test-data/event.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -553,7 +553,7 @@ ____________________________________________________________
 ## Test case: save tasks and load them on startup
 
 - Aim: Typed deadline values are written to disk after they are added and restored when SevenSix starts again.
-- Run command: `rm -f .ui-test-data/persistence.txt && printf 'deadline saved deadline /by 2/12/2019 1800\nbye\n' | java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip duke.SevenSix > /dev/null && java -ea -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/persistence.txt && printf 'deadline saved deadline /by 2/12/2019 1800\nbye\n' | java -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip sevensix.SevenSix > /dev/null && java -ea -Dsevensix.data.file=.ui-test-data/persistence.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -581,7 +581,7 @@ ____________________________________________________________
 ## Test case: ignore corrupted task records
 
 - Aim: A malformed record produces a warning and blocks saving while valid records remain available to list.
-- Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | 2019-06-06\n' > .ui-test-data/corrupted.txt && java -ea -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip duke.SevenSix`
+- Run command: `mkdir -p .ui-test-data && printf 'T | 1 | valid saved task\nnot a valid record\nD | 0 | return book | 2019-06-06\n' > .ui-test-data/corrupted.txt && java -ea -Dsevensix.data.file=.ui-test-data/corrupted.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -613,7 +613,7 @@ ____________________________________________________________
 ## Test case: find tasks by keyword
 
 - Aim: The find command returns matching task descriptions without changing the task list, regardless of keyword letter case, and reports when there are no matches.
-- Run command: `rm -f .ui-test-data/find.txt && java -ea -Dsevensix.data.file=.ui-test-data/find.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/find.txt && java -ea -Dsevensix.data.file=.ui-test-data/find.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -664,7 +664,7 @@ ____________________________________________________________
 ## Test case: undo the most recent task change
 
 - Aim: The undo command removes the most recently added task and reports an error when there is no task-changing command left to undo.
-- Run command: `rm -f .ui-test-data/undo.txt && java -ea -Dsevensix.data.file=.ui-test-data/undo.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/undo.txt && java -ea -Dsevensix.data.file=.ui-test-data/undo.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -705,7 +705,7 @@ ____________________________________________________________
 ## Test case: show help in an empty session
 
 - Aim: Help lists every command and examples, allows later commands, and creates no undo opportunity.
-- Run command: `rm -f .ui-test-data/help-empty.txt && java -ea -Dsevensix.data.file=.ui-test-data/help-empty.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/help-empty.txt && java -ea -Dsevensix.data.file=.ui-test-data/help-empty.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -760,7 +760,7 @@ ____________________________________________________________
 ## Test case: help preserves tasks and undo history
 
 - Aim: Leading whitespace before help is accepted; help and rejected extra arguments preserve task status and the previous undo.
-- Run command: `rm -f .ui-test-data/help-history.txt && java -ea -Dsevensix.data.file=.ui-test-data/help-history.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/help-history.txt && java -ea -Dsevensix.data.file=.ui-test-data/help-history.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -836,7 +836,7 @@ ____________________________________________________________
 ## Test case: help accepts trailing whitespace at end of input
 
 - Aim: Trailing spaces and a tab are accepted even when the last command has no newline; end-of-input closes the console normally.
-- Run command: `printf 'help   \t' | java -ea -Dsevensix.data.file=.ui-test-data/help-eof.txt -cp out/production/ip duke.SevenSix`
+- Run command: `printf 'help   \t' | java -ea -Dsevensix.data.file=.ui-test-data/help-eof.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 
@@ -878,7 +878,7 @@ ____________________________________________________________
 ## Test case: undo several task changes in reverse order
 
 - Aim: Repeated undo restores deleted tasks and status before removing additions, then reports empty history.
-- Run command: `rm -f .ui-test-data/undo-sequence.txt && java -ea -Dsevensix.data.file=.ui-test-data/undo-sequence.txt -cp out/production/ip duke.SevenSix`
+- Run command: `rm -f .ui-test-data/undo-sequence.txt && java -ea -Dsevensix.data.file=.ui-test-data/undo-sequence.txt -cp out/production/ip sevensix.SevenSix`
 
 ### Inputs
 

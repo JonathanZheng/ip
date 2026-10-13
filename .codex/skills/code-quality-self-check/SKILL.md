@@ -51,7 +51,7 @@ question rather than doing a job.
 A class much beyond roughly 300 lines is usually doing more than one job.
 
 ```
-wc -l src/main/java/duke/*.java | sort -rn | head
+wc -l src/main/java/sevensix/*.java | sort -rn | head
 ```
 
 When a class is oversized, look for groups of methods that share a single

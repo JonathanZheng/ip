@@ -29,6 +29,7 @@ window dimensions, date, and result for each session.
 | G11 | Enter `bye`, then separately reopen and close using the window close control. | The application exits without an uncaught exception; saved tasks survive restart. |
 | G12 | Repeat under English and Chinese OS languages, and at different display scaling levels. | Dates retain the documented English format; task text is preserved; controls do not overlap. |
 | G13 | Submit `help` using Enter and Send command, resize to 560x520, then submit `help todo`. | The full guide appears as a normal reply and remains readable by scrolling; extra arguments produce an error; the composer hint points to help. |
+| G14 | Add a task, mark it, run `list`, then run `undo` twice. | List has a heading; each undo names the action and task; the second undo removes the addition. |
 
 ## Recorded local rendering checks
 
@@ -46,6 +47,15 @@ mouse, input-method composition, or a change to the actual OS display settings.
 The smaller scene heights reflect the native title bar in windows sized 560x520
 and 1440x900. These are window/scene sizes, not simulated monitor resolutions.
 The OS language and display scaling were not changed during these checks.
+
+## Review-feedback smoke check
+
+2026-10-13: macOS, Java 25.0.3. A temporary driver invoked the packaged
+`sevensix.Launcher`, submitted commands through the field and button handlers,
+and checked the list heading and two successive undo replies. The captured
+900x720 scene was visually inspected; the new replies were readable.
+This verifies application handlers and rendering, not physical input or the
+cross-platform matrix below.
 
 ## Remaining manual matrix
 
