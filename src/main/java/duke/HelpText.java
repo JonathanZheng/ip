@@ -22,7 +22,7 @@ public final class HelpText {
                 "  unmark <number> - Mark a task as not done.",
                 "  delete <number> - Remove a task.",
                 "  find <keyword> - Search descriptions, ignoring letter case.",
-                "  undo - Undo the most recent task change, once.",
+                "  undo - Undo the latest task change; repeat to undo earlier changes.",
                 "  bye - Exit SevenSix.",
                 "Use task numbers from list, starting at 1.",
                 "Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.",

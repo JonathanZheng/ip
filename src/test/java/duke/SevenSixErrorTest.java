@@ -67,6 +67,9 @@ class SevenSixErrorTest {
         assertEquals("Undid mark as done: [T][ ] first", chatbot.getResponse("undo"), command);
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] first",
                 new SevenSix(file).getResponse("list"), command);
+        assertEquals("Undid addition: [T][ ] first", chatbot.getResponse("undo"), command);
+        assertEquals(Ui.getEmptyListMessage(), new SevenSix(file).getResponse("list"), command);
+        assertEquals(Ui.formatError(Ui.EMPTY_UNDO_HISTORY), chatbot.getResponse("undo"), command);
     }
 
     /** Startup failures should be exposed to both interfaces and prevent apparent successful adds. */

@@ -1,8 +1,11 @@
 package duke;
 
-/** Remembers the latest successful task change and its independent pre-command state. */
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+/** Remembers successful task changes in reverse order for session-scoped undo. */
 public class UndoHistory {
-    private UndoEntry savedEntry;
+    private final Deque<UndoEntry> entries = new ArrayDeque<>();
 
     /** Remembers a change before its action modifies the live tasks.
      *
@@ -11,7 +14,7 @@ public class UndoHistory {
      * @param task the affected task before the action.
      */
     public void save(Iterable<Task> tasks, ChangeType type, Task task) {
-        savedEntry = new UndoEntry(tasks, type, task);
+        entries.push(new UndoEntry(tasks, type, task));
     }
 
     /** Checks whether a change is available to undo.
@@ -19,7 +22,7 @@ public class UndoHistory {
      * @return true when an entry is available.
      */
     public boolean hasSnapshot() {
-        return savedEntry != null;
+        return !entries.isEmpty();
     }
 
     /** Copies the history for recovery after a failed command.
@@ -28,18 +31,16 @@ public class UndoHistory {
      */
     public UndoHistory copy() {
         UndoHistory copy = new UndoHistory();
-        copy.savedEntry = savedEntry;
+        copy.entries.addAll(entries);
         return copy;
     }
 
-    /** Consumes the saved entry exactly once.
+    /** Consumes the most recent entry without changing earlier entries.
      *
      * @return the change to reverse.
      */
     public UndoEntry takeEntry() {
         assert hasSnapshot() : "Callers check hasSnapshot before taking an entry";
-        UndoEntry entry = savedEntry;
-        savedEntry = null;
-        return entry;
+        return entries.pop();
     }
 }

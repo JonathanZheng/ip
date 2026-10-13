@@ -20,7 +20,7 @@ public class SevenSix {
     private final TaskStorage storage;
     /** The in-memory task list used by this chatbot instance. */
     private final TaskList tasks;
-    /** The task list as it was before the most recent task-changing command. */
+    /** Earlier task-list states and actions available to undo in this session. */
     private UndoHistory undoHistory = new UndoHistory();
 
     /**

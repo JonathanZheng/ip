@@ -734,7 +734,7 @@ Here is your command playbook:
   unmark <number> - Mark a task as not done.
   delete <number> - Remove a task.
   find <keyword> - Search descriptions, ignoring letter case.
-  undo - Undo the most recent task change, once.
+  undo - Undo the latest task change; repeat to undo earlier changes.
   bye - Exit SevenSix.
 Use task numbers from list, starting at 1.
 Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.
@@ -802,7 +802,7 @@ Here is your command playbook:
   unmark <number> - Mark a task as not done.
   delete <number> - Remove a task.
   find <keyword> - Search descriptions, ignoring letter case.
-  undo - Undo the most recent task change, once.
+  undo - Undo the latest task change; repeat to undo earlier changes.
   bye - Exit SevenSix.
 Use task numbers from list, starting at 1.
 Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.
@@ -861,7 +861,7 @@ Here is your command playbook:
   unmark <number> - Mark a task as not done.
   delete <number> - Remove a task.
   find <keyword> - Search descriptions, ignoring letter case.
-  undo - Undo the most recent task change, once.
+  undo - Undo the latest task change; repeat to undo earlier changes.
   bye - Exit SevenSix.
 Use task numbers from list, starting at 1.
 Dates: yyyy-MM-dd or d/M/yyyy; optionally add HHmm or HH:mm for a time.
@@ -872,5 +872,81 @@ Examples:
   event team meeting /from 2026-09-18 1400 /to 2026-09-18 1500
   mark 1
 Help does not change tasks or undo history.
+____________________________________________________________
+```
+
+## Test case: undo several task changes in reverse order
+
+- Aim: Repeated undo restores deleted tasks and status before removing additions, then reports empty history.
+- Run command: `rm -f .ui-test-data/undo-sequence.txt && java -ea -Dsevensix.data.file=.ui-test-data/undo-sequence.txt -cp out/production/ip duke.SevenSix`
+
+### Inputs
+
+```text
+todo first
+todo second
+mark 1
+delete 2
+undo
+undo
+list
+undo
+undo
+list
+undo
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+Hello! I'm SevenSix, your productivity thought partner.
+Which deliverables are we unlocking today?
+____________________________________________________________
+____________________________________________________________
+Circling back on your ask. I've actioned this deliverable:
+  [T][ ] first
+Your pipeline now holds 1 deliverable.
+____________________________________________________________
+____________________________________________________________
+Circling back on your ask. I've actioned this deliverable:
+  [T][ ] second
+Your pipeline now holds 2 deliverables.
+____________________________________________________________
+____________________________________________________________
+Love to see it. This deliverable has shipped:
+  [T][X] first
+____________________________________________________________
+____________________________________________________________
+Noted. I've descoped this deliverable:
+  [T][ ] second
+Your pipeline now holds 1 deliverable.
+____________________________________________________________
+____________________________________________________________
+Undid deletion: [T][ ] second
+____________________________________________________________
+____________________________________________________________
+Undid mark as done: [T][ ] first
+____________________________________________________________
+____________________________________________________________
+Here is your pipeline:
+1.[T][ ] first
+2.[T][ ] second
+____________________________________________________________
+____________________________________________________________
+Undid addition: [T][ ] second
+____________________________________________________________
+____________________________________________________________
+Undid addition: [T][ ] first
+____________________________________________________________
+____________________________________________________________
+Your pipeline is empty. Nothing to action right now.
+____________________________________________________________
+____________________________________________________________
+Flagging a blocker: there is nothing in the rollback history yet.
+____________________________________________________________
+____________________________________________________________
+Great sync. Let's touch base again soon!
 ____________________________________________________________
 ```

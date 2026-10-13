@@ -59,6 +59,7 @@ class HelpCommandTest {
         assertEquals("Here is your pipeline:" + System.lineSeparator() + "1.[T][ ] read book",
                 chatbot.getResponse("list"));
         assertEquals(Ui.getHelpMessage(), chatbot.getResponse(command));
+        assertEquals("Undid addition: [T][ ] read book", chatbot.getResponse("undo"));
         assertEquals(Ui.formatError(Ui.EMPTY_UNDO_HISTORY), chatbot.getResponse("undo"));
     }
 

@@ -71,8 +71,8 @@ to `SevenSix`.
   into descriptions, tasks, keywords, and task numbers.
 * `Ui` formats user-visible responses, and `HelpText` owns the command reference.
 * `ConsoleUi` drives the console loop and prints response blocks.
-* `UndoHistory` remembers the task list from before the last task-changing
-  command.
+* `UndoHistory` keeps a stack of task states and action details for session undo.
+* `TaskSnapshot` and `UndoEntry` isolate saved state from later task mutations.
 * `TaskList` and `TaskStorage` own the in-memory list and its persistence.
 
 ## Git commit message standard

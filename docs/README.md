@@ -150,7 +150,7 @@ The replacement appears at the end of the list and starts incomplete. If needed,
 run `list` again and `mark NUMBER` to complete it. Adding and deleting are separate
 changes: `undo` after the deletion restores the original but keeps the replacement.
 
-### Undoing your last change
+### Undoing changes
 
 **Format:** `undo`
 
@@ -163,10 +163,11 @@ delete 2
 undo
 ```
 
-This restores task 2 in its original position. There is **one undo step**:
-another task-changing command replaces it; `undo` consumes it. Even marking an
-already-completed task replaces that step. `list`, `find`, `help`, and failed
-commands preserve it. Closing the app clears undo history. There is no redo.
+This restores task 2 in its original position. Repeat `undo` to reverse earlier
+changes, one at a time, until the session history is empty. A new task-changing
+command adds another step, including marking an already-completed task.
+`list`, `find`, `help`, and failed commands preserve the history. A failed save
+does not consume an undo step. Closing the app clears history. There is no redo.
 
 ### Exiting
 
@@ -211,7 +212,7 @@ Back up any existing file before replacing it.
 | Invalid task number | Run `list` and use an existing number from that list, without a sign or decimal point. |
 | Invalid date or parameters | Check the formats above and use each required flag once, in order. |
 | Duplicate task | Use the existing task or change its description/schedule. Completion status does not make it distinct. |
-| Nothing to undo | Make a successful task change first. Only the latest change in this session can be undone. |
+| Nothing to undo | Make a successful task change first. Repeat undo for earlier changes until this session's history is empty. |
 | Empty list after moving the JAR | Check your launch folder and restore your saved `data/duke.txt` there. |
 | Startup storage warning | Saving is disabled; valid loaded tasks remain viewable. Close the app, back up the file, fix its path/permissions or restore a valid backup, then restart. |
 | A change could not be saved | Tasks and undo history were restored. Check file/folder permissions and free disk space, then retry. |

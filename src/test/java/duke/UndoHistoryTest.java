@@ -103,12 +103,14 @@ class UndoHistoryTest {
     }
 
     @Test
-    void saveReplacesThePreviousSnapshot() {
+    void saveRetainsEarlierSnapshotsInReverseOrder() {
         UndoHistory history = new UndoHistory();
         history.save(new TaskList(List.of(new Todo("read book"))), ChangeType.ADD, new Todo("change"));
         history.save(new TaskList(List.of(new Todo("join sports club"), new Todo("borrow book"))),
                 ChangeType.ADD, new Todo("change"));
 
         assertEquals(2, history.takeEntry().restoreTasks().size());
+        assertEquals("read book", history.takeEntry().restoreTasks().get(0).getDescription());
+        assertFalse(history.hasSnapshot());
     }
 }
