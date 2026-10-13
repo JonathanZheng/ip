@@ -69,6 +69,19 @@ public class TaskList implements Iterable<Task> {
         return tasks.get(index);
     }
 
+    /** Resolves a user-facing task number with a recoverable error for missing tasks.
+     *
+     * @param taskNumber the one-based task number.
+     * @return the task at that position.
+     * @throws SevenSixException if the number is outside the list.
+     */
+    public Task getByNumber(int taskNumber) throws SevenSixException {
+        if (taskNumber < 1 || taskNumber > size()) {
+            throw new SevenSixException(Ui.TASK_NOT_FOUND);
+        }
+        return get(taskNumber - 1);
+    }
+
     /**
      * Removes and returns the task at a zero-based index.
      *

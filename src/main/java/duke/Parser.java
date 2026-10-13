@@ -47,6 +47,39 @@ public class Parser {
     private Parser() {
     }
 
+    /** Turns raw input into a command with typed arguments.
+     *
+     * @param input the raw command text.
+     * @return the parsed command ready to execute.
+     * @throws SevenSixException if its syntax or arguments are invalid.
+     */
+    public static Command parse(String input) throws SevenSixException {
+        return parseNormalizedCommand(normalize(input));
+    }
+
+    /** Selects a command implementation after whitespace normalization.
+     *
+     * @param command the normalized input.
+     * @return a command containing parsed task details, a number, or a keyword.
+     * @throws SevenSixException if the command is unknown or malformed.
+     */
+    private static Command parseNormalizedCommand(String command) throws SevenSixException {
+        return switch (parseCommandKeyword(command)) {
+        case COMMAND_BYE -> new ByeCommand();
+        case COMMAND_HELP -> new HelpCommand();
+        case COMMAND_LIST -> new ListCommand();
+        case COMMAND_UNDO -> new UndoCommand();
+        case COMMAND_TODO -> new AddCommand(new Todo(parseTodoDescription(command)));
+        case COMMAND_DEADLINE -> new AddCommand(parseDeadline(command));
+        case COMMAND_EVENT -> new AddCommand(parseEvent(command));
+        case COMMAND_MARK -> new StatusCommand(parseTaskNumber(command, COMMAND_MARK), true);
+        case COMMAND_UNMARK -> new StatusCommand(parseTaskNumber(command, COMMAND_UNMARK), false);
+        case COMMAND_DELETE -> new DeleteCommand(parseTaskNumber(command, COMMAND_DELETE));
+        case COMMAND_FIND -> new FindCommand(parseFindKeyword(command));
+        default -> throw new SevenSixException(Ui.getUnknownCommandMessage());
+        };
+    }
+
     /** Normalizes horizontal whitespace and rejects empty or unsafe input.
      *
      * @param command the raw command, possibly null.

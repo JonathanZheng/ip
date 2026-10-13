@@ -66,9 +66,12 @@ example.
 Keep new code in the class that owns the responsibility, rather than adding it
 to `SevenSix`.
 
-* `SevenSix` decides what each command does, and holds no parsing or wording.
+* `SevenSix` connects parsed commands to the session executor, without parsing or wording.
+* `Command` implementations own individual actions; related task types share `AddCommand`.
+* `StatusCommand` shares the workflow for marking and reopening tasks.
+* `CommandExecutor` coordinates persistence and rollback for all task-changing commands.
 * `Parser` owns every rule about the shape of a command, and turns command text
-  into descriptions, tasks, keywords, and task numbers.
+  into command objects with typed tasks, keywords, and task numbers.
 * `Ui` formats user-visible responses, and `HelpText` owns the command reference.
 * `ConsoleUi` drives the console loop and prints response blocks.
 * `UndoHistory` keeps a stack of task states and action details for session undo.
