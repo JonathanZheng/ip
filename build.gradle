@@ -127,3 +127,8 @@ run {
     // The 'test' task already enables them by default, so JUnit runs check them too.
     enableAssertions = true
 }
+
+// Child-process GUI tests need the complete runtime, including JavaFX and test assertions.
+tasks.withType(Test).configureEach {
+    systemProperty 'sevensix.test.classpath', sourceSets.test.runtimeClasspath.asPath
+}
