@@ -36,13 +36,32 @@ public class DialogBox extends HBox {
      * @param widthFraction the largest share of the row width the message may use.
      */
     private DialogBox(String message, String styleClass, Pos alignment, double widthFraction) {
-        messageLabel = new Label(message);
-        messageLabel.setWrapText(true);
-        messageLabel.maxWidthProperty().bind(widthProperty().multiply(widthFraction));
-        // Without this, a wrapped label may be cut short with "..." instead of growing taller.
-        messageLabel.setMinHeight(Region.USE_PREF_SIZE);
-        messageLabel.getStyleClass().addAll("message", styleClass);
+        messageLabel = createMessageLabel(message, styleClass, widthFraction);
+        configureRow(alignment);
+    }
 
+    /** Creates a wrapping label whose width follows this message row.
+     *
+     * @param message the displayed text.
+     * @param styleClass the message variant style.
+     * @param widthFraction the maximum share of the row width.
+     * @return the configured message label.
+     */
+    private Label createMessageLabel(String message, String styleClass, double widthFraction) {
+        Label label = new Label(message);
+        label.setWrapText(true);
+        label.maxWidthProperty().bind(widthProperty().multiply(widthFraction));
+        // A wrapped label must grow taller instead of truncating its text.
+        label.setMinHeight(Region.USE_PREF_SIZE);
+        label.getStyleClass().addAll("message", styleClass);
+        return label;
+    }
+
+    /** Positions the message on its side of the conversation.
+     *
+     * @param alignment the side used by this message.
+     */
+    private void configureRow(Pos alignment) {
         setMaxWidth(Double.MAX_VALUE);
         setAlignment(alignment);
         getStyleClass().add("dialog-row");
