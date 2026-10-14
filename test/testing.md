@@ -50,6 +50,21 @@ Automated GUI assertions cover message text, styling, avatars, resize bindings,
 startup warnings, both submission handlers, blank input, errors, persistence,
 and scrolling. They do not replace the manual visual and physical-input checks.
 
+## VS Code coverage
+
+Use **Java: Configure Java Runtime** to confirm that the project uses Java 25
+(the Zulu JavaFX JDK for this project's setup). The workspace test configuration
+in `.vscode/settings.json` enables assertions and native access for
+`javafx.graphics`. These options belong in `java.test.config`, because the Java
+test extension launches JUnit directly rather than running Gradle's `test` task.
+
+After importing the Gradle project, open the Testing view and choose **Run Tests
+with Coverage** for the project. Run the whole suite to measure complete coverage.
+`LauncherTest` falls back to the runner's classpath when Gradle's custom property
+is absent and passes native access to the child JVM. Keep `coverage.appendResult`
+enabled so parent and child JVM coverage records are retained. Appended coverage
+can include previous runs; use `./gradlew clean check` for a fresh enforced report.
+
 ## Coverage and test design
 
 The tests exercise these behaviors through public APIs, without reflecting into
