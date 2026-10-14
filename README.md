@@ -49,7 +49,7 @@ permissions and free disk space, then retry. The original data file is not trunc
 
 ## Testing
 
-With Java 25, run `./gradlew check` for JUnit, Checkstyle, and non-GUI coverage checks.
+With Java 25, run `./gradlew check` for JUnit, Checkstyle, and core and GUI coverage checks.
 Run `./gradlew testChineseLocale` to repeat the JUnit suite with Chinese JVM defaults.
 Use `gradlew.bat` on Windows.
 

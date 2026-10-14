@@ -1,7 +1,7 @@
 # Automated testing
 
-Use Java 25. The suite targets nearly all non-GUI production code, superseding the
-earlier approximately 50% testing target for this branch. No application behavior
+Use Java 25. The suite targets nearly all core production code and full coverage of the GUI,
+superseding the earlier approximately 50% testing target for this branch. No application behavior
 is changed by this testing work.
 
 ## Commands
@@ -13,6 +13,8 @@ is changed by this testing work.
 
 `check` runs JUnit, both Checkstyle tasks, generates the coverage report, and enforces
 at least 99% line coverage and 97% branch coverage for non-GUI production classes.
+Each of `SevenSixGui`, `DialogBox`, and `Launcher` must have 100% line and branch
+coverage; classes with no branches have no branch obligations.
 `testChineseLocale` runs the same suite in a fresh JVM with `zh-CN` defaults.
 For just JUnit and the report, run `./gradlew test jacocoTestReport`.
 Use `gradlew.bat` instead of `./gradlew` on Windows.
@@ -26,8 +28,27 @@ Generated reports (do not commit these):
 
 JaCoCo 0.8.14 is pinned because its
 [release notes](https://www.jacoco.org/jacoco/trunk/doc/changes.html) specify Java 25 support.
-Only `SevenSixGui`, `DialogBox`, and `Launcher` are excluded from the report and gate.
-The console interface, including `SevenSix.main`, remains in scope.
+All production classes are included in the report. `verifyCoreCoverage` retains
+the core-only thresholds, and `jacocoTestCoverageVerification` enforces the
+per-class GUI thresholds. The console entry point remains in scope.
+
+## JavaFX test environment
+
+GUI tests create real windows and require a graphical session. On Linux without
+an active display, run `xvfb-run --auto-servernum ./gradlew check` (install Xvfb
+first if needed). CI uses this command on Linux and the normal Gradle command on
+macOS and Windows. The locale task needs the same display setup.
+
+The toolkit is shared within each test worker. UI actions run on the JavaFX thread
+with bounded waits. Test storage is temporary, and every test window is closed.
+`LauncherTest` uses a separate JVM to exercise the production launcher and the
+GUI's `bye` action without shutting down the other tests. A bounded startup
+observer finds the window; assertions verify its greeting and farewell before
+exit. Child coverage is included in the default-locale report.
+
+Automated GUI assertions cover message text, styling, avatars, resize bindings,
+startup warnings, both submission handlers, blank input, errors, persistence,
+and scrolling. They do not replace the manual visual and physical-input checks.
 
 ## Coverage and test design
 
@@ -75,7 +96,26 @@ This preserves application-level coverage without claiming that arbitrary Unicod
 launcher arguments work on every Windows code page. Production code is unchanged.
 The subprocess streams explicitly use UTF-8 to match the test's input and output.
 
-## Recorded result
+## GUI coverage result
+
+On 2026-10-14, using macOS and Zulu JavaFX JDK 25.0.3:
+
+| Check | Result |
+| --- | --- |
+| Default-locale JUnit | 244 passed, none skipped |
+| Chinese-locale JUnit | 244 passed, none skipped |
+| `DialogBox` line coverage | 28/28 (100%) |
+| `SevenSixGui` line coverage | 121/121 (100%) |
+| `SevenSixGui` branch coverage | 8/8 (100%) |
+| `Launcher` line coverage | 2/2 (100%) |
+| Checkstyle and both coverage gates | Passed |
+| Recorded console UI cases | 21 passed |
+
+All three GUI classes also have 100% instruction and method coverage.
+`DialogBox` and `Launcher` have no branches. Cross-platform execution of the new
+GUI tests remains to be confirmed by CI; these results are from macOS.
+
+## Earlier recorded result
 
 On 2026-09-14, macOS 26.5.1 with Zulu JavaFX JDK 25.0.3:
 
