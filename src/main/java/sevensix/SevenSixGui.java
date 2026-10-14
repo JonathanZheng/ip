@@ -101,17 +101,52 @@ public class SevenSixGui extends Application {
      * @return the configured brand row.
      */
     private HBox createBrandRow() {
-        StackPane brandMark = createBrandMark();
+        return arrangeBrandRow(createBrandMark(), createIdentity(), createHeaderSpacer(), createStatus());
+    }
+
+    /** Creates the application name and subtitle as one identity block.
+     *
+     * @return the styled identity labels.
+     */
+    private VBox createIdentity() {
         Label title = new Label(Ui.APPLICATION_NAME);
         title.getStyleClass().add("title");
         Label subtitle = new Label(Ui.APPLICATION_SUBTITLE);
         subtitle.getStyleClass().add("subtitle");
         VBox identity = new VBox(title, subtitle);
         identity.getStyleClass().add("identity");
+        return identity;
+    }
+
+    /** Pushes the readiness indicator to the opposite edge of the header.
+     *
+     * @return an expanding spacer.
+     */
+    private Region createHeaderSpacer() {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
+    }
+
+    /** Creates the styled readiness indicator.
+     *
+     * @return the readiness label.
+     */
+    private Label createStatus() {
         Label status = new Label(Ui.READY_STATUS);
         status.getStyleClass().add("status-pill");
+        return status;
+    }
+
+    /** Aligns the prepared brand components in one row.
+     *
+     * @param brandMark the application badge.
+     * @param identity the application name and subtitle.
+     * @param spacer the expanding gap.
+     * @param status the readiness indicator.
+     * @return the aligned brand row.
+     */
+    private HBox arrangeBrandRow(StackPane brandMark, VBox identity, Region spacer, Label status) {
         HBox brandRow = new HBox(brandMark, identity, spacer, status);
         brandRow.setAlignment(Pos.CENTER_LEFT);
         brandRow.getStyleClass().add("brand-row");
@@ -232,8 +267,15 @@ public class SevenSixGui extends Application {
         }
 
         displayCommandResponse(command);
-        userInput.clear();
+        finishSubmission(command);
+    }
 
+    /** Clears the composer and either exits or schedules scrolling after the reply is laid out.
+     *
+     * @param command the command that has just been processed.
+     */
+    private void finishSubmission(String command) {
+        userInput.clear();
         if (Parser.isExitCommand(command)) {
             Platform.exit();
             return;

@@ -21,23 +21,40 @@ jacoco {
     toolVersion = '0.8.14'
 }
 
-// Exclude only the JavaFX window, message widgets, and their launcher.
-def nonGuiClasses = sourceSets.main.output.asFileTree.matching {
-    exclude 'sevensix/SevenSixGui*', 'sevensix/DialogBox*', 'sevensix/Launcher*'
-}
-
 jacocoTestReport {
     dependsOn test
     reports {
         html.required = true
         xml.required = true
     }
-    classDirectories.setFrom(nonGuiClasses)
 }
 
 jacocoTestCoverageVerification {
     dependsOn test
-    classDirectories.setFrom(nonGuiClasses)
+    violationRules {
+        rule {
+            element = 'CLASS'
+            includes = ['sevensix.DialogBox', 'sevensix.SevenSixGui', 'sevensix.Launcher']
+            limit {
+                counter = 'LINE'
+                minimum = 1.0
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 1.0
+            }
+        }
+    }
+}
+
+// Preserve the original core-only coverage thresholds independently of the GUI.
+tasks.register('verifyCoreCoverage', JacocoCoverageVerification) {
+    dependsOn test
+    executionData test
+    sourceDirectories.setFrom(sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom(sourceSets.main.output.asFileTree.matching {
+        exclude 'sevensix/SevenSixGui*', 'sevensix/DialogBox*', 'sevensix/Launcher*'
+    })
     violationRules {
         rule {
             limit {
@@ -53,7 +70,7 @@ jacocoTestCoverageVerification {
 }
 
 check {
-    dependsOn jacocoTestReport, jacocoTestCoverageVerification
+    dependsOn jacocoTestReport, jacocoTestCoverageVerification, verifyCoreCoverage
 }
 
 // Exercise the entire suite in a fresh JVM whose default language is Chinese.
@@ -126,4 +143,9 @@ run {
     // Assertions are off by default in the JVM, so enable them when running from Gradle.
     // The 'test' task already enables them by default, so JUnit runs check them too.
     enableAssertions = true
+}
+
+// Child-process GUI tests need the complete runtime, including JavaFX and test assertions.
+tasks.withType(Test).configureEach {
+    systemProperty 'sevensix.test.classpath', sourceSets.test.runtimeClasspath.asPath
 }
