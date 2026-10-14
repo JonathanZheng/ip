@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import javafx.application.Platform;
 
 /** Verifies actual JavaFX launch and exit in a bounded child JVM with its own task storage. */
 class LauncherTest {
@@ -23,6 +24,31 @@ class LauncherTest {
     /** The launcher must display the GUI and return successfully after its bye command. */
     @Test
     void launcherStartsWindowAndExitsThroughBye() throws Exception {
+        verifyLauncherProcess();
+    }
+
+    /** IDE runners must launch successfully without Gradle's custom classpath property. */
+    @Test
+    void launcherUsesRunnerClasspathWithoutGradleConfiguration() throws Exception {
+        String configuredClasspath = System.getProperty("sevensix.test.classpath");
+        String runnerClasspath = System.getProperty("java.class.path");
+        try {
+            // Gradle's worker classpath contains only its bootstrap JAR, unlike a direct JUnit runner.
+            if (configuredClasspath != null) {
+                System.setProperty("java.class.path", configuredClasspath);
+            }
+            System.clearProperty("sevensix.test.classpath");
+            verifyLauncherProcess();
+        } finally {
+            System.setProperty("java.class.path", runnerClasspath);
+            if (configuredClasspath != null) {
+                System.setProperty("sevensix.test.classpath", configuredClasspath);
+            }
+        }
+    }
+
+    /** Runs the launch-and-exit scenario with isolated storage and a bounded lifetime. */
+    private void verifyLauncherProcess() throws Exception {
         Path outputFile = temporaryDirectory.resolve("launcher.log");
         Process process = new ProcessBuilder(launchCommand()).directory(temporaryDirectory.toFile())
                 .redirectErrorStream(true).redirectOutput(outputFile.toFile()).start();
@@ -46,12 +72,31 @@ class LauncherTest {
     private List<String> launchCommand() {
         String executable = System.getProperty("os.name").startsWith("Windows") ? "java.exe" : "java";
         List<String> command = new ArrayList<>(List.of(
-                Path.of(System.getProperty("java.home"), "bin", executable).toString(), "-ea"));
+                Path.of(System.getProperty("java.home"), "bin", executable).toString(), "-ea",
+                nativeAccessArgument()));
         command.addAll(coverageArguments());
         command.addAll(List.of("-Duser.language=" + System.getProperty("user.language"),
                 "-Duser.country=" + System.getProperty("user.country", ""),
-                "-cp", System.getProperty("sevensix.test.classpath"), "sevensix.GuiLaunchProbe"));
+                "-cp", runtimeClasspath(), "sevensix.GuiLaunchProbe"));
         return command;
+    }
+
+    /** Uses Gradle's explicit runtime when available, or the IDE's direct JUnit classpath.
+     *
+     * @return the classpath inherited by the child JVM.
+     */
+    private String runtimeClasspath() {
+        return System.getProperty("sevensix.test.classpath", System.getProperty("java.class.path"));
+    }
+
+    /** Grants native access to JavaFX whether it comes from the JDK or the classpath.
+     *
+     * @return the JVM option for the module that loads JavaFX's native libraries.
+     */
+    private String nativeAccessArgument() {
+        Module graphicsModule = Platform.class.getModule();
+        String moduleName = graphicsModule.isNamed() ? graphicsModule.getName() : "ALL-UNNAMED";
+        return "--enable-native-access=" + moduleName;
     }
 
     /** Includes child execution in the same JaCoCo report as the test worker.
